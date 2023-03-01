@@ -13,6 +13,8 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <microstream.version>08.00.00-MS-EA2</microstream.version>
+        <jakarta.data.version>1.0.0-b1</jakarta.data.version>
+        <jakarta.nosql.version>1.0.0-b6</jakarta.nosql.version>
     </properties>
 
     <dependencies>
@@ -35,6 +37,16 @@
             <groupId>one.microstream</groupId>
             <artifactId>microstream-cache</artifactId>
             <version>${microstream.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>jakarta-data-api</artifactId>
+            <groupId>jakarta.data</groupId>
+            <version>${jakarta.data.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.nosql</groupId>
+            <artifactId>nosql-core</artifactId>
+            <version>${jakarta.nosql.version}</version>
         </dependency>
     </dependencies>
 
