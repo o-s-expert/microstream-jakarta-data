@@ -1,13 +1,13 @@
 package os.expert.integration;
 
-import one.microstream.collections.lazy.LazyHashSet;
+import one.microstream.collections.lazy.LazyHashMap;
 
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
-public class DataStructure<T> {
+public class DataStructure<K, T> {
 
-    private Set<T> data = new LazyHashSet<>();
+    private Map<K, T> data = new LazyHashMap();
 
 
     public void add(T entity) {
