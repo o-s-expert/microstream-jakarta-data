@@ -18,7 +18,7 @@ public class DataStructure {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DataStructure<?, ?> that = (DataStructure<?, ?>) o;
+        DataStructure that = (DataStructure) o;
         return Objects.equals(data, that.data);
     }
 

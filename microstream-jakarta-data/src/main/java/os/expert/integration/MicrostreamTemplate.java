@@ -27,6 +27,7 @@ class MicrostreamTemplate implements Template {
 
     @Override
     public <T> Iterable<T> insert(Iterable<T> entities) {
+        Objects.requireNonNull(entity, "entity is required");
         return null;
     }
 
