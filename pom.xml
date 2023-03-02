@@ -1,41 +1,23 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>microstream-integrations-cdi</artifactId>
-    <groupId>one.microstream</groupId>
-    <version>08.00.00-MS-GA-SNAPSHOT</version>
-
-    <name>MicroStream Integrations CDI</name>
-    <description>MicroStream CDI Extension</description>
+    <groupId>os.expert.integration</groupId>
+    <artifactId>microstream-jakarta-data</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.test.skip>true</maven.test.skip>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <microstream.version>08.00.00-MS-EA2</microstream.version>
-        <junit.version>5.9.2</junit.version>
-        <mockito.verson>4.11.0</mockito.verson>
+        <jakarta.data.version>1.0.0-b1</jakarta.data.version>
+        <jakarta.nosql.version>1.0.0-b6</jakarta.nosql.version>
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>jakarta.enterprise</groupId>
-            <artifactId>jakarta.enterprise.cdi-api</artifactId>
-            <version>2.0.2</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
-            <version>1.1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.microprofile.config</groupId>
-            <artifactId>microprofile-config-api</artifactId>
-            <version>2.0</version>
-            <scope>provided</scope>
-        </dependency>
-
         <dependency>
             <groupId>one.microstream</groupId>
             <artifactId>microstream-storage-embedded</artifactId>
@@ -56,66 +38,16 @@
             <artifactId>microstream-cache</artifactId>
             <version>${microstream.version}</version>
         </dependency>
-
-        <!--Test-->
         <dependency>
-            <groupId>io.smallrye.config</groupId>
-            <artifactId>smallrye-config</artifactId>
-            <version>2.8.2</version>
-            <scope>test</scope>
+            <artifactId>jakarta-data-api</artifactId>
+            <groupId>jakarta.data</groupId>
+            <version>${jakarta.data.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>${mockito.verson}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>${mockito.verson}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.weld</groupId>
-            <artifactId>weld-junit5</artifactId>
-            <version>2.0.2.Final</version>
-            <scope>test</scope>
+            <groupId>jakarta.nosql</groupId>
+            <artifactId>nosql-core</artifactId>
+            <version>${jakarta.nosql.version}</version>
         </dependency>
     </dependencies>
 
-
-    <profiles>
-        <profile>
-            <id>run-its</id>
-            <properties>
-                <maven.test.skip>false</maven.test.skip>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.2</version>
-                        <configuration>
-                            <argLine>--illegal-access=permit</argLine>
-                            <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
