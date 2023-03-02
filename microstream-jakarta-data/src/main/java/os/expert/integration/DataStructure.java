@@ -5,9 +5,9 @@ import one.microstream.collections.lazy.LazyHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class DataStructure<K, T> {
+public class DataStructure {
 
-    private final Map<K, T> data = new LazyHashMap();
+    private final Map<Object, Object> data = new LazyHashMap();
 
 
     @Override
