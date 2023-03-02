@@ -14,23 +14,11 @@ public class Main {
                 .setStorageDirectory("target/data").createEmbeddedStorageFoundation();
         storageFoundation.registerTypeHandler(new BinaryHandlerLazyArrayList());
 
+
         StorageManager manager = storageFoundation.createEmbeddedStorageManager();
         manager.start();
         ThreadLocalRandom random = ThreadLocalRandom.current();
         Object root = manager.root();
-        DataStructure<Long> values;
-        if (root == null) {
-            values = new DataStructure<>();
-            values.add(random.nextLong(0, 10));
-            values.add(random.nextLong(0, 10));
-            values.add(random.nextLong(0, 10));
-            storageFoundation.setRoot(values);
-        } else {
-            values = (DataStructure<Long>) manager.root();
-        }
-        values.add(random.nextLong(0, 10));
-        values.add(random.nextLong(0, 10));
-        values.add(random.nextLong(0, 10));
         manager.storeRoot();
         System.out.println("the root: " + root);
         manager.shutdown();
