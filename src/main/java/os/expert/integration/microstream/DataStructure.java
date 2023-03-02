@@ -23,9 +23,17 @@ public class DataStructure {
         return (Optional<V>) Optional.ofNullable(this.data.get(key));
     }
 
-    public <K> void remove(K key){
+    public <K> void remove(K key) {
         Objects.requireNonNull(key, "key is required");
         this.data.remove(key);
+    }
+
+    public int size() {
+        return this.data.size();
+    }
+
+    public boolean isEmpty() {
+        return this.data.isEmpty();
     }
 
     public <V> Stream<V> values() {
