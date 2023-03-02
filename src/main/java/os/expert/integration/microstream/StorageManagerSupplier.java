@@ -1,4 +1,4 @@
-package os.expert.integration;
+package os.expert.integration.microstream;
 
 
 import jakarta.enterprise.context.ApplicationScoped;

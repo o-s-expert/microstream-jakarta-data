@@ -1,8 +1,7 @@
-package os.expert.integration;
+package os.expert.integration.microstream;
 
 import one.microstream.collections.lazy.LazyHashMap;
 
-import javax.swing.text.html.Option;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;

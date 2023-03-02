@@ -1,4 +1,4 @@
-package os.expert.integration;
+package os.expert.integration.microstream;
 
 
 import one.microstream.persistence.binary.one.microstream.collections.lazy.BinaryHandlerLazyArrayList;
