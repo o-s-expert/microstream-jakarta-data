@@ -5,19 +5,24 @@ import jakarta.nosql.QueryMapper;
 import jakarta.nosql.Template;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.Optional;
 
 class MicrostreamTemplate implements Template {
 
 
+    private DataStructure data;
+
+
     @Override
     public <T> T insert(T entity) {
+        Objects.requireNonNull(entity, "entity is required");
         return null;
     }
 
     @Override
     public <T> T insert(T entity, Duration ttl) {
-        return null;
+        throw new UnsupportedOperationException("The insert with duration is unsupported");
     }
 
     @Override
@@ -27,7 +32,7 @@ class MicrostreamTemplate implements Template {
 
     @Override
     public <T> Iterable<T> insert(Iterable<T> entities, Duration ttl) {
-        return null;
+        throw new UnsupportedOperationException("The insert with duration is unsupported");
     }
 
     @Override
@@ -52,11 +57,11 @@ class MicrostreamTemplate implements Template {
 
     @Override
     public <T> QueryMapper.MapperFrom select(Class<T> type) {
-        return null;
+        throw new UnsupportedOperationException("The select is unsupported");
     }
 
     @Override
     public <T> QueryMapper.MapperDeleteFrom delete(Class<T> type) {
-        return null;
+        throw new UnsupportedOperationException("The delete is unsupported");
     }
 }
