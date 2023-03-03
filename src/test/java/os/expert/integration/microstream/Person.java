@@ -3,6 +3,7 @@ package os.expert.integration.microstream;
 import jakarta.nosql.Column;
 import jakarta.nosql.Id;
 
+import java.time.LocalDate;
 import java.time.Year;
 
 public class Person {
@@ -15,5 +16,5 @@ public class Person {
     private String name;
 
     @Column
-    private Year year;
+    private LocalDate birthday;
 }
