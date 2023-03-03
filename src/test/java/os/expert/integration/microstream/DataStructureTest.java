@@ -10,7 +10,20 @@ class DataStructureTest {
 
     @BeforeEach
     public void setUp() {
-
+        this.data = new DataStructure();
     }
+
+    public void shouldPut() {}
+
+    public void shouldGet() {}
+
+    public void shouldRemove() {}
+
+    public void shouldSize() {}
+
+    public void shouldIsEmpty() {}
+
+    public void shouldValue() {}
+
 
 }
