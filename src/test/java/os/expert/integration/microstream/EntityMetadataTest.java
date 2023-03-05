@@ -1,6 +1,11 @@
 package os.expert.integration.microstream;
 
+import jakarta.data.exceptions.MappingException;
+import jakarta.nosql.Column;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import java.time.Year;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -44,4 +49,17 @@ class EntityMetadataTest {
                 .contains("name", "year");
     }
 
+    @Test
+    public void shouldReturnErrorWhenThereIsNotId() {
+        assertThrows(MappingException.class, ()
+                -> EntityMetadata.of(Car.class));
+    }
+
+    private static class Car {
+        @Column
+        private String plate;
+
+        @Column
+        private Year year;
+    }
 }
