@@ -1,5 +1,6 @@
 package os.expert.integration.microstream;
 
+import jakarta.data.exceptions.MappingException;
 import jakarta.nosql.Column;
 import jakarta.nosql.Id;
 
@@ -71,6 +72,10 @@ final class EntityMetadata {
             } else if (field.getAnnotation(Column.class) != null) {
                 fields.add(FieldMetadata.of(field));
             }
+        }
+        if (id == null) {
+            throw new MappingException("The entity " + type + " requires at least a field with " +
+                    "@jakarta.nosql.Id annotation");
         }
         return new EntityMetadata(id, fields, type);
     }
