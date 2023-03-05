@@ -29,4 +29,19 @@ class EntityMetadataTest {
                 .contains("name", "birthday");
 
     }
+
+    @Test
+    public void shouldCreateEntityMetadata2() {
+        EntityMetadata metadata = EntityMetadata.of(Animal.class);
+
+        assertThat(metadata)
+                .isNotNull()
+                .matches(m -> m.type().equals(Animal.class))
+                .matches(m -> m.id().name().equals("id"));
+
+        assertThat(metadata.fields())
+                .hasSize(2)
+                .extracting(FieldMetadata::name)
+                .contains("name", "year");
+    }
 }
