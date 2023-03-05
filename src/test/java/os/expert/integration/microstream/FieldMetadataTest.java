@@ -1,5 +1,6 @@
 package os.expert.integration.microstream;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -16,5 +17,7 @@ class FieldMetadataTest {
         Person poliana = Person.of("poliana", "Poliana", LocalDate.now());
         FieldMetadata id = metadata.id();
 
+        Object value = id.get(poliana);
+        Assertions.assertEquals("poliana", value);
     }
 }
