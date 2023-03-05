@@ -21,7 +21,12 @@ class EntityMetadataTest {
         assertThat(metadata)
                 .isNotNull()
                 .matches(m -> m.type().equals(Person.class))
-                .matches(m -> m.id().name().equals("id"))
-                .extracting(m -> m.fields());
+                .matches(m -> m.id().name().equals("id"));
+
+        assertThat(metadata.fields())
+                .hasSize(2)
+                .extracting(FieldMetadata::name)
+                .contains("name", "birthday");
+
     }
 }
