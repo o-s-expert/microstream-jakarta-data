@@ -4,7 +4,15 @@ import jakarta.data.exceptions.MappingException;
 
 import java.lang.reflect.Field;
 
-record FieldMetadata (Field field, String name){
+final class FieldMetadata {
+
+    private final Field field;
+    private final String name;
+
+    FieldMetadata(Field field, String name) {
+        this.field = field;
+        this.name = name;
+    }
 
     <T> Object get(T entity) {
         try {
