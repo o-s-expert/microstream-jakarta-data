@@ -25,6 +25,41 @@ final class EntityMetadata {
         return Collections.unmodifiableList(fields);
     }
 
+    FieldMetadata id() {
+        return id;
+    }
+
+    Class<?> type() {
+        return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        EntityMetadata that = (EntityMetadata) o;
+        return Objects.equals(id, that.id)
+                && Objects.equals(fields, that.fields)
+                && Objects.equals(type, that.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, fields, type);
+    }
+
+    @Override
+    public String toString() {
+        return "EntityMetadata{" +
+                "id=" + id +
+                ", fields=" + fields +
+                ", type=" + type +
+                '}';
+    }
 
     static EntityMetadata of(Class<?> type) {
         Objects.requireNonNull(type, "type is required");
