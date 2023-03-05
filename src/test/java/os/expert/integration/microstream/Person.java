@@ -36,7 +36,7 @@ public class Person {
         return birthday;
     }
 
-    public Person of(String id, String name, LocalDate birthday) {
+    public static Person of(String id, String name, LocalDate birthday) {
         return new Person(id, name, birthday);
     }
 }
