@@ -13,11 +13,14 @@ class MicrostreamTemplate implements Template {
 
     private DataStructure data;
 
+    private EntityMetadata metadata;
 
     @Override
     public <T> T insert(T entity) {
         Objects.requireNonNull(entity, "entity is required");
-        return null;
+        Object id = this.metadata.id().get(entity);
+        this.data.put(id, entity);
+        return entity;
     }
 
     @Override
@@ -28,7 +31,8 @@ class MicrostreamTemplate implements Template {
     @Override
     public <T> Iterable<T> insert(Iterable<T> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        return null;
+        entities.forEach(this::insert);
+        return entities;
     }
 
     @Override
@@ -38,22 +42,26 @@ class MicrostreamTemplate implements Template {
 
     @Override
     public <T> T update(T entity) {
-        return null;
+        return insert(entity);
     }
 
     @Override
     public <T> Iterable<T> update(Iterable<T> entities) {
-        return null;
+        return insert(entities);
     }
 
     @Override
     public <T, K> Optional<T> find(Class<T> type, K id) {
-        return Optional.empty();
+        Objects.requireNonNull(type, "type is required");
+        Objects.requireNonNull(id, "id is required");
+        return data.get(id);
     }
 
     @Override
     public <T, K> void delete(Class<T> type, K id) {
-
+        Objects.requireNonNull(type, "type is required");
+        Objects.requireNonNull(id, "id is required");
+        this.data.remove(id);
     }
 
     @Override
