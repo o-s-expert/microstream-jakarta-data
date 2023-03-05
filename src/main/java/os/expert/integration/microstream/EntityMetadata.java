@@ -67,6 +67,7 @@ final class EntityMetadata {
         List<FieldMetadata> fields = new ArrayList<>();
         FieldMetadata id = null;
         for (Field field : type.getDeclaredFields()) {
+            field.setAccessible(true);
             if (field.getAnnotation(Id.class) != null) {
                 id = FieldMetadata.of(field);
             } else if (field.getAnnotation(Column.class) != null) {
