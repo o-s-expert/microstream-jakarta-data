@@ -2,6 +2,7 @@ package os.expert.integration.microstream;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 import one.microstream.persistence.binary.one.microstream.collections.lazy.BinaryHandlerLazyHashMap;
 import one.microstream.storage.embedded.configuration.types.EmbeddedStorageConfiguration;
 import one.microstream.storage.embedded.types.EmbeddedStorageFoundation;
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
 public class StorageManagerSupplier implements Supplier<StorageManager> {
 
     @Override
+    @Produces
     public StorageManager get() {
         EmbeddedStorageFoundation<?> storageFoundation = EmbeddedStorageConfiguration.Builder()
                 .setStorageDirectory("target/data").createEmbeddedStorageFoundation();
