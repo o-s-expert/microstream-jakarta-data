@@ -3,7 +3,9 @@ package os.expert.integration.microstream;
 import jakarta.data.exceptions.MappingException;
 
 import java.lang.reflect.Field;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.Function;
 
 final class FieldMetadata {
 
@@ -28,8 +30,13 @@ final class FieldMetadata {
             return this.field.get(entity);
         } catch (IllegalAccessException e) {
             throw new MappingException("It cannot access the value from the field " + field + " at the entity "
-            + entity.getClass());
+                    + entity.getClass());
         }
+    }
+
+    <T, U extends Comparable<?>> Comparator comparator() {
+        Function<T, Comparable> comp = t -> (U) get(t);
+        return Comparator.comparing(comp);
     }
 
     @Override
@@ -56,7 +63,10 @@ final class FieldMetadata {
                 ", name='" + name + '\'' +
                 '}';
     }
+
     static FieldMetadata of(Field field) {
         return new FieldMetadata(field, field.getName());
     }
+
+
 }
