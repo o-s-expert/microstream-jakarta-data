@@ -7,7 +7,10 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FieldMetadataTest {
@@ -45,11 +48,14 @@ class FieldMetadataTest {
         Person otavio = Person.of("otavio", "Poliana", LocalDate.now());
         Person ada = Person.of("ada", "Poliana", LocalDate.now());
         FieldMetadata id = metadata.id();
-        List<Person> people = List.of(poliana, otavio, ada);
         Comparator<Person> comparator =  id.comparator();
+        List<Person> people = Stream.of(poliana, otavio, ada)
+                .sorted(comparator).collect(Collectors.toUnmodifiableList());
 
-        Function<Person, Comparable> id1 = Person::id;
-        Comparator.comparing(id1);
-
+        assertThat(people)
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactly(ada, otavio, poliana);
     }
+
 }
