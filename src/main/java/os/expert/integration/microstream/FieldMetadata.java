@@ -23,6 +23,15 @@ final class FieldMetadata {
         return name;
     }
 
+    <T> Object get(T entity) {
+        try {
+            return this.field.get(entity);
+        } catch (IllegalAccessException e) {
+            throw new MappingException("It cannot access the value from the field " + field + " at the entity "
+            + entity.getClass());
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -47,16 +56,6 @@ final class FieldMetadata {
                 ", name='" + name + '\'' +
                 '}';
     }
-
-    <T> Object get(T entity) {
-        try {
-            return this.field.get(entity);
-        } catch (IllegalAccessException e) {
-            throw new MappingException("It cannot access the value from the field " + field + " at the entity "
-            + entity.getClass());
-        }
-    }
-
     static FieldMetadata of(Field field) {
         return new FieldMetadata(field, field.getName());
     }
