@@ -39,6 +39,10 @@ final class FieldMetadata {
         return Comparator.comparing(comp);
     }
 
+    <T, U extends Comparable> Comparator reversed() {
+        return comparator().reversed();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -67,6 +71,7 @@ final class FieldMetadata {
     static FieldMetadata of(Field field) {
         return new FieldMetadata(field, field.getName());
     }
+
 
 
 }
