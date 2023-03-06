@@ -3,20 +3,15 @@ package os.expert.integration.microstream;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import jakarta.data.repository.CrudRepository;
 import jakarta.data.repository.DataRepository;
-import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Repository;
 import jakarta.nosql.Entity;
-import org.eclipse.jnosql.mapping.Embeddable;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toUnmodifiableSet;
