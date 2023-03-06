@@ -34,8 +34,8 @@ final class FieldMetadata {
         }
     }
 
-    <T, U extends Comparable<?>> Comparator comparator() {
-        Function<T, Comparable> comp = t -> (U) get(t);
+    <T, U extends Comparable> Comparator comparator() {
+        Function<T, U> comp = t -> (U) get(t);
         return Comparator.comparing(comp);
     }
 
