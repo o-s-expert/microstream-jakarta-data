@@ -58,4 +58,20 @@ class FieldMetadataTest {
                 .containsExactly(ada, otavio, poliana);
     }
 
+    @Test
+    public void shouldOrderByFieldReversed() {
+        EntityMetadata metadata = EntityMetadata.of(Person.class);
+        Person poliana = Person.of("poliana", "Poliana", LocalDate.now());
+        Person otavio = Person.of("otavio", "Poliana", LocalDate.now());
+        Person ada = Person.of("ada", "Poliana", LocalDate.now());
+        FieldMetadata id = metadata.id();
+        Comparator<Person> comparator =  id.reversed();
+        List<Person> people = Stream.of(ada, poliana, otavio)
+                .sorted(comparator).collect(Collectors.toUnmodifiableList());
+
+        assertThat(people)
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactly(poliana, otavio, ada);
+    }
 }
