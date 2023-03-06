@@ -17,6 +17,7 @@
         <jakarta.nosql.version>1.0.0-b6</jakarta.nosql.version>
         <junit.version>5.9.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
+        <classgraph.version>4.8.151</classgraph.version>
     </properties>
 
     <dependencies>
@@ -31,6 +32,11 @@
             <artifactId>microprofile-config-api</artifactId>
             <version>3.0.1</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>${classgraph.version}</version>
         </dependency>
         <dependency>
             <groupId>one.microstream</groupId>
