@@ -9,15 +9,22 @@ import one.microstream.storage.embedded.types.EmbeddedStorageFoundation;
 import one.microstream.storage.types.StorageManager;
 
 import java.util.function.Supplier;
+import java.util.logging.Logger;
 
 @ApplicationScoped
-public class StorageManagerSupplier implements Supplier<StorageManager> {
+class StorageManagerSupplier implements Supplier<StorageManager> {
+
+    private static final Logger LOGGER = Logger.getLogger(StorageManagerSupplier.class.getName());
+
+    private static final String DEFAULT_PATH = "target/data";
 
     @Override
     @Produces
     public StorageManager get() {
+        LOGGER.warning("Starting the default Storage Manager where it will use the path " + DEFAULT_PATH +
+                " overwrite on production");
         EmbeddedStorageFoundation<?> storageFoundation = EmbeddedStorageConfiguration.Builder()
-                .setStorageDirectory("target/data").createEmbeddedStorageFoundation();
+                .setStorageDirectory(DEFAULT_PATH).createEmbeddedStorageFoundation();
         storageFoundation.registerTypeHandler(new BinaryHandlerLazyHashMap());
 
         return storageFoundation.createEmbeddedStorageManager();
