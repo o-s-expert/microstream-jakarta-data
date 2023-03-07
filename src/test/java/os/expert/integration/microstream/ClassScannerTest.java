@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ClassScannerTest {
 
     private ClassScanner scanner;
@@ -22,6 +20,13 @@ class ClassScannerTest {
         Set<Class<?>> entities = this.scanner.entities();
         Assertions.assertThat(entities).hasSize(1)
                 .contains(Book.class);
+    }
+
+    @Test
+    public void shouldReturnRepository() {
+        Set<Class<?>> repositories = this.scanner.repositories();
+        Assertions.assertThat(repositories).hasSize(1)
+                .contains(Library.class);
     }
 
 }
