@@ -25,6 +25,16 @@ public class Book {
     @Column
     private String author;
 
+    Book(String isbn, String title, Integer edition, Year release, String author) {
+        this.isbn = isbn;
+        this.title = title;
+        this.edition = edition;
+        this.release = release;
+        this.author = author;
+    }
+
+    Book() {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -52,5 +62,9 @@ public class Book {
                 ", release=" + release +
                 ", author='" + author + '\'' +
                 '}';
+    }
+
+    public static BookBuilder builder() {
+        return new BookBuilder();
     }
 }
