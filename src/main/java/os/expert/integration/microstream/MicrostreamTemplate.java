@@ -1,6 +1,7 @@
 package os.expert.integration.microstream;
 
 
+import jakarta.inject.Inject;
 import jakarta.nosql.QueryMapper;
 import jakarta.nosql.Template;
 
@@ -14,6 +15,17 @@ class MicrostreamTemplate implements Template {
     private DataStructure data;
 
     private EntityMetadata metadata;
+
+    @Inject
+    MicrostreamTemplate(DataStructure data, EntityMetadata metadata) {
+        this.data = data;
+        this.metadata = metadata;
+    }
+
+
+    @Deprecated
+    MicrostreamTemplate() {
+    }
 
     @Override
     public <T> T insert(T entity) {
