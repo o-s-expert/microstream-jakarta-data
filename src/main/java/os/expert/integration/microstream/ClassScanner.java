@@ -26,22 +26,22 @@ public enum ClassScanner {
     INSTANCE;
 
     private final Set<Class<?>> entities;
-    private final Set<Class<?>> repositores;
+    private final Set<Class<?>> repositories;
 
 
     ClassScanner() {
         entities = new HashSet<>();
-        repositores = new HashSet<>();
+        repositories = new HashSet<>();
 
         Logger logger = Logger.getLogger(ClassScanner.class.getName());
         logger.fine("Starting scan class to find entities, embeddable and repositories.");
         try (ScanResult result = new ClassGraph().enableAllInfo().scan()) {
             this.entities.addAll(result.getClassesWithAnnotation(Entity.class).loadClasses());
-            this.repositores.addAll(result.getClassesWithAnnotation(Repository.class)
+            this.repositories.addAll(result.getClassesWithAnnotation(Repository.class)
                     .getInterfaces().loadClasses(DataRepository.class));
         }
         logger.fine(String.format("Finished the class scan with entities %d, and repositories: %d"
-                , entities.size(), repositores.size()));
+                , entities.size(), repositories.size()));
 
     }
 
@@ -61,7 +61,7 @@ public enum ClassScanner {
      * @return the repositories items
      */
     public Set<Class<?>> repositories() {
-        return unmodifiableSet(repositores);
+        return unmodifiableSet(repositories);
     }
 
     /**
@@ -72,7 +72,7 @@ public enum ClassScanner {
      */
     public Set<Class<?>> repositories(Class<? extends DataRepository> filter) {
         Objects.requireNonNull(filter, "filter is required");
-        return repositores.stream().filter(filter::isAssignableFrom)
+        return repositories.stream().filter(filter::isAssignableFrom)
                 .filter(c -> Arrays.asList(c.getInterfaces()).contains(filter))
                 .collect(toUnmodifiableSet());
     }
