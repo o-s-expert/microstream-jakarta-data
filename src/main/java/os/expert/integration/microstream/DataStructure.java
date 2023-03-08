@@ -87,6 +87,13 @@ public class DataStructure {
         return (Stream<V>) this.data.values().stream();
     }
 
+    /**
+     * Removes all entities from this structure .
+     * The map will be empty after this call returns.
+     */
+    public void clear() {
+        this.data.clear();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) {
