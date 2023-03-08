@@ -90,4 +90,12 @@ public class MicrostreamTemplate implements Template {
     public <T> QueryMapper.MapperDeleteFrom delete(Class<T> type) {
         throw new UnsupportedOperationException("The delete is unsupported");
     }
+
+    DataStructure data() {
+        return data;
+    }
+
+    EntityMetadata metadata() {
+        return metadata;
+    }
 }
