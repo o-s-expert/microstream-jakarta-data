@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 final class EntityMetadata {
 
@@ -32,6 +33,14 @@ final class EntityMetadata {
 
     Class<?> type() {
         return type;
+    }
+
+    Optional<FieldMetadata> field(String name) {
+        if (id.name().equals(name)) {
+            Optional.ofNullable(id);
+        }
+        return this.fields.stream().filter(f -> f.name().equals(name))
+                .findFirst();
     }
 
     @Override
