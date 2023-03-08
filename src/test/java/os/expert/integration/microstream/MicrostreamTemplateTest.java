@@ -57,6 +57,30 @@ class MicrostreamTemplateTest {
         Assertions.assertThrows(NullPointerException.class, () -> template.insert((Iterable<? extends Object>) null));
     }
 
+    @ParameterizedTest
+    @MethodSource("book")
+    public void shouldUpdate(Book book) {
+        Book insert = this.template.update(book);
+        assertThat(insert)
+                .isNotNull()
+                .isEqualTo(book);
+    }
+
+    @ParameterizedTest
+    @MethodSource("books")
+    public void shouldUpdate(List<Book> books) {
+        Iterable<Book> insert = this.template.update(books);
+        assertThat(insert).hasSize(3)
+                .isNotEmpty()
+                .contains(books.toArray(Book[]::new));
+    }
+
+    @Test
+    public void shouldReturnErrorWhenUpdate() {
+        Assertions.assertThrows(NullPointerException.class, () -> template.insert((Object) null));
+        Assertions.assertThrows(NullPointerException.class, () -> template.insert((Iterable<? extends Object>) null));
+    }
+
     static Stream<Arguments> book() {
         return Stream.of(Arguments.of(Book.builder().isbn("1231").title("Clean Code").author("Robert Martin")
                 .edition(1).release(Year.of(2020)).build()));
