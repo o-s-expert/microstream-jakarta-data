@@ -9,7 +9,12 @@ import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 
-class MicrostreamTemplate implements Template {
+/**
+ * The Microstream implementation of {@link Template}
+ * It uses a {@link DataStructure} as root graph at Microstream.
+ * It does not implement {@link Template#select(Class)} and {@link Template#delete(Class)}
+ */
+public class MicrostreamTemplate implements Template {
 
 
     private DataStructure data;
