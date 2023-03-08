@@ -13,6 +13,7 @@ import java.time.Year;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,6 +101,44 @@ class MicrostreamTemplateTest {
 
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
                 this.template.delete(Book.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("book")
+    public void shouldFindId(Book book) {
+        this.template.insert(book);
+        Optional<Book> optional = this.template.find(Book.class, book.isbn());
+        assertThat(optional)
+                .isPresent()
+                .contains(book);
+    }
+
+    @ParameterizedTest
+    @MethodSource("book")
+    public void shouldFindNotId(Book book) {
+        this.template.insert(book);
+        Optional<Book> optional = this.template.find(Book.class, "no-isbn");
+        assertThat(optional)
+                .isNotPresent()
+                .contains(book);
+    }
+
+    @ParameterizedTest
+    @MethodSource("book")
+    public void shouldDeleteId(Book book) {
+        this.template.insert(book);
+        Optional<Book> optional = this.template.find(Book.class, book.isbn());
+        assertThat(optional)
+                .isPresent()
+                .contains(book);
+
+        template.delete(Book.class, book.isbn());
+
+        optional = this.template.find(Book.class, book.isbn());
+        assertThat(optional)
+                .isNotPresent()
+                .contains(book);
+
     }
 
     static Stream<Arguments> book() {
