@@ -54,18 +54,18 @@ public enum ClassScanner {
 
 
     /**
-     * Returns the classes that that has the {@link Entity} annotation
+     * Returns the class that that has the {@link Entity} annotation
      *
-     * @return classes with {@link Entity} annotation
+     * @return the class with {@link Entity} annotation or {@link Optional#empty()}
      */
     public Optional<Class<?>> entity() {
         return Optional.ofNullable(entity);
     }
 
     /**
-     * Returns repositories: interfaces that extend DataRepository and has the Repository annotation.
+     * Returns repository: interface that extend DataRepository and has the Repository annotation.
      *
-     * @return the repositories items
+     * @return the repository or the {@link Optional#empty()}
      */
     public Optional<Class<?>> repository() {
         return Optional.ofNullable(repository);
