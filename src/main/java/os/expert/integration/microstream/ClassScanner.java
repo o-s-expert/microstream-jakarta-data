@@ -9,10 +9,9 @@ import jakarta.data.repository.Repository;
 import jakarta.nosql.Entity;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
-
-import static java.util.Collections.unmodifiableSet;
 
 /**
  * Scanner classes that will load entities with both Entity and Embeddable
@@ -48,6 +47,9 @@ public enum ClassScanner {
         if (repositories.size() > 1) {
             throw new MappingException("Microstream Jakarta Data does not support more than one Repository");
         }
+
+        this.entity = entities.stream().findFirst().orElse(null);
+        this.repository = repositories.stream().findFirst().orElse(null);
     }
 
 
@@ -56,8 +58,8 @@ public enum ClassScanner {
      *
      * @return classes with {@link Entity} annotation
      */
-    public Set<Class<?>> entities() {
-        return unmodifiableSet(entities);
+    public Optional<Class<?>> entity() {
+        return Optional.ofNullable(entity);
     }
 
     /**
@@ -65,8 +67,8 @@ public enum ClassScanner {
      *
      * @return the repositories items
      */
-    public Set<Class<?>> repositories() {
-        return unmodifiableSet(repositories);
+    public Optional<Class<?>> repository() {
+        return Optional.ofNullable(repository);
     }
 
 }
