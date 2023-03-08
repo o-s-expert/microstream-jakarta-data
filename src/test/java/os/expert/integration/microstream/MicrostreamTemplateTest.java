@@ -15,6 +15,9 @@ class MicrostreamTemplateTest {
 
     @Test
     public void setUp() {
+        this.data = new DataStructure();
+        this.metadata = EntityMetadata.of(Book.class);
+        this.template = new MicrostreamTemplate(data, metadata);
 
     }
 
