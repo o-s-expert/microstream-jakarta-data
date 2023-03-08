@@ -8,8 +8,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.time.Duration;
 import java.time.Year;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -77,8 +79,27 @@ class MicrostreamTemplateTest {
 
     @Test
     public void shouldReturnErrorWhenUpdate() {
-        Assertions.assertThrows(NullPointerException.class, () -> template.insert((Object) null));
-        Assertions.assertThrows(NullPointerException.class, () -> template.insert((Iterable<? extends Object>) null));
+        Assertions.assertThrows(NullPointerException.class, () -> template.update((Object) null));
+        Assertions.assertThrows(NullPointerException.class, () -> template.update((Iterable<? extends Object>) null));
+    }
+
+    @ParameterizedTest
+    @MethodSource("book")
+    public void shouldUnsupportedWhenItHasTtl(Book book) {
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+                this.template.insert(book, Duration.ofSeconds(2L)));
+
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+                this.template.insert(Collections.singleton(book), Duration.ofSeconds(2L)));
+    }
+
+    @Test
+    public void shouldUnsupportedWhenItUsesCriteria() {
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+                this.template.select(Book.class));
+
+        Assertions.assertThrows(UnsupportedOperationException.class, () ->
+                this.template.delete(Book.class));
     }
 
     static Stream<Arguments> book() {
