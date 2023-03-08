@@ -7,6 +7,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+
+/**
+ * The data structure used at Microstream on both {@link jakarta.nosql.Template} and any {@link jakarta.data.repository.DataRepository}
+ * implementation.
+ * <p>
+ * It is a wrapper of {@link LazyHashMap}
+ */
 public class DataStructure {
 
     private final Map<Object, Object> data = new LazyHashMap();
