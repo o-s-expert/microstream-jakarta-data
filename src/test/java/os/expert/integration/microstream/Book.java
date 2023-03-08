@@ -36,6 +36,26 @@ public class Book {
     Book() {
     }
 
+    public String isbn() {
+        return isbn;
+    }
+
+    public String title() {
+        return title;
+    }
+
+    public Integer edition() {
+        return edition;
+    }
+
+    public Year release() {
+        return release;
+    }
+
+    public String author() {
+        return author;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
