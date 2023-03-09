@@ -47,7 +47,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("books")
+    @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldInsert(List<Book> books) {
         Iterable<Book> insert = this.template.insert(books);
         assertThat(insert).hasSize(3)
@@ -71,7 +71,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("books")
+    @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldUpdate(List<Book> books) {
         Iterable<Book> insert = this.template.update(books);
         assertThat(insert).hasSize(3)
@@ -140,12 +140,4 @@ class MicrostreamTemplateTest {
 
     }
 
-    static Stream<Arguments> books() {
-        return Stream.of(Arguments.of(List.of(Book.builder().isbn("1231").title("Clean Code").author("Robert Martin")
-                .edition(1).release(Year.of(2020)).build(),
-                Book.builder().isbn("1232").title("Effective Java").author("Joshua Bloch")
-                        .edition(1).release(Year.of(2001)).build(),
-                Book.builder().isbn("1233").title("Modern Software Engineering").author("David Farley")
-                        .edition(1).release(Year.of(2020)).build())));
-    }
 }
