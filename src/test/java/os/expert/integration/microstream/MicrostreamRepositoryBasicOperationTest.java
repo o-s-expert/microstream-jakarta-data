@@ -283,11 +283,7 @@ public class MicrostreamRepositoryBasicOperationTest {
                 .containsAll(books);
     }
 
-    //limit
-    //skip
-    //order
-    //reverse order
-    //two orders
+
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldFindAllPagination(List<Book> books) {
@@ -317,6 +313,33 @@ public class MicrostreamRepositoryBasicOperationTest {
         Page<Book> page = this.library.findAll(pageable);
         assertThat(page.numberOfElements()).isEqualTo(3);
         List<Book> result = books.stream().sorted(Comparator.comparing(Book::title).reversed())
+                .collect(toUnmodifiableList());
+        assertThat(page.stream()).containsAll(result);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldFindAllPaginationOrderSkip(List<Book> books) {
+        this.library.saveAll(books);
+        Pageable pageable = Pageable.ofSize(2).page(2L).sortBy(Sort.desc("title"));
+        Page<Book> page = this.library.findAll(pageable);
+        assertThat(page.numberOfElements()).isEqualTo(1);
+        List<Book> result = books.stream().sorted(Comparator.comparing(Book::title).reversed())
+                .skip(2L)
+                .collect(toUnmodifiableList());
+        assertThat(page.stream()).containsAll(result);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldFindAllPaginationDoubleOrder(List<Book> books) {
+        this.library.saveAll(books);
+        Pageable pageable = Pageable.ofSize(3).sortBy(Sort.asc("title"),
+                Sort.asc("isbn"));
+        Page<Book> page = this.library.findAll(pageable);
+        assertThat(page.numberOfElements()).isEqualTo(3);
+        List<Book> result = books.stream().sorted(Comparator.comparing(Book::title)
+                        .thenComparing(Comparator.comparing(Book::isbn)))
                 .collect(toUnmodifiableList());
         assertThat(page.stream()).containsAll(result);
     }
