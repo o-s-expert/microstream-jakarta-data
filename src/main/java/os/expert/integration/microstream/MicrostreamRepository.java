@@ -83,7 +83,8 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
         Class<?> type = type();
         return (Stream<T>) StreamSupport.stream(ids.spliterator(), false)
                 .map(k -> this.template.find(type, k))
-                .filter(Optional::isPresent);
+                .filter(Optional::isPresent)
+                .map(Optional::get);
     }
 
     @Override
