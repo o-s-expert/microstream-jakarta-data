@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Duration;
@@ -61,7 +62,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("book")
+    @ArgumentsSource(BookArgumentProvider.class)
     public void shouldUpdate(Book book) {
         Book insert = this.template.update(book);
         assertThat(insert)
@@ -85,7 +86,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("book")
+    @ArgumentsSource(BookArgumentProvider.class)
     public void shouldUnsupportedWhenItHasTtl(Book book) {
         Assertions.assertThrows(UnsupportedOperationException.class, () ->
                 this.template.insert(book, Duration.ofSeconds(2L)));
@@ -104,7 +105,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("book")
+    @ArgumentsSource(BookArgumentProvider.class)
     public void shouldFindId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, book.isbn());
@@ -114,7 +115,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("book")
+    @ArgumentsSource(BookArgumentProvider.class)
     public void shouldFindNotId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, "no-isbn");
@@ -139,11 +140,6 @@ class MicrostreamTemplateTest {
                 .isNotPresent()
                 .contains(book);
 
-    }
-
-    static Stream<Arguments> book() {
-        return Stream.of(Arguments.of(Book.builder().isbn("1231").title("Clean Code").author("Robert Martin")
-                .edition(1).release(Year.of(2020)).build()));
     }
 
     static Stream<Arguments> books() {
