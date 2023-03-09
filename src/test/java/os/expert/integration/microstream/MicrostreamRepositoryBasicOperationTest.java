@@ -227,6 +227,37 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @Test
     public void shouldReturnErrorWhenDeleteAllById() {
-        assertThrows(NullPointerException.class, () -> this.library.deleteById(null));
+        assertThrows(NullPointerException.class, () -> this.library.deleteAllById(null));
+    }
+
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldDeleteAll(List<Book> books){
+        this.library.saveAll(books);
+
+        List<String> ids = books.stream().map(Book::isbn)
+                .collect(toUnmodifiableList());
+        this.library.deleteAll(books);
+
+        Stream<Book> result = this.library.findAllById(ids);
+        assertThat(result).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldDeleteId2(List<Book> books){
+        this.library.saveAll(books);
+        List<String> ids = new ArrayList<>();
+        books.stream().skip(1).map(Book::isbn).forEach(ids::add);
+        this.library.deleteAll(books.stream().skip(1).collect(toUnmodifiableList()));
+
+        Stream<Book> result = this.library.findAllById( books.stream().map(Book::isbn).collect(toUnmodifiableList()));
+        assertThat(result).isNotEmpty().hasSize(1);
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDeleteId() {
+        assertThrows(NullPointerException.class, () -> this.library.deleteAll(null));
     }
 }
