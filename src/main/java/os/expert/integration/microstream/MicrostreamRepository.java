@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -41,7 +42,8 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
         if (pageable.size() > 1) {
             entities = entities.limit(skip);
         }
-        return null;
+        List<T> collect = entities.collect(Collectors.toUnmodifiableList());
+        return MicrostreamPage.of(collect, pageable);
     }
 
     @Override
