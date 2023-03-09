@@ -38,7 +38,7 @@ class MicrostreamTemplateTest {
     }
 
     @ParameterizedTest
-    @MethodSource("book")
+    @ArgumentsSource(BookArgumentProvider.class)
     public void shouldInsert(Book book) {
         Book insert = this.template.insert(book);
         assertThat(insert)
@@ -120,12 +120,11 @@ class MicrostreamTemplateTest {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, "no-isbn");
         assertThat(optional)
-                .isNotPresent()
-                .contains(book);
+                .isNotPresent();
     }
 
     @ParameterizedTest
-    @MethodSource("book")
+    @ArgumentsSource(BookArgumentProvider.class)
     public void shouldDeleteId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, book.isbn());
@@ -137,8 +136,7 @@ class MicrostreamTemplateTest {
 
         optional = this.template.find(Book.class, book.isbn());
         assertThat(optional)
-                .isNotPresent()
-                .contains(book);
+                .isNotPresent();
 
     }
 
