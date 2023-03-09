@@ -103,5 +103,22 @@ public class MicrostreamRepositoryBasicOperationTest {
         assertThrows(NullPointerException.class, () -> this.library.findById(null));
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BookArgumentProvider.class)
+    public void shouldExistById(Book book) {
+        this.library.save(book);
+        assertThat(this.library.existsById(book.isbn())).isTrue();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookArgumentProvider.class)
+    public void shouldFalseExistById(Book book) {
+        assertThat(this.library.existsById(book.isbn())).isFalse();
+    }
+
+    @Test
+    public void shouldReturnErrorExistsById() {
+        assertThrows(NullPointerException.class, () -> this.library.existsById(null));
+    }
 
 }
