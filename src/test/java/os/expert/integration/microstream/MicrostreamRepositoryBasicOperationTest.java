@@ -9,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,7 +31,7 @@ public class MicrostreamRepositoryBasicOperationTest {
         this.metadata = EntityMetadata.of(Book.class);
         this.data = new DataStructure();
         this.template = new MicrostreamTemplate(data, metadata);
-        this.library =  new MicrostreamRepository<>(template);
+        this.library = new MicrostreamRepository<>(template);
     }
 
     @ParameterizedTest
@@ -78,6 +79,28 @@ public class MicrostreamRepositoryBasicOperationTest {
         this.library.saveAll(books);
         assertThat(data.isEmpty()).isFalse();
         assertThat(data.size()).isEqualTo(books.size());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookArgumentProvider.class)
+    public void shouldFindById(Book book) {
+        this.library.save(book);
+        Optional<Book> result = this.library.findById(book.isbn());
+        assertThat(result)
+                .isPresent()
+                .contains(book);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookArgumentProvider.class)
+    public void shouldNotFindById(Book book) {
+        Optional<Book> result = this.library.findById(book.isbn());
+        assertThat(result).isNotPresent();
+    }
+
+    @Test
+    public void shouldReturnErrorFindById() {
+        assertThrows(NullPointerException.class, () -> this.library.findById(null));
     }
 
 
