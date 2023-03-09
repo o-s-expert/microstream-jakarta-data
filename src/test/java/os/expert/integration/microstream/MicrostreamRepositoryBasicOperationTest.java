@@ -170,4 +170,33 @@ public class MicrostreamRepositoryBasicOperationTest {
         assertThat(this.library.count()).isEqualTo(books.size());
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BookArgumentProvider.class)
+    public void shouldDeleteById(Book book) {
+        this.library.save(book);
+        this.library.deleteById(book.isbn());
+
+        assertThat(library.findById(book.isbn()))
+                .isNotPresent();
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDeleteById() {
+        assertThrows(NullPointerException.class, () -> this.library.deleteById(null));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookArgumentProvider.class)
+    public void shouldDelete(Book book) {
+        this.library.save(book);
+        this.library.delete(book);
+
+        assertThat(library.findById(book.isbn()))
+                .isNotPresent();
+    }
+
+    @Test
+    public void shouldReturnErrorWhenDelete() {
+        assertThrows(NullPointerException.class, () -> this.library.delete(null));
+    }
 }
