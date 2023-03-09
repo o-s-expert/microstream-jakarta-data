@@ -8,9 +8,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -120,5 +124,43 @@ public class MicrostreamRepositoryBasicOperationTest {
     public void shouldReturnErrorExistsById() {
         assertThrows(NullPointerException.class, () -> this.library.existsById(null));
     }
+
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldNotFindByAllId(List<Book> books) {
+        this.library.saveAll(books);
+
+        Stream<Book> found = this.library.findAllById(books.stream().map(Book::isbn)
+                .collect(toUnmodifiableList()));
+
+        assertThat(found)
+                .hasSize(3)
+                .containsAll(books);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldNotFindByAllIdWhereThereIsInvalidIds(List<Book> books) {
+
+        List<String> ids = new ArrayList<>();
+        ids.add("invalid");
+        ids.add("invalid-2");
+        books.stream().map(Book::isbn).forEach(ids::add);
+
+        this.library.saveAll(books);
+        Stream<Book> found = this.library.findAllById(books.stream().map(Book::isbn)
+                .collect(toUnmodifiableList()));
+
+        assertThat(found)
+                .hasSize(3)
+                .containsAll(books);
+    }
+
+    @Test
+    public void shouldReturnErrorFindAllById() {
+        assertThrows(NullPointerException.class, () -> this.library.findAllById( null));
+    }
+
 
 }
