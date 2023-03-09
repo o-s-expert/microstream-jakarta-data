@@ -39,8 +39,8 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
         if (skip > 1) {
             entities = entities.skip(skip);
         }
-        if (pageable.size() > 1) {
-            entities = entities.limit(skip);
+        if (pageable.size() >= 1) {
+            entities = entities.limit(pageable.size());
         }
         List<T> collect = entities.collect(Collectors.toUnmodifiableList());
         return MicrostreamPage.of(collect, pageable);
