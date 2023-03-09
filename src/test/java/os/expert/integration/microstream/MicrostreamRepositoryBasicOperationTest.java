@@ -159,7 +159,7 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @Test
     public void shouldReturnErrorFindAllById() {
-        assertThrows(NullPointerException.class, () -> this.library.findAllById( null));
+        assertThrows(NullPointerException.class, () -> this.library.findAllById(null));
     }
 
     @ParameterizedTest
@@ -202,7 +202,7 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldDeleteAllById(List<Book> books){
+    public void shouldDeleteAllById(List<Book> books) {
         this.library.saveAll(books);
 
         List<String> ids = books.stream().map(Book::isbn)
@@ -215,13 +215,13 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldDeleteAllById2(List<Book> books){
+    public void shouldDeleteAllById2(List<Book> books) {
         this.library.saveAll(books);
         List<String> ids = new ArrayList<>();
         books.stream().skip(1).map(Book::isbn).forEach(ids::add);
         this.library.deleteAllById(ids);
 
-        Stream<Book> result = this.library.findAllById( books.stream().map(Book::isbn).collect(toUnmodifiableList()));
+        Stream<Book> result = this.library.findAllById(books.stream().map(Book::isbn).collect(toUnmodifiableList()));
         assertThat(result).isNotEmpty().hasSize(1);
     }
 
@@ -233,7 +233,7 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldDeleteAll(List<Book> books){
+    public void shouldDeleteAll(List<Book> books) {
         this.library.saveAll(books);
 
         List<String> ids = books.stream().map(Book::isbn)
@@ -246,13 +246,13 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldDeleteId2(List<Book> books){
+    public void shouldDeleteId2(List<Book> books) {
         this.library.saveAll(books);
         List<String> ids = new ArrayList<>();
         books.stream().skip(1).map(Book::isbn).forEach(ids::add);
         this.library.deleteAll(books.stream().skip(1).collect(toUnmodifiableList()));
 
-        Stream<Book> result = this.library.findAllById( books.stream().map(Book::isbn).collect(toUnmodifiableList()));
+        Stream<Book> result = this.library.findAllById(books.stream().map(Book::isbn).collect(toUnmodifiableList()));
         assertThat(result).isNotEmpty().hasSize(1);
     }
 
@@ -263,10 +263,19 @@ public class MicrostreamRepositoryBasicOperationTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldDeleteAll2(List<Book> books){
+    public void shouldDeleteAll2(List<Book> books) {
         this.library.saveAll(books);
         this.library.deleteAll();
 
         assertThat(this.data.isEmpty()).isTrue();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldFindAll(List<Book> books) {
+        this.library.saveAll(books);
+        Stream<Book> result = this.library.findAll();
+        assertThat(result).hasSize(books.size())
+                .containsAll(books);
     }
 }
