@@ -339,7 +339,7 @@ public class MicrostreamRepositoryBasicOperationTest {
         Page<Book> page = this.library.findAll(pageable);
         assertThat(page.numberOfElements()).isEqualTo(3);
         List<Book> result = books.stream().sorted(Comparator.comparing(Book::title)
-                        .thenComparing(Comparator.comparing(Book::isbn)))
+                        .thenComparing(Book::isbn))
                 .collect(toUnmodifiableList());
         assertThat(page.stream()).containsAll(result);
     }
