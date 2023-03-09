@@ -1,6 +1,9 @@
 package os.expert.integration.microstream;
 
 
+import jakarta.data.repository.Page;
+import jakarta.data.repository.Pageable;
+import jakarta.data.repository.Sort;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +12,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -277,5 +281,43 @@ public class MicrostreamRepositoryBasicOperationTest {
         Stream<Book> result = this.library.findAll();
         assertThat(result).hasSize(books.size())
                 .containsAll(books);
+    }
+
+    //limit
+    //skip
+    //order
+    //reverse order
+    //two orders
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldFindAllPagination(List<Book> books) {
+        this.library.saveAll(books);
+        Pageable pageable = Pageable.ofSize(1);
+        Page<Book> page = this.library.findAll(pageable);
+        assertThat(page.numberOfElements()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldFindAllPaginationOrder(List<Book> books) {
+        this.library.saveAll(books);
+        Pageable pageable = Pageable.ofSize(3).sortBy(Sort.asc("title"));
+        Page<Book> page = this.library.findAll(pageable);
+        assertThat(page.numberOfElements()).isEqualTo(3);
+        List<Book> result = books.stream().sorted(Comparator.comparing(Book::title))
+                .collect(toUnmodifiableList());
+        assertThat(page.stream()).containsAll(result);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldFindAllPaginationOrderReversed(List<Book> books) {
+        this.library.saveAll(books);
+        Pageable pageable = Pageable.ofSize(3).sortBy(Sort.desc("title"));
+        Page<Book> page = this.library.findAll(pageable);
+        assertThat(page.numberOfElements()).isEqualTo(3);
+        List<Book> result = books.stream().sorted(Comparator.comparing(Book::title).reversed())
+                .collect(toUnmodifiableList());
+        assertThat(page.stream()).containsAll(result);
     }
 }
