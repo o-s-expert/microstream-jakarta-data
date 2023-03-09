@@ -6,7 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("The Microstream's PageableRepository default methods")
-public class MicrostreamRepositoryBasicOperation {
+public class MicrostreamRepositoryBasicOperationTest {
 
 
     private MicrostreamRepository<Book, String> library;
