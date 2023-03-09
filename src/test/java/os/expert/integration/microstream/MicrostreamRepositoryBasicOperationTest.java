@@ -260,4 +260,13 @@ public class MicrostreamRepositoryBasicOperationTest {
     public void shouldReturnErrorWhenDeleteId() {
         assertThrows(NullPointerException.class, () -> this.library.deleteAll(null));
     }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldDeleteAll2(List<Book> books){
+        this.library.saveAll(books);
+        this.library.deleteAll();
+
+        assertThat(this.data.isEmpty()).isTrue();
+    }
 }
