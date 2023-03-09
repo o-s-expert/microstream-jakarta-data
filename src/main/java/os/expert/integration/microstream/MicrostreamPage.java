@@ -14,7 +14,7 @@ import java.util.Objects;
  *
  * @param <T> the entity type
  */
-public class MicrostreamPage<T> implements Page<T> {
+class MicrostreamPage<T> implements Page<T> {
 
     private final List<T> entities;
 
@@ -73,8 +73,8 @@ public class MicrostreamPage<T> implements Page<T> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        NoSQLPage<?> noSQLPage = (NoSQLPage<?>) o;
-        return Objects.equals(entities, noSQLPage.entities) && Objects.equals(pageable, noSQLPage.pageable);
+        MicrostreamPage<?> page = (MicrostreamPage<?>) o;
+        return Objects.equals(entities, page.entities) && Objects.equals(pageable, page.pageable);
     }
 
     @Override
@@ -97,10 +97,10 @@ public class MicrostreamPage<T> implements Page<T> {
      * @return a {@link Page} instance
      * @param <T> the entity type
      */
-    public static <T> Page<T> of(List<T> entities, Pageable pageable) {
+    static <T> Page<T> of(List<T> entities, Pageable pageable) {
         Objects.requireNonNull(entities, "entities is required");
         Objects.requireNonNull(pageable, "pageable is required");
-        return new NoSQLPage<>(entities, pageable);
+        return new MicrostreamPage<>(entities, pageable);
     }
 
     /**
@@ -109,7 +109,7 @@ public class MicrostreamPage<T> implements Page<T> {
      * @return the skip
      * @throws NullPointerException when parameter is null
      */
-    public static long skip(Pageable pageable) {
+    static long skip(Pageable pageable) {
         Objects.requireNonNull(pageable, "pageable is required");
         return pageable.size() * (pageable.page() - 1);
     }
