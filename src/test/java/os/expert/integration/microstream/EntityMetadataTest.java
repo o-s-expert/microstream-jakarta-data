@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Year;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -53,6 +54,31 @@ class EntityMetadataTest {
     public void shouldReturnErrorWhenThereIsNotId() {
         assertThrows(MappingException.class, ()
                 -> EntityMetadata.of(Car.class));
+    }
+
+    @Test
+    public void shouldGetField() {
+        EntityMetadata metadata = EntityMetadata.of(Person.class);
+        Optional<FieldMetadata> name = metadata.field("name");
+        assertThat(name).isPresent()
+                .get().extracting(FieldMetadata::name)
+                .isEqualTo("name");
+    }
+
+    @Test
+    public void shouldGetId() {
+        EntityMetadata metadata = EntityMetadata.of(Book.class);
+        Optional<FieldMetadata> name = metadata.field("isbn");
+        assertThat(name).isPresent()
+                .get().extracting(FieldMetadata::name)
+                .isEqualTo("isbn");
+    }
+
+    @Test
+    public void shouldReturnEmptyFieldIsNotFound() {
+        EntityMetadata metadata = EntityMetadata.of(Book.class);
+        Optional<FieldMetadata> name = metadata.field("not-found");
+        assertThat(name).isNotPresent();
     }
 
     private static class Car {
