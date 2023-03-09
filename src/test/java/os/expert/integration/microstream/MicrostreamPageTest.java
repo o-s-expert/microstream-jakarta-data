@@ -9,8 +9,6 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.Collections;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class MicrostreamPageTest {
 
     private Person otavio = Person.of("otaviojava","Otavio",
