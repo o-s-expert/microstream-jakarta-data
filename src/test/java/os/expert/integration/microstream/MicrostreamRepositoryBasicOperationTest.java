@@ -162,5 +162,12 @@ public class MicrostreamRepositoryBasicOperationTest {
         assertThrows(NullPointerException.class, () -> this.library.findAllById( null));
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldCount(List<Book> books) {
+        assertThat(this.library.count()).isEqualTo(0L);
+        this.library.saveAll(books);
+        assertThat(this.library.count()).isEqualTo(books.size());
+    }
 
 }
