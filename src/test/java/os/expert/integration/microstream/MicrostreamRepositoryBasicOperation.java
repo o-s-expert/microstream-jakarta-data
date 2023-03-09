@@ -1,6 +1,7 @@
 package os.expert.integration.microstream;
 
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,11 +17,16 @@ public class MicrostreamRepositoryBasicOperation {
 
     private EntityMetadata metadata;
 
-    @Test
+    @BeforeEach
     public void setUp() {
         this.metadata = EntityMetadata.of(Book.class);
         this.data = new DataStructure();
         this.template = new MicrostreamTemplate(data, metadata);
         this.library =  new MicrostreamRepository<>(template);
+    }
+
+    @Test
+    public void shouldSave() {
+
     }
 }
