@@ -37,7 +37,7 @@ final class EntityMetadata {
 
     Optional<FieldMetadata> field(String name) {
         if (id.name().equals(name)) {
-            Optional.ofNullable(id);
+            return Optional.ofNullable(id);
         }
         return this.fields.stream().filter(f -> f.name().equals(name))
                 .findFirst();
