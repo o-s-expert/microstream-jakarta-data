@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -52,6 +54,30 @@ public class MicrostreamRepositoryBasicOperationTest {
         this.library.save(book);
         assertThat(data.isEmpty()).isFalse();
         assertThat(data.size()).isEqualTo(1);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldSaveWhenDataDoesNotExist(List<Book> books) {
+        assertThat(data.isEmpty()).isTrue();
+        this.library.saveAll(books);
+        assertThat(data.isEmpty()).isFalse();
+        assertThat(data.size()).isEqualTo(books.size());
+    }
+
+    @Test
+    public void shouldReturnErrorWhenSaveAllIsNull() {
+        assertThrows(NullPointerException.class, () -> this.library.saveAll(null));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldSaveWhenDataExist(List<Book> books) {
+        assertThat(data.isEmpty()).isTrue();
+        this.library.saveAll(books);
+        this.library.saveAll(books);
+        assertThat(data.isEmpty()).isFalse();
+        assertThat(data.size()).isEqualTo(books.size());
     }
 
 
