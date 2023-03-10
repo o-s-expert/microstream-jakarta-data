@@ -49,6 +49,19 @@ public class RepositoryMethodQueryTest {
                 .isEqualTo("Clean Code");
     }
 
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByTitleOrderByIsbn(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> effectiveJava = this.library.findByTitleOrderByIsbn("Effective Java");
+
+        Assertions.assertThat(effectiveJava)
+                .isNotEmpty()
+                .hasSize(3)
+                .map(Book::edition)
+                .containsExactly(1, 2, 3);
+    }
+
     static Stream<? extends Arguments> arguments() {
         return Stream.of(Arguments.of(library()));
     }
