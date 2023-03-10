@@ -12,6 +12,7 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -155,6 +156,20 @@ public class RepositoryMethodQueryTest {
                 .hasSize(1)
                 .allMatch(b -> b.title().equals("Effective Java"))
                 .allMatch(b -> b.edition() == 2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByTitleOrEdition(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> result = this.library.findByTitleOrEdition("Effective Java", 1);
+        Predicate<Book> isEffectiveJava = b -> b.title().equals("Effective Java");
+        Predicate<Book> firstEdition = b -> b.edition() == 1;
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(5)
+                .allMatch(isEffectiveJava.or(firstEdition))
+                .anyMatch(b -> b.edition() == 1);
     }
 
     static Stream<? extends Arguments> arguments() {
