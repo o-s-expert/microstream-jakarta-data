@@ -73,27 +73,22 @@ class RepositoryProxy<T, K> implements InvocationHandler {
     private static <T> Predicate<T> condition(QueryCondition condition, FieldMetadata field, Method method,
                                               Object[] params, QueryValue<?> value, AtomicInteger paramIndex) {
 
-        Object param = param(method, params, value, paramIndex);
 
         switch (condition.condition()) {
             case EQUALS:
-                return t -> param.equals(field.get(t));
+                return Predicates.eq(field, method, params, value, paramIndex);
             case GREATER_THAN:
-                return of(param.getClass()).greater(param, field);
+                return Predicates.gt(field, method, params, value, paramIndex);
             case GREATER_EQUALS_THAN:
-                return of(param.getClass()).greaterEquals(param, field);
+                return Predicates.gte(field, method, params, value, paramIndex);
             case LESSER_THAN:
-                return of(param.getClass()).lesser(param, field);
+                return Predicates.lt(field, method, params, value, paramIndex);
             case LESSER_EQUALS_THAN:
-                return of(param.getClass()).lesserEquals(param, field);
+                return Predicates.lte(field, method, params, value, paramIndex);
             case IN:
-                if (param instanceof Iterable<?> iterable) {
-                    List<Object> items = new ArrayList<>();
-                    iterable.forEach(items::add);
-                    return t -> items.contains(field.get(t));
-                }
-                throw new MappingException("The IN condition at method query works with Iterable implementations");
+                return Predicates.in(field, method, params, value, paramIndex);
             case AND:
+
             case OR:
             case NOT:
             case LIKE:
@@ -106,18 +101,6 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         }
     }
 
-    private static Object param(Method method, Object[] params, QueryValue<?> value, AtomicInteger paramIndex) {
-
-        if (value.type().equals(ValueType.PARAMETER)) {
-            if (paramIndex.get() > params.length - 1) {
-                throw new MappingException("There is arguments missing at the method repository: "
-                        + method);
-            }
-            return requireNonNull(params[paramIndex.getAndIncrement()], "parameter cannot be null at repository");
-        } else {
-            return value.get();
-        }
-    }
 
     private Stream<T> query(Method method, Object[] params) {
         EntityMetadata metadata = template.metadata();
@@ -162,4 +145,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         }
         return comparator;
     }
+
+
+
 }
