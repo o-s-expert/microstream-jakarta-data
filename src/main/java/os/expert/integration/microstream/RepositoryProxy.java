@@ -3,6 +3,7 @@ package os.expert.integration.microstream;
 import jakarta.data.exceptions.MappingException;
 import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Sort;
+import org.eclipse.jnosql.communication.query.ConditionQueryValue;
 import org.eclipse.jnosql.communication.query.QueryCondition;
 import org.eclipse.jnosql.communication.query.QueryValue;
 import org.eclipse.jnosql.communication.query.SelectQuery;
@@ -60,36 +61,40 @@ class RepositoryProxy<T, K> implements InvocationHandler {
 
     private <T> Predicate<T> predicate(Where where, Method method, Object[] params, EntityMetadata metadata) {
         QueryCondition condition = where.condition();
-        FieldMetadata field = metadata.field(condition.name())
-                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
-                        "there is no field with the name: " + condition.name()));
-        QueryValue<?> value = condition.value();
+
         AtomicInteger paramIndex = new AtomicInteger(0);
-        Predicate<T> predicate = condition(condition, field, method, params, value, paramIndex);
+        Predicate<T> predicate = condition(condition, metadata, method, params, paramIndex);
         return predicate;
     }
 
 
-    private static <T> Predicate<T> condition(QueryCondition condition, FieldMetadata field, Method method,
-                                              Object[] params, QueryValue<?> value, AtomicInteger paramIndex) {
+    private static <T> Predicate<T> condition(QueryCondition condition, EntityMetadata metadata, Method method,
+                                              Object[] params, AtomicInteger paramIndex) {
 
 
         switch (condition.condition()) {
             case EQUALS:
-                return Predicates.eq(field, method, params, value, paramIndex);
+                return Predicates.eq(metadata, method, params, paramIndex, condition);
             case GREATER_THAN:
-                return Predicates.gt(field, method, params, value, paramIndex);
+                return Predicates.gt(metadata, method, params, paramIndex, condition);
             case GREATER_EQUALS_THAN:
-                return Predicates.gte(field, method, params, value, paramIndex);
+                return Predicates.gte(metadata, method, params, paramIndex, condition);
             case LESSER_THAN:
-                return Predicates.lt(field, method, params, value, paramIndex);
+                return Predicates.lt(metadata, method, params, paramIndex, condition);
             case LESSER_EQUALS_THAN:
-                return Predicates.lte(field, method, params, value, paramIndex);
+                return Predicates.lte(metadata, method, params, paramIndex, condition);
             case IN:
-                return Predicates.in(field, method, params, value, paramIndex);
+                return Predicates.in(metadata, method, params, paramIndex, condition);
             case AND:
-
+                List<QueryCondition> andConditions = ((ConditionQueryValue) condition).get();
+                Predicate<T> and = (Predicate<T>) andConditions.stream().map(c -> condition(c, metadata, method, params, paramIndex))
+                        .reduce(Predicate::and).orElseThrow();
+                return and;
             case OR:
+                List<QueryCondition> orConditions = ((ConditionQueryValue) condition).get();
+                Predicate<T> or = (Predicate<T>) orConditions.stream().map(c -> condition(c, metadata, method, params, paramIndex))
+                        .reduce(Predicate::or).orElseThrow();
+                return or;
             case NOT:
             case LIKE:
             case BETWEEN:
@@ -145,7 +150,6 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         }
         return comparator;
     }
-
 
 
 }
