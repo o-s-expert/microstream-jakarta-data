@@ -1,6 +1,6 @@
 package os.expert.integration.microstream;
 
-import jakarta.data.repository.PageableRepository;
+import jakarta.data.repository.CrudRepository;
 
 import java.lang.reflect.Proxy;
 
@@ -17,7 +17,7 @@ class RepositoryProxySupplier {
      * @param <R>             the repository type
      * @return a Repository interface
      */
-    <T, K, R extends PageableRepository<T, K>> R get(Class<R> repositoryClass, MicrostreamTemplate template) {
+    <T, K, R extends CrudRepository<T, K>> R get(Class<R> repositoryClass, MicrostreamTemplate template) {
         MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template);
         RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository);
         return (R) Proxy.newProxyInstance(repositoryClass.getClassLoader(),
