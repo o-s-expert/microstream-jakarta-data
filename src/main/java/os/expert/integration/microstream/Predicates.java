@@ -1,6 +1,7 @@
 package os.expert.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
+import org.eclipse.jnosql.communication.query.QueryCondition;
 import org.eclipse.jnosql.communication.query.QueryValue;
 import org.eclipse.jnosql.communication.query.ValueType;
 
@@ -16,38 +17,68 @@ import static os.expert.integration.microstream.CompareCondition.of;
 final class Predicates {
     private Predicates() {
     }
-    static <T> Predicate<T> lte(FieldMetadata field, Method method, Object[] params, QueryValue<?> value,
-                                AtomicInteger paramIndex) {
+    static <T> Predicate<T> lte(EntityMetadata metadata, Method method, Object[] params,
+                                AtomicInteger paramIndex, QueryCondition condition) {
+
+        QueryValue<?> value = condition.value();
+        FieldMetadata field = metadata.field(condition.name())
+                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
+                        "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
         return of(param.getClass()).lesserEquals(param, field);
     }
 
-    static <T> Predicate<T> lt(FieldMetadata field, Method method, Object[] params, QueryValue<?> value,
-                                       AtomicInteger paramIndex) {
+    static <T> Predicate<T> lt(EntityMetadata metadata, Method method, Object[] params,
+                                       AtomicInteger paramIndex, QueryCondition condition) {
+
+        QueryValue<?> value = condition.value();
+        FieldMetadata field = metadata.field(condition.name())
+                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
+                        "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
         return of(param.getClass()).lesser(param, field);
     }
 
-    static <T> Predicate<T> gte(FieldMetadata field, Method method, Object[] params, QueryValue<?> value,
-                                        AtomicInteger paramIndex) {
+    static <T> Predicate<T> gte(EntityMetadata metadata, Method method, Object[] params,
+                                        AtomicInteger paramIndex, QueryCondition condition) {
+
+        QueryValue<?> value = condition.value();
+        FieldMetadata field = metadata.field(condition.name())
+                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
+                        "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
         return of(param.getClass()).greaterEquals(param, field);
     }
 
-    static <T> Predicate<T> gt(FieldMetadata field, Method method, Object[] params, QueryValue<?> value,
-                                       AtomicInteger paramIndex) {
+    static <T> Predicate<T> gt(EntityMetadata metadata, Method method, Object[] params,
+                                       AtomicInteger paramIndex, QueryCondition condition) {
+
+        QueryValue<?> value = condition.value();
+        FieldMetadata field = metadata.field(condition.name())
+                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
+                        "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
         return of(param.getClass()).greater(param, field);
     }
 
-    static <T> Predicate<T> eq(FieldMetadata field, Method method, Object[] params, QueryValue<?> value,
-                                       AtomicInteger paramIndex) {
+    static <T> Predicate<T> eq(EntityMetadata metadata, Method method, Object[] params,
+                               AtomicInteger paramIndex, QueryCondition condition) {
+
+        QueryValue<?> value = condition.value();
+        FieldMetadata field = metadata.field(condition.name())
+                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
+                        "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
         return t -> param.equals(field.get(t));
     }
 
-    static <T> Predicate<T> in(FieldMetadata field, Method method, Object[] params, QueryValue<?> value,
-                                       AtomicInteger paramIndex) {
+    static <T> Predicate<T> in(EntityMetadata metadata, Method method, Object[] params,
+                                       AtomicInteger paramIndex, QueryCondition condition) {
+
+        QueryValue<?> value = condition.value();
+        FieldMetadata field = metadata.field(condition.name())
+                .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
+                        "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
         if (param instanceof Iterable<?> iterable) {
             List<Object> items = new ArrayList<>();
