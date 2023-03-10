@@ -2,10 +2,12 @@ package os.expert.integration.microstream;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Disposes;
 import jakarta.enterprise.inject.Produces;
 import one.microstream.persistence.binary.one.microstream.collections.lazy.BinaryHandlerLazyHashMap;
 import one.microstream.storage.embedded.configuration.types.EmbeddedStorageConfiguration;
 import one.microstream.storage.embedded.types.EmbeddedStorageFoundation;
+import one.microstream.storage.embedded.types.EmbeddedStorageManager;
 import one.microstream.storage.types.StorageManager;
 
 import java.util.function.Supplier;
@@ -27,6 +29,11 @@ class StorageManagerSupplier implements Supplier<StorageManager> {
                 .setStorageDirectory(DEFAULT_PATH).createEmbeddedStorageFoundation();
         storageFoundation.registerTypeHandler(new BinaryHandlerLazyHashMap());
 
-        return storageFoundation.createEmbeddedStorageManager();
+        StorageManager manager = storageFoundation.createEmbeddedStorageManager();
+        return manager.start();
+    }
+
+    public void dispose(@Disposes StorageManager manager) {
+        manager.shutdown();
     }
 }
