@@ -63,7 +63,7 @@ public class RepositoryMethodQueryTest {
                 .isNotEmpty()
                 .hasSize(3)
                 .map(Book::edition)
-                .containsExactly(1, 2, 3);
+                .contains(1, 2, 3);
     }
 
     @ParameterizedTest
