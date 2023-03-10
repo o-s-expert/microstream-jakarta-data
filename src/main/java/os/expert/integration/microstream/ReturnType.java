@@ -7,20 +7,24 @@ import jakarta.data.repository.Sort;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
+import java.util.NavigableSet;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 enum ReturnType {
 
     STREAM {
         @Override
         boolean isCompatible(Class<?> type) {
-            return Stream.class.isAssignableFrom(type);
+            return Stream.class.equals(type);
         }
 
         @Override
@@ -30,18 +34,29 @@ enum ReturnType {
     }, SET {
         @Override
         boolean isCompatible(Class<?> type) {
-            return Set.class.isAssignableFrom(type);
+            return Set.class.equals(type);
         }
 
         @Override
         <T> Object convert(Stream<T> stream, Pageable pageable) {
             return stream.collect(Collectors.toUnmodifiableSet());
         }
+    }, SORTED_SET {
+        @Override
+        boolean isCompatible(Class<?> type) {
+            return NavigableSet.class.equals(type)
+                    || SortedSet.class.equals(type);
+        }
+
+        @Override
+        <T> Object convert(Stream<T> stream, Pageable pageable) {
+            return stream.collect(Collectors.toCollection(TreeSet::new));
+        }
     }, QUEUE {
         @Override
         boolean isCompatible(Class<?> type) {
-            return Queue.class.isAssignableFrom(type) ||
-                    Deque.class.isAssignableFrom(type);
+            return Queue.class.equals(type) ||
+                    Deque.class.equals(type);
         }
 
         @Override
@@ -52,7 +67,9 @@ enum ReturnType {
     LIST {
         @Override
         boolean isCompatible(Class<?> type) {
-            return Iterable.class.isAssignableFrom(type);
+            return List.class.equals(type)
+                    || Iterable.class.equals(type)
+                    || Collection.class.equals(type);
         }
 
         @Override
@@ -69,6 +86,16 @@ enum ReturnType {
         <T> Object convert(Stream<T> stream, Pageable pageable) {
             List<T> entities = stream.collect(Collectors.toUnmodifiableList());
             return MicrostreamPage.of(entities, pageable);
+        }
+    }, OPTIONAL{
+        @Override
+        boolean isCompatible(Class<?> type) {
+            return Optional.class.isAssignableFrom(type);
+        }
+
+        @Override
+        <T> Object convert(Stream<T> stream, Pageable pageable) {
+            return stream.findFirst();
         }
     };
 

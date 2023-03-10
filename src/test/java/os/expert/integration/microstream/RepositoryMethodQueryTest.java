@@ -2,6 +2,9 @@ package os.expert.integration.microstream;
 
 
 import jakarta.data.exceptions.MappingException;
+import jakarta.data.repository.Page;
+import jakarta.data.repository.Pageable;
+import jakarta.data.repository.Sort;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -183,6 +186,29 @@ public class RepositoryMethodQueryTest {
                 .isNotEmpty()
                 .hasSize(2)
                 .allMatch(b -> b.edition()> 1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByTitlePageable(List<Book> books) {
+        this.library.saveAll(books);
+        String title = "Effective Java";
+        Pageable pageable = Pageable.ofSize(1).sortBy(Sort.asc("edition"));
+        Page<Book> page = this.library.findByTitle(title, pageable);
+
+        assertThat(page.content())
+                .isNotEmpty()
+                .hasSize(1)
+                .allMatch(b -> b.title().equals(title))
+                .allMatch(b -> b.edition() == 1);
+
+        Page<Book> second = this.library.findByTitle(title, pageable.next());
+
+        assertThat(second.content())
+                .isNotEmpty()
+                .hasSize(1)
+                .allMatch(b -> b.title().equals(title))
+                .allMatch(b -> b.edition() == 2);
     }
 
     static Stream<? extends Arguments> arguments() {

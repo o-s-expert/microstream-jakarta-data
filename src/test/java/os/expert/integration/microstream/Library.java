@@ -1,5 +1,6 @@
 package os.expert.integration.microstream;
 
+import jakarta.data.repository.Page;
 import jakarta.data.repository.Pageable;
 import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Repository;
@@ -35,7 +36,7 @@ public interface Library  extends PageableRepository<Book, String> {
 
     List<Book> findByTitleOrEdition(String title, Integer edition);
 
-    List<Book> findByEdition(Integer edition, Pageable pageable);
+    Page<Book> findByTitle(String title, Pageable pageable);
 
     List<Book> findByEditionNot(Integer edition);
 }
