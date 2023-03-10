@@ -135,7 +135,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             values = values.skip(skip);
         }
         if (limit > 0) {
-            values = values.skip(limit);
+            values = values.limit(limit);
         }
         Comparator<T> comparator = comparator(query.orderBy(), metadata);
         if (comparator != null) {
