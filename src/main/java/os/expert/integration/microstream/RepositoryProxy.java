@@ -45,7 +45,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 return method.invoke(repository, params);
             case FIND_BY:
                 Stream<T> values = query(method, params);
-                return values.collect(Collectors.toUnmodifiableList());
+                return ReturnType.of(method.getReturnType()).convert(values, null);
             case ORDER_BY:
             case COUNT_BY:
             case EXISTS_BY:
