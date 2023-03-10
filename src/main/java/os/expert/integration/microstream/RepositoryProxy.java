@@ -1,6 +1,7 @@
 package os.expert.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
+import jakarta.data.repository.Pageable;
 import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Sort;
 import org.eclipse.jnosql.communication.query.ConditionQueryValue;
@@ -24,6 +25,7 @@ import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static os.expert.integration.microstream.CompareCondition.of;
+import static os.expert.integration.microstream.ReturnType.pageable;
 
 class RepositoryProxy<T, K> implements InvocationHandler {
 
@@ -45,11 +47,11 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 return method.invoke(repository, params);
             case FIND_BY:
                 Stream<T> values = query(method, params);
-                return ReturnType.of(method.getReturnType()).convert(values, null);
-            case ORDER_BY:
+                return ReturnType.of(method.getReturnType()).convert(values, pageable(params));
             case COUNT_BY:
             case EXISTS_BY:
             case FIND_ALL:
+            case ORDER_BY:
             case DELETE_BY:
             case QUERY:
             default:
@@ -125,11 +127,15 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         if (predicate != null) {
             values = values.filter(predicate);
         }
-        if (query.skip() > 0) {
-            values = values.skip(query.skip());
+        Pageable pageable = pageable(params);
+        long skip = pageable == null ? query.skip() : MicrostreamPage.skip(pageable);
+        long limit = pageable == null ? query.limit() : pageable.size();
+
+        if (skip > 0) {
+            values = values.skip(skip);
         }
-        if (query.limit() > 0) {
-            values = values.skip(query.skip());
+        if (limit > 0) {
+            values = values.skip(limit);
         }
         Comparator<T> comparator = comparator(query.orderBy(), metadata);
         if (comparator != null) {

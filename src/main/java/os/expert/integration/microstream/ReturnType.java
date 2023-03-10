@@ -80,4 +80,13 @@ enum ReturnType {
                 .findFirst()
                 .orElse(STREAM);
     }
+
+    static Pageable pageable(Object[] params) {
+        for (Object param : params) {
+            if (param instanceof Pageable pageable) {
+                return pageable;
+            }
+        }
+        return null;
+    }
 }
