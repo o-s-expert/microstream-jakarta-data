@@ -4,8 +4,9 @@ import jakarta.data.repository.CrudRepository;
 
 import java.lang.reflect.Proxy;
 
-class RepositoryProxySupplier {
+enum RepositoryProxySupplier {
 
+    INSTANCE;
 
     /**
      * Produces a Repository class from repository class and {@link MicrostreamTemplate}
@@ -21,7 +22,7 @@ class RepositoryProxySupplier {
         MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template);
         RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository);
         return (R) Proxy.newProxyInstance(repositoryClass.getClassLoader(),
-                (Class<?>[]) new Class[]{repositoryClass},
+                new Class[]{repositoryClass},
                 handler);
     }
 }
