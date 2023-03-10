@@ -22,9 +22,9 @@ public interface Library  extends PageableRepository<Book, String> {
 
     List<Book> findByEditionGreaterThanEqual(Integer edition);
 
-    List<Book> findByEditionIn(Integer edition);
-
     List<Book> findByEditionBetween(Integer edition, Integer editionB);
+
+    List<Book> findByEditionIn(Integer edition);
 
     List<Book> findByEdition(Integer edition, Pageable pageable);
 }

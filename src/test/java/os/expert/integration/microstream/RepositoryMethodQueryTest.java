@@ -116,6 +116,19 @@ public class RepositoryMethodQueryTest {
 
     }
 
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionBetween(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> editions = this.library.findByEditionBetween(1, 2);
+
+        assertThat(editions)
+                .isNotEmpty()
+                .hasSize(4)
+                .map(Book::edition)
+                .allMatch(p -> p <= 2);
+    }
+
     static Stream<? extends Arguments> arguments() {
         return Stream.of(Arguments.of(library()));
     }
