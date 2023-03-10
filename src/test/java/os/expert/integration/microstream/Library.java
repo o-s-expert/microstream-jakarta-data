@@ -11,6 +11,8 @@ public interface Library  extends PageableRepository<Book, String> {
 
     List<Book> findByTitle(String title);
 
+    List<Book> findByEdition(Integer edition);
+
     List<Book> findByTitleOrderByIsbn(String title);
 
     List<Book> findByEditionLessThan(Integer edition);
