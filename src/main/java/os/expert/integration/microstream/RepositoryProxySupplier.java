@@ -20,7 +20,7 @@ enum RepositoryProxySupplier {
      */
     <T, K, R extends CrudRepository<T, K>> R get(Class<R> repositoryClass, MicrostreamTemplate template) {
         MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template);
-        RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository);
+        RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository, template);
         return (R) Proxy.newProxyInstance(repositoryClass.getClassLoader(),
                 new Class[]{repositoryClass},
                 handler);
