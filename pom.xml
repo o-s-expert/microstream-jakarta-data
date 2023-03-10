@@ -15,6 +15,7 @@
         <microstream.version>08.00.00-MS-EA2</microstream.version>
         <jakarta.data.version>1.0.0-b2</jakarta.data.version>
         <jakarta.nosql.version>1.0.0-b6</jakarta.nosql.version>
+        <jnosql.query.version>1.0.0-b5</jnosql.query.version>
         <junit.version>5.9.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <classgraph.version>4.8.151</classgraph.version>
@@ -67,6 +68,11 @@
             <groupId>jakarta.nosql</groupId>
             <artifactId>nosql-core</artifactId>
             <version>${jakarta.nosql.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jnosql.communication</groupId>
+            <artifactId>jnosql-communication-query</artifactId>
+            <version>${jnosql.query.version}</version>
         </dependency>
 
         <!--Test-->
