@@ -85,9 +85,13 @@ enum ReturnType {
         @Override
         <T> Object convert(Stream<T> stream, Pageable pageable) {
             List<T> entities = stream.collect(Collectors.toUnmodifiableList());
-            return MicrostreamPage.of(entities, pageable);
+            if (pageable != null) {
+                return MicrostreamPage.of(entities, pageable);
+            } else {
+                return MicrostreamPage.of(entities, Pageable.ofSize(entities.size()));
+            }
         }
-    }, OPTIONAL{
+    }, OPTIONAL {
         @Override
         boolean isCompatible(Class<?> type) {
             return Optional.class.isAssignableFrom(type);
