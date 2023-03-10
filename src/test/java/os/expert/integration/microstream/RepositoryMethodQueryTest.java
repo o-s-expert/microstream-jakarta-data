@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @DisplayName("The Microstream's PageableRepository query by methods features")
 public class RepositoryMethodQueryTest {
 
@@ -42,7 +44,7 @@ public class RepositoryMethodQueryTest {
         this.library.saveAll(books);
         List<Book> cleanCode = this.library.findByTitle("Clean Code");
 
-        Assertions.assertThat(cleanCode)
+        assertThat(cleanCode)
                 .isNotEmpty()
                 .map(Book::title)
                 .first()
@@ -55,11 +57,63 @@ public class RepositoryMethodQueryTest {
         this.library.saveAll(books);
         List<Book> effectiveJava = this.library.findByTitleOrderByIsbn("Effective Java");
 
-        Assertions.assertThat(effectiveJava)
+        assertThat(effectiveJava)
                 .isNotEmpty()
                 .hasSize(3)
                 .map(Book::edition)
                 .containsExactly(1, 2, 3);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionLessThan(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> firstEdition = this.library.findByEditionLessThan(2);
+        assertThat(firstEdition)
+                .isNotEmpty()
+                .hasSize(3)
+                .map(Book::edition)
+                .allMatch(p -> p == 1);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionLessThanEqual(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> editions = this.library.findByEditionLessThanEqual(2);
+
+        assertThat(editions)
+                .isNotEmpty()
+                .hasSize(4)
+                .map(Book::edition)
+                .allMatch(p -> p <= 2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionGreaterThan(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> thirdEditions = this.library.findByEditionGreaterThan(2);
+
+        assertThat(thirdEditions)
+                .isNotEmpty()
+                .hasSize(1)
+                .map(Book::edition)
+                .allMatch(p -> p > 2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionGreaterThanEqual(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> editions = this.library.findByEditionGreaterThanEqual(2);
+
+        assertThat(editions)
+                .isNotEmpty()
+                .hasSize(2)
+                .map(Book::edition)
+                .allMatch(p -> p >= 2);
+
     }
 
     static Stream<? extends Arguments> arguments() {
