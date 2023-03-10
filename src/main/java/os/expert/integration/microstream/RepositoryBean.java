@@ -9,6 +9,7 @@ import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.enterprise.inject.spi.PassivationCapable;
 import jakarta.enterprise.util.AnnotationLiteral;
+import jakarta.nosql.Template;
 import one.microstream.storage.types.StorageManager;
 
 import java.lang.annotation.Annotation;
@@ -40,7 +41,7 @@ public class RepositoryBean<T> implements Bean<T>, PassivationCapable {
     /**
      * Constructor
      *
-     * @param type     the tye
+     * @param type the tye
      */
     public RepositoryBean(Class type) {
         this.type = type;
@@ -57,12 +58,8 @@ public class RepositoryBean<T> implements Bean<T>, PassivationCapable {
 
     @Override
     public T create(CreationalContext<T> creationalContext) {
-        EntityMetadata entity = getInstance(EntityMetadata.class);
-        StorageManager manager = getInstance(StorageManager.class);
-        manager.
-        return (T) Proxy.newProxyInstance(type.getClassLoader(),
-                new Class[]{type},
-                handler);
+        MicrostreamTemplate template = getInstance(MicrostreamTemplate.class);
+        return (T) RepositoryProxySupplier.INSTANCE.get(type, template);
     }
 
     @Override
@@ -114,7 +111,7 @@ public class RepositoryBean<T> implements Bean<T>, PassivationCapable {
 
     }
 
-    private  <T> T getInstance(Class<T> bean) {
+    private <T> T getInstance(Class<T> bean) {
         return CDI.current().select(bean).get();
     }
 }
