@@ -86,12 +86,12 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case IN:
                 return Predicates.in(metadata, method, params, paramIndex, condition);
             case AND:
-                List<QueryCondition> andConditions = ((ConditionQueryValue) condition).get();
+                List<QueryCondition> andConditions = ((ConditionQueryValue) condition.value()).get();
                 Predicate<T> and = (Predicate<T>) andConditions.stream().map(c -> condition(c, metadata, method, params, paramIndex))
                         .reduce(Predicate::and).orElseThrow();
                 return and;
             case OR:
-                List<QueryCondition> orConditions = ((ConditionQueryValue) condition).get();
+                List<QueryCondition> orConditions = ((ConditionQueryValue) condition.value()).get();
                 Predicate<T> or = (Predicate<T>) orConditions.stream().map(c -> condition(c, metadata, method, params, paramIndex))
                         .reduce(Predicate::or).orElseThrow();
                 return or;

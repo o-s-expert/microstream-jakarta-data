@@ -141,6 +141,20 @@ public class RepositoryMethodQueryTest {
     public void shouldReturnErrorWhenFindByEditionIn(List<Book> books) {
         this.library.saveAll(books);
         assertThrows(MappingException.class, () -> this.library.findByEditionIn(1));
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByTitleAndEdition(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> result = this.library.findByTitleAndEdition("Effective Java", 2);
+
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(1)
+                .allMatch(b -> b.title().equals("Effective Java"))
+                .allMatch(b -> b.edition() == 2);
     }
 
     static Stream<? extends Arguments> arguments() {
