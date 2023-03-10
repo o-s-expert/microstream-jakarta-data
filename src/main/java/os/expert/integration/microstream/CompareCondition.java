@@ -10,22 +10,22 @@ enum CompareCondition {
     COMPARABLE {
         @Override
         <T> Predicate<T> greater(Object param, FieldMetadata field) {
-            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param)) >= 1;
+            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))  <= -1;
         }
 
         @Override
         <T> Predicate<T> lesser(Object param, FieldMetadata field) {
-            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param)) <= -1;
+            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))>= 1;
         }
 
         @Override
         <T> Predicate<T> greaterEquals(Object param, FieldMetadata field) {
-            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param)) >= 0;
+            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))<= 0;
         }
 
         @Override
         <T> Predicate<T> lesserEquals(Object param, FieldMetadata field) {
-            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param)) <= 0;
+            return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))  >= 0;
         }
     };
 
