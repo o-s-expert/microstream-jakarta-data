@@ -118,15 +118,23 @@ public class RepositoryMethodQueryTest {
 
     @ParameterizedTest
     @MethodSource("arguments")
-    public void shouldFindByEditionBetween(List<Book> books) {
+    public void shouldReturnErrorWhenFindByEditionBetween(List<Book> books) {
         this.library.saveAll(books);
-        List<Book> editions = this.library.findByEditionBetween(1, 2);
+        org.junit.jupiter.api.Assertions.assertThrows(UnsupportedOperationException.class, () ->
+                this.library.findByEditionBetween(1, 2));
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionIn(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> editions = this.library.findByEditionIn(List.of(3, 2));
 
         assertThat(editions)
                 .isNotEmpty()
-                .hasSize(4)
+                .hasSize(2)
                 .map(Book::edition)
-                .allMatch(p -> p <= 2);
+                .allMatch(p -> p >= 2);
     }
 
     static Stream<? extends Arguments> arguments() {
