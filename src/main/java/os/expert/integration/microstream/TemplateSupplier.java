@@ -3,6 +3,7 @@ package os.expert.integration.microstream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.nosql.Template;
 import one.microstream.storage.types.StorageManager;
@@ -21,7 +22,8 @@ class TemplateSupplier implements Supplier<Template> {
     @Override
     @Produces
     @ApplicationScoped
-    public Template get() {
+    @Typed({Template.class, MicrostreamTemplate.class})
+    public MicrostreamTemplate get() {
 
         Object root = manager.root();
         DataStructure data;
