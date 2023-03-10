@@ -104,8 +104,6 @@ final class Predicates {
 
     static <T> Predicate<T> condition(QueryCondition condition, EntityMetadata metadata, Method method,
                                               Object[] params, AtomicInteger paramIndex) {
-
-
         switch (condition.condition()) {
             case EQUALS:
                 return Predicates.eq(metadata, method, params, paramIndex, condition);
