@@ -20,11 +20,15 @@ public class MicrostreamExtensionTest {
     @Inject
     private MicrostreamTemplate microstreamTemplate;
 
+    @Inject
+    private Library library;
 
     @Test
     public void shouldIntegrate() {
         Assertions.assertNotNull(template);
         Assertions.assertNotNull(microstreamTemplate);
+        Assertions.assertNotNull(library);
     }
 }
+
 
