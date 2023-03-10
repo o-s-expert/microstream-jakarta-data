@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -68,7 +69,7 @@ public class RepositoryMethodQueryTest {
     @MethodSource("arguments")
     public void shouldFindByEditionLessThan(List<Book> books) {
         this.library.saveAll(books);
-        List<Book> firstEdition = this.library.findByEditionLessThan(2);
+        Queue<Book> firstEdition = this.library.findByEditionLessThan(2);
         assertThat(firstEdition)
                 .isNotEmpty()
                 .hasSize(3)
@@ -80,7 +81,7 @@ public class RepositoryMethodQueryTest {
     @MethodSource("arguments")
     public void shouldFindByEditionLessThanEqual(List<Book> books) {
         this.library.saveAll(books);
-        List<Book> editions = this.library.findByEditionLessThanEqual(2);
+        Stream<Book> editions = this.library.findByEditionLessThanEqual(2);
 
         assertThat(editions)
                 .isNotEmpty()

@@ -5,6 +5,9 @@ import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Repository;
 
 import java.util.List;
+import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Stream;
 
 
 @Repository
@@ -12,11 +15,11 @@ public interface Library  extends PageableRepository<Book, String> {
 
     List<Book> findByTitle(String title);
 
-    List<Book> findByTitleOrderByIsbn(String title);
+    Set<Book> findByTitleOrderByIsbn(String title);
 
-    List<Book> findByEditionLessThan(Integer edition);
+    Queue<Book> findByEditionLessThan(Integer edition);
 
-    List<Book> findByEditionLessThanEqual(Integer edition);
+    Stream<Book> findByEditionLessThanEqual(Integer edition);
 
     List<Book> findByEditionGreaterThan(Integer edition);
 
