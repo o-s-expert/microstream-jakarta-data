@@ -22,6 +22,7 @@ class StorageManagerSupplier implements Supplier<StorageManager> {
 
     @Override
     @Produces
+    @ApplicationScoped
     public StorageManager get() {
         LOGGER.warning("Starting the default Storage Manager where it will use the path " + DEFAULT_PATH +
                 " overwrite on production");
