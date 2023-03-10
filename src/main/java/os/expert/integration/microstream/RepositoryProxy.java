@@ -65,50 +65,8 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         QueryCondition condition = where.condition();
 
         AtomicInteger paramIndex = new AtomicInteger(0);
-        Predicate<T> predicate = condition(condition, metadata, method, params, paramIndex);
+        Predicate<T> predicate = Predicates.condition(condition, metadata, method, params, paramIndex);
         return predicate;
-    }
-
-
-    private static <T> Predicate<T> condition(QueryCondition condition, EntityMetadata metadata, Method method,
-                                              Object[] params, AtomicInteger paramIndex) {
-
-
-        switch (condition.condition()) {
-            case EQUALS:
-                return Predicates.eq(metadata, method, params, paramIndex, condition);
-            case GREATER_THAN:
-                return Predicates.gt(metadata, method, params, paramIndex, condition);
-            case GREATER_EQUALS_THAN:
-                return Predicates.gte(metadata, method, params, paramIndex, condition);
-            case LESSER_THAN:
-                return Predicates.lt(metadata, method, params, paramIndex, condition);
-            case LESSER_EQUALS_THAN:
-                return Predicates.lte(metadata, method, params, paramIndex, condition);
-            case IN:
-                return Predicates.in(metadata, method, params, paramIndex, condition);
-            case AND:
-                List<QueryCondition> andConditions = ((ConditionQueryValue) condition.value()).get();
-                Predicate<T> and = (Predicate<T>) andConditions.stream().map(c -> condition(c, metadata, method, params, paramIndex))
-                        .reduce(Predicate::and).orElseThrow();
-                return and;
-            case OR:
-                List<QueryCondition> orConditions = ((ConditionQueryValue) condition.value()).get();
-                Predicate<T> or = (Predicate<T>) orConditions.stream().map(c -> condition(c, metadata, method, params, paramIndex))
-                        .reduce(Predicate::or).orElseThrow();
-                return or;
-            case NOT:
-                List<QueryCondition> notConditions = ((ConditionQueryValue) condition.value()).get();
-                QueryCondition notCondition = notConditions.get(0);
-                return Predicate.not(condition(notCondition, metadata, method, params, paramIndex));
-            case LIKE:
-            case BETWEEN:
-            default:
-                throw new UnsupportedOperationException("There is no support to method query using the condition: "
-                        + condition.condition());
-
-
-        }
     }
 
 
