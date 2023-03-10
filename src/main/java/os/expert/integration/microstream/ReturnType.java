@@ -101,6 +101,16 @@ enum ReturnType {
         <T> Object convert(Stream<T> stream, Pageable pageable) {
             return stream.findFirst();
         }
+    }, DEFAULT{
+        @Override
+        boolean isCompatible(Class<?> type) {
+            return false;
+        }
+
+        @Override
+        <T> Object convert(Stream<T> stream, Pageable pageable) {
+            return stream.findFirst().orElse(null);
+        }
     };
 
     abstract boolean isCompatible(Class<?> type);
@@ -111,7 +121,7 @@ enum ReturnType {
         return Arrays.stream(ReturnType.values())
                 .filter(r -> r.isCompatible(type))
                 .findFirst()
-                .orElse(STREAM);
+                .orElse(DEFAULT);
     }
 
     static Pageable pageable(Object[] params) {
