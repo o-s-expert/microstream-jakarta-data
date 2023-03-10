@@ -19,14 +19,13 @@ class RepositoryProxySupplierTest {
 
     private MicrostreamTemplate template;
 
-    private RepositoryProxySupplier supplier;
+    private RepositoryProxySupplier supplier = RepositoryProxySupplier.INSTANCE;
 
     @BeforeEach
     public void setUp() {
         this.data = new DataStructure();
         this.metadata = EntityMetadata.of(Book.class);
         this.template = new MicrostreamTemplate(data, metadata);
-        this.supplier = new RepositoryProxySupplier();
 
     }
 

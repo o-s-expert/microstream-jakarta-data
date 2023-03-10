@@ -24,20 +24,20 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RepositoryBasicOperationsTest {
 
 
-    private MicrostreamRepository<Book, String> library;
-
+    private Library library;
     private DataStructure data;
 
     private MicrostreamTemplate template;
 
     private EntityMetadata metadata;
 
+
     @BeforeEach
     public void setUp() {
         this.metadata = EntityMetadata.of(Book.class);
         this.data = new DataStructure();
         this.template = new MicrostreamTemplate(data, metadata);
-        this.library = new MicrostreamRepository<>(template);
+        this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
     }
 
     @ParameterizedTest
