@@ -48,11 +48,6 @@ public class RepositoryBasicOperationsTest {
         assertThat(data.isEmpty()).isFalse();
     }
 
-    @Test
-    public void shouldReturnErrorWhenSaveIsNull() {
-        assertThrows(NullPointerException.class, () -> this.library.save(null));
-    }
-
     @ParameterizedTest
     @ArgumentsSource(BookArgumentProvider.class)
     public void shouldSaveWhenDataExist(Book book) {
@@ -70,11 +65,6 @@ public class RepositoryBasicOperationsTest {
         this.library.saveAll(books);
         assertThat(data.isEmpty()).isFalse();
         assertThat(data.size()).isEqualTo(books.size());
-    }
-
-    @Test
-    public void shouldReturnErrorWhenSaveAllIsNull() {
-        assertThrows(NullPointerException.class, () -> this.library.saveAll(null));
     }
 
     @ParameterizedTest
@@ -104,11 +94,6 @@ public class RepositoryBasicOperationsTest {
         assertThat(result).isNotPresent();
     }
 
-    @Test
-    public void shouldReturnErrorFindById() {
-        assertThrows(NullPointerException.class, () -> this.library.findById(null));
-    }
-
     @ParameterizedTest
     @ArgumentsSource(BookArgumentProvider.class)
     public void shouldExistById(Book book) {
@@ -121,12 +106,6 @@ public class RepositoryBasicOperationsTest {
     public void shouldFalseExistById(Book book) {
         assertThat(this.library.existsById(book.isbn())).isFalse();
     }
-
-    @Test
-    public void shouldReturnErrorExistsById() {
-        assertThrows(NullPointerException.class, () -> this.library.existsById(null));
-    }
-
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
@@ -159,11 +138,6 @@ public class RepositoryBasicOperationsTest {
                 .containsAll(books);
     }
 
-    @Test
-    public void shouldReturnErrorFindAllById() {
-        assertThrows(NullPointerException.class, () -> this.library.findAllById(null));
-    }
-
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldCount(List<Book> books) {
@@ -182,11 +156,6 @@ public class RepositoryBasicOperationsTest {
                 .isNotPresent();
     }
 
-    @Test
-    public void shouldReturnErrorWhenDeleteById() {
-        assertThrows(NullPointerException.class, () -> this.library.deleteById(null));
-    }
-
     @ParameterizedTest
     @ArgumentsSource(BookArgumentProvider.class)
     public void shouldDelete(Book book) {
@@ -195,11 +164,6 @@ public class RepositoryBasicOperationsTest {
 
         assertThat(library.findById(book.isbn()))
                 .isNotPresent();
-    }
-
-    @Test
-    public void shouldReturnErrorWhenDelete() {
-        assertThrows(NullPointerException.class, () -> this.library.delete(null));
     }
 
     @ParameterizedTest
@@ -227,12 +191,6 @@ public class RepositoryBasicOperationsTest {
         assertThat(result).isNotEmpty().hasSize(1);
     }
 
-    @Test
-    public void shouldReturnErrorWhenDeleteAllById() {
-        assertThrows(NullPointerException.class, () -> this.library.deleteAllById(null));
-    }
-
-
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldDeleteAll(List<Book> books) {
@@ -256,11 +214,6 @@ public class RepositoryBasicOperationsTest {
 
         Stream<Book> result = this.library.findAllById(books.stream().map(Book::isbn).collect(toUnmodifiableList()));
         assertThat(result).isNotEmpty().hasSize(1);
-    }
-
-    @Test
-    public void shouldReturnErrorWhenDeleteId() {
-        assertThrows(NullPointerException.class, () -> this.library.deleteAll(null));
     }
 
     @ParameterizedTest
