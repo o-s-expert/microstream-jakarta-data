@@ -172,6 +172,17 @@ public class RepositoryMethodQueryTest {
                 .anyMatch(b -> b.edition() == 1);
     }
 
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldFindByEditionNot(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> result = this.library.findByEditionNot(1);
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(2)
+                .allMatch(b -> b.edition()> 1);
+    }
+
     static Stream<? extends Arguments> arguments() {
         return Stream.of(Arguments.of(library()));
     }
