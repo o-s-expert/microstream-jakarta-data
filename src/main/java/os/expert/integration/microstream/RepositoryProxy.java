@@ -2,6 +2,7 @@ package os.expert.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
 import jakarta.data.repository.PageableRepository;
+import jakarta.data.repository.Sort;
 import org.eclipse.jnosql.communication.query.QueryCondition;
 import org.eclipse.jnosql.communication.query.QueryValue;
 import org.eclipse.jnosql.communication.query.SelectQuery;
@@ -12,6 +13,8 @@ import org.eclipse.jnosql.communication.query.method.SelectMethodProvider;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -119,6 +122,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                     Predicate<T> p = predicate(w, method, params, metadata);
                     return p;
                 }).orElse(null);
+
         Stream<T> values = repository.findAll();
         if (predicate != null) {
             values = values.filter(predicate);
@@ -129,6 +133,26 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         if (query.limit() > 0) {
             values = values.skip(query.skip());
         }
+        Comparator<T> comparator = comparator(query.orderBy(), metadata);
+        if (comparator != null) {
+            values = values.sorted(comparator);
+        }
         return values;
+    }
+
+    private <T> Comparator<T> comparator(List<Sort> sorts, EntityMetadata metadata) {
+        Comparator<T> comparator = null;
+        for (Sort sort : sorts) {
+            Optional<FieldMetadata> field = metadata.field(sort.property());
+            Comparator comparator1 = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
+                    .orElseThrow(() -> new MappingException("There is not field with the name " + sort.property() +
+                            " to order"));
+            if (comparator == null) {
+                comparator = comparator1;
+            } else {
+                comparator = comparator.thenComparing(comparator1);
+            }
+        }
+        return comparator;
     }
 }
