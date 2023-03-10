@@ -4,7 +4,6 @@ package os.expert.integration.microstream;
 import jakarta.data.repository.Page;
 import jakarta.data.repository.Pageable;
 import jakarta.data.repository.Sort;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -23,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("The Microstream's PageableRepository default methods")
-public class MicrostreamRepositoryBasicOperationTest {
+public class MicrostreamRepositoryTest {
 
 
     private MicrostreamRepository<Book, String> library;
