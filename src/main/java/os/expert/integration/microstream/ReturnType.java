@@ -2,8 +2,10 @@ package os.expert.integration.microstream;
 
 import jakarta.data.repository.Page;
 import jakarta.data.repository.Pageable;
+import jakarta.data.repository.Sort;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.List;
@@ -88,5 +90,23 @@ enum ReturnType {
             }
         }
         return null;
+    }
+
+    static List<Sort> sort(List<Sort> sorts, Object[] params) {
+        List<Sort> orderBy = new ArrayList<>(sorts);
+        orderBy.addAll(sorts(params));
+        return orderBy;
+    }
+
+    private static List<Sort> sorts(Object[] params) {
+        List<Sort> orderBy = new ArrayList<>();
+        for (Object param : params) {
+            if (param instanceof Sort sort) {
+                orderBy.add(sort);
+            } else if (param instanceof Pageable pageable) {
+                orderBy.addAll(pageable.sorts());
+            }
+        }
+        return orderBy;
     }
 }
