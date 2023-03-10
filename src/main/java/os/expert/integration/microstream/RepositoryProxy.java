@@ -96,6 +96,9 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                         .reduce(Predicate::or).orElseThrow();
                 return or;
             case NOT:
+                List<QueryCondition> notConditions = ((ConditionQueryValue) condition.value()).get();
+                QueryCondition notCondition = notConditions.get(0);
+                return Predicate.not(condition(notCondition, metadata, method, params, paramIndex));
             case LIKE:
             case BETWEEN:
             default:
