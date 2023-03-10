@@ -14,6 +14,8 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Objects.requireNonNull;
 import static os.expert.integration.microstream.CompareCondition.of;
@@ -37,17 +39,8 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case DEFAULT:
                 return method.invoke(repository, params);
             case FIND_BY:
-                EntityMetadata metadata = template.metadata();
-                SelectMethodProvider provider = SelectMethodProvider.INSTANCE;
-                SelectQuery query = provider.apply(method, "");
-                Predicate<T> predicate = query
-                        .where()
-                        .map(w -> {
-                            Predicate<T> p = predicate(w, method, params, metadata);
-                            return p;
-                        }).orElse(null);
-
-
+                Stream<T> values = query(method, params);
+                return values.collect(Collectors.toUnmodifiableList());
             case ORDER_BY:
             case COUNT_BY:
             case EXISTS_BY:
@@ -114,5 +107,28 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         } else {
             return value.get();
         }
+    }
+
+    private Stream<T> query(Method method, Object[] params) {
+        EntityMetadata metadata = template.metadata();
+        SelectMethodProvider provider = SelectMethodProvider.INSTANCE;
+        SelectQuery query = provider.apply(method, "");
+        Predicate<T> predicate = query
+                .where()
+                .map(w -> {
+                    Predicate<T> p = predicate(w, method, params, metadata);
+                    return p;
+                }).orElse(null);
+        Stream<T> values = repository.findAll();
+        if (predicate != null) {
+            values = values.filter(predicate);
+        }
+        if (query.skip() > 0) {
+            values = values.skip(query.skip());
+        }
+        if (query.limit() > 0) {
+            values = values.skip(query.skip());
+        }
+        return values;
     }
 }
