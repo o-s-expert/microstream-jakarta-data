@@ -12,6 +12,7 @@ import org.eclipse.jnosql.communication.query.method.SelectMethodProvider;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -86,6 +87,12 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case LESSER_EQUALS_THAN:
                 return of(param.getClass()).lesserEquals(param, field);
             case IN:
+                if (param instanceof Iterable<?> iterable) {
+                    List<Object> items = new ArrayList<>();
+                    iterable.forEach(items::add);
+                    return t -> items.contains(field.get(t));
+                }
+                new MappingException("The IN condition at method query works with Iterable implementations");
             case AND:
             case OR:
             case NOT:
