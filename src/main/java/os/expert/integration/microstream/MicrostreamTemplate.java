@@ -1,6 +1,8 @@
 package os.expert.integration.microstream;
 
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.nosql.QueryMapper;
 import jakarta.nosql.Template;
@@ -14,6 +16,8 @@ import java.util.Optional;
  * It uses a {@link DataStructure} as root graph at Microstream.
  * It does not implement {@link Template#select(Class)} and {@link Template#delete(Class)}
  */
+@ApplicationScoped
+@Typed({Template.class, MicrostreamTemplate.class})
 public class MicrostreamTemplate implements Template {
 
 
@@ -33,6 +37,7 @@ public class MicrostreamTemplate implements Template {
     }
 
     @Override
+    @Transaction
     public <T> T insert(T entity) {
         Objects.requireNonNull(entity, "entity is required");
         Object id = this.metadata.id().get(entity);
@@ -46,6 +51,7 @@ public class MicrostreamTemplate implements Template {
     }
 
     @Override
+    @Transaction
     public <T> Iterable<T> insert(Iterable<T> entities) {
         Objects.requireNonNull(entities, "entities is required");
         entities.forEach(this::insert);
@@ -58,11 +64,13 @@ public class MicrostreamTemplate implements Template {
     }
 
     @Override
+    @Transaction
     public <T> T update(T entity) {
         return insert(entity);
     }
 
     @Override
+    @Transaction
     public <T> Iterable<T> update(Iterable<T> entities) {
         return insert(entities);
     }
@@ -75,6 +83,7 @@ public class MicrostreamTemplate implements Template {
     }
 
     @Override
+    @Transaction
     public <T, K> void delete(Class<T> type, K id) {
         Objects.requireNonNull(type, "type is required");
         Objects.requireNonNull(id, "id is required");

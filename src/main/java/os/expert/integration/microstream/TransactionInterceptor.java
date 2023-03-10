@@ -1,7 +1,7 @@
 package os.expert.integration.microstream;
 
 
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.annotation.Priority;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
@@ -10,7 +10,7 @@ import one.microstream.storage.types.StorageManager;
 
 @Transaction
 @Interceptor
-@ApplicationScoped
+@Priority(Interceptor.Priority.APPLICATION)
 class TransactionInterceptor {
 
     @Inject

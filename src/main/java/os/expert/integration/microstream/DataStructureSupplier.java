@@ -11,7 +11,7 @@ import one.microstream.storage.types.StorageManager;
 import java.util.function.Supplier;
 
 @ApplicationScoped
-class TemplateSupplier implements Supplier<Template> {
+class DataStructureSupplier implements Supplier<DataStructure> {
 
     @Inject
     private StorageManager manager;
@@ -22,8 +22,7 @@ class TemplateSupplier implements Supplier<Template> {
     @Override
     @Produces
     @ApplicationScoped
-    @Typed({Template.class, MicrostreamTemplate.class})
-    public MicrostreamTemplate get() {
+    public DataStructure get() {
 
         Object root = manager.root();
         DataStructure data;
@@ -36,6 +35,6 @@ class TemplateSupplier implements Supplier<Template> {
             throw new IllegalArgumentException("The current root structure is incompatible with DataStructure. " +
                     "The current structure class: " + root.getClass());
         }
-        return new MicrostreamTemplate(data, metadata);
+        return data;
     }
 }
