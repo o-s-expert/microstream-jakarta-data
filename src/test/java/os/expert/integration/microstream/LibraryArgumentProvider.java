@@ -11,9 +11,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class LibraryArgumentProvider implements ArgumentsProvider {
+
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        return Stream.of(Arguments.of(library());
+        return Stream.of(Arguments.of(library()));
     }
 
     private List<Book> library() {
