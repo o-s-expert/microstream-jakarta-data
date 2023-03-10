@@ -92,7 +92,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                     iterable.forEach(items::add);
                     return t -> items.contains(field.get(t));
                 }
-                new MappingException("The IN condition at method query works with Iterable implementations");
+                throw new MappingException("The IN condition at method query works with Iterable implementations");
             case AND:
             case OR:
             case NOT:

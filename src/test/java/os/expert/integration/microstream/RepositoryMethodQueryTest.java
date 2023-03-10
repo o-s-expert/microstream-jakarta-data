@@ -1,13 +1,11 @@
 package os.expert.integration.microstream;
 
 
-import org.assertj.core.api.Assertions;
+import jakarta.data.exceptions.MappingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Year;
@@ -17,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("The Microstream's PageableRepository query by methods features")
 public class RepositoryMethodQueryTest {
@@ -120,7 +119,7 @@ public class RepositoryMethodQueryTest {
     @MethodSource("arguments")
     public void shouldReturnErrorWhenFindByEditionBetween(List<Book> books) {
         this.library.saveAll(books);
-        org.junit.jupiter.api.Assertions.assertThrows(UnsupportedOperationException.class, () ->
+        assertThrows(UnsupportedOperationException.class, () ->
                 this.library.findByEditionBetween(1, 2));
     }
 
@@ -135,6 +134,13 @@ public class RepositoryMethodQueryTest {
                 .hasSize(2)
                 .map(Book::edition)
                 .allMatch(p -> p >= 2);
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
+    public void shouldReturnErrorWhenFindByEditionIn(List<Book> books) {
+        this.library.saveAll(books);
+        assertThrows(MappingException.class, () -> this.library.findByEditionIn(1));
     }
 
     static Stream<? extends Arguments> arguments() {
