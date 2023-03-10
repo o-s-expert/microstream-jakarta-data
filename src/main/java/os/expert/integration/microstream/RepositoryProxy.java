@@ -8,7 +8,11 @@ import java.lang.reflect.Method;
 
 class RepositoryProxy<T, K> implements InvocationHandler {
 
-    private PageableRepository<T, K> repository;
+    private final PageableRepository<T, K> repository;
+
+    RepositoryProxy(PageableRepository<T, K> repository) {
+        this.repository = repository;
+    }
 
 
     @Override
