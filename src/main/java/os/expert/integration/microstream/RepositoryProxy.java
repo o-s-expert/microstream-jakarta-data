@@ -90,13 +90,15 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case LESSER_EQUALS_THAN:
                 return of(param.getClass()).lesserEquals(param, field);
             case IN:
-            case LIKE:
             case AND:
             case OR:
             case NOT:
+            case LIKE:
             case BETWEEN:
-                return t -> param.equals(field.get(t));
-            Predicate<T> predicate = t -> param.equals(field.get(t));
+            default:
+                throw new UnsupportedOperationException("There is no support to method query using the condition: "
+                        + condition.condition());
+
 
         }
     }
