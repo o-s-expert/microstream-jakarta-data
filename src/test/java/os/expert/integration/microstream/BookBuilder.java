@@ -9,6 +9,8 @@ public class BookBuilder {
     private Year release;
     private String author;
 
+    private boolean active;
+
     public BookBuilder isbn(String isbn) {
         this.isbn = isbn;
         return this;
@@ -34,7 +36,12 @@ public class BookBuilder {
         return this;
     }
 
+    public BookBuilder active() {
+        this.active = true;
+        return this;
+    }
+
     public Book build() {
-        return new Book(isbn, title, edition, release, author);
+        return new Book(isbn, title, edition, release, author, active);
     }
 }

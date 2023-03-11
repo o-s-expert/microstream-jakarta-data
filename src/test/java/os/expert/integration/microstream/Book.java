@@ -25,12 +25,16 @@ public class Book {
     @Column
     private String author;
 
-    Book(String isbn, String title, Integer edition, Year release, String author) {
+    @Column
+    private boolean active;
+
+    Book(String isbn, String title, Integer edition, Year release, String author, boolean active) {
         this.isbn = isbn;
         this.title = title;
         this.edition = edition;
         this.release = release;
         this.author = author;
+        this.active = active;
     }
 
     Book() {
@@ -54,6 +58,10 @@ public class Book {
 
     public String author() {
         return author;
+    }
+
+    public boolean active() {
+        return active;
     }
 
     @Override
@@ -81,6 +89,7 @@ public class Book {
                 ", edition=" + edition +
                 ", release=" + release +
                 ", author='" + author + '\'' +
+                ", active=" + active +
                 '}';
     }
 
