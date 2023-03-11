@@ -201,6 +201,17 @@ public class RepositoryMethodQueryTest {
 
     @ParameterizedTest
     @MethodSource("arguments")
+    public void shouldFindByActiveFalse(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> result = this.library.findByActiveFalse();
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(1)
+                .allMatch(b -> b.active());
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
     public void shouldFindByTitlePageable(List<Book> books) {
         this.library.saveAll(books);
         String title = "Effective Java";
@@ -236,7 +247,7 @@ public class RepositoryMethodQueryTest {
                 2001));
         books.add(createBook(integer.incrementAndGet(), "Effective Java", "Joshua Bloch", 2,
                 2008));
-        books.add(createBook(integer.incrementAndGet(), "Effective Java", "Joshua Bloch", 3,
+        books.add(createBookActive(integer.incrementAndGet(), "Effective Java", "Joshua Bloch", 3,
                 2017));
         books.add(createBook(integer.incrementAndGet(), "Modern Software Engineering", "David Farley", 1,
                 2020));
@@ -248,5 +259,11 @@ public class RepositoryMethodQueryTest {
         return Book.builder().isbn(isbn.toString()).title(title)
                 .author(author).edition(edition)
                 .release(Year.of(year)).build();
+    }
+
+    static Book createBookActive(Integer isbn, String title, String author, int edition, int year) {
+        return Book.builder().isbn(isbn.toString()).title(title)
+                .author(author).edition(edition)
+                .release(Year.of(year)).active().build();
     }
 }
