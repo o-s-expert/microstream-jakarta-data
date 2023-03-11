@@ -45,6 +45,8 @@ public class Book {
 }
 ----
 
+WARNING: Microstream integration supports only an entity with `Entity`; otherwise, it will return an exception.
+
 After mapping an entity, you can explore the advantage of using a `Template` interface, which can increase productivity on NoSQL operations.
 
 [source, java]
