@@ -1,7 +1,7 @@
 package os.expert.integration.microstream;
 
 
-import jakarta.inject.Inject;
+import jakarta.data.exceptions.NonUniqueResultException;
 import jakarta.nosql.Template;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,9 +11,11 @@ import java.time.Year;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -168,19 +170,36 @@ class MapperSelectTest {
 
     @Test
     public void shouldResult() {
+        List<Book> result = this.template.select(Book.class).result();
+        assertThat(result).isNotEmpty()
+                .containsAll(library());
     }
 
 
     @Test
     public void shouldStream() {
+        Stream<Book> result = this.template.select(Book.class).stream();
+        assertThat(result).isNotEmpty()
+                .containsAll(library());
 
     }
 
     @Test
     public void shouldSingleResult() {
+        Optional<Book> book = this.template.select(Book.class).where("edition").eq(3).singleResult();
+        assertThat(book).isPresent()
+                .get().extracting(Book::edition)
+                .isEqualTo(3);
 
+        book = this.template.select(Book.class).where("edition").eq(5).singleResult();
+        assertThat(book).isNotPresent();
     }
 
+    @Test
+    public void shouldReturnErrorWhenThereAreTwoResults() {
+        Assertions.assertThrows(NonUniqueResultException.class,
+                () ->  this.template.select(Book.class).singleResult());
+    }
     @Test
     public void shouldReturnErrorSelectWhenOrderIsNull() {
         Assertions.assertThrows(NullPointerException.class, () -> template.select(Book.class).orderBy(null));
