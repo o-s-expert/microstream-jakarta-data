@@ -61,4 +61,41 @@ template.delete(Book.class).where("edition").lte(2).execute();
 
 ----
 
+## Jakarta Data
+
+A repository abstraction aims to significantly reduce the boilerplate code required to implement data access layers for various persistence stores.
+
+[source, java]
+----
+@Repository
+public interface Library  extends PageableRepository<Book, String> {
+    List<Book> findByTitle(String title);
+}
+
+@Inject
+private Library library;
+...
+List<Book> cleanCode = this.library.findByTitle("Clean Code");
+----
+
+## Qualifier
+
+Microstream provides a qualifier when there are other vendors for both: Jakarta NoSQL and Jakarta Data. You can add `@Microstream` qualifier.
+
+[source, java]
+----
+@Inject
+@Microstream
+private Template template;
+@Inject
+@Microstream
+private Library library;
+----
+
 ## Maven
+
+Add the Maven dependency:
+
+[source, xml]
+----
+----
