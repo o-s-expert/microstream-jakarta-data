@@ -88,15 +88,6 @@ class MicrostreamTemplateTest {
                 this.template.insert(Collections.singleton(book), Duration.ofSeconds(2L)));
     }
 
-    @Test
-    public void shouldUnsupportedWhenItUsesCriteria() {
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->
-                this.template.select(Book.class));
-
-        Assertions.assertThrows(UnsupportedOperationException.class, () ->
-                this.template.delete(Book.class));
-    }
-
     @ParameterizedTest
     @ArgumentsSource(BookArgumentProvider.class)
     public void shouldFindId(Book book) {
