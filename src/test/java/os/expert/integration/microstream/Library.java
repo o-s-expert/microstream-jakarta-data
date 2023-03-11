@@ -43,5 +43,9 @@ public interface Library  extends PageableRepository<Book, String> {
     List<Book> findByActiveTrue();
 
     List<Book> findByActiveFalse();
+
+    Long countByActiveTrue();
+
+    boolean existByActiveTrue();
 }
 
