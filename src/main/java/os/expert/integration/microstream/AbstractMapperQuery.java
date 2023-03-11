@@ -2,6 +2,7 @@ package os.expert.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.StreamSupport;
@@ -51,23 +52,15 @@ abstract class AbstractMapperQuery {
         this.name = null;
     }
 
-    protected <T> void betweenImpl(T valueA, T valueB) {
-        requireNonNull(valueA, "valueA is required");
-        requireNonNull(valueB, "valueB is required");
-        ColumnCondition newCondition = ColumnCondition
-                .between(Column.of(mapping.columnField(name), asList(getValue(valueA), getValue(valueB))));
-        appendCondition(newCondition);
-    }
 
 
     protected <T> void inImpl(Iterable<T> values) {
-
         requireNonNull(values, "values is required");
-        List<Object> convertedValues = StreamSupport.stream(values.spliterator(), false)
-                .map(this::getValue).collect(toList());
-        ColumnCondition newCondition = ColumnCondition
-                .in(Column.of(mapping.columnField(name), convertedValues));
-        appendCondition(newCondition);
+
+        List<T> items = new ArrayList<>();
+        values.forEach(items::add);
+        FieldMetadata field = field();
+        appendCondition(t -> items.contains(field.get(t)));
     }
 
     protected <T> void eqImpl(T value) {
@@ -102,7 +95,7 @@ abstract class AbstractMapperQuery {
     }
 
 
-    private FieldMetadata field() {
+    protected FieldMetadata field() {
         FieldMetadata field = mapping.field(name)
                 .orElseThrow(() -> new MappingException("The field " +name+  " does not exist at the entity "
                         + mapping.type()));
