@@ -39,5 +39,9 @@ public interface Library  extends PageableRepository<Book, String> {
     Page<Book> findByTitle(String title, Pageable pageable);
 
     List<Book> findByEditionNot(Integer edition);
+
+    List<Book> findByActiveTrue();
+
+    List<Book> findByActiveFalse();
 }
 

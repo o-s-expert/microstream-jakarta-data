@@ -190,6 +190,17 @@ public class RepositoryMethodQueryTest {
 
     @ParameterizedTest
     @MethodSource("arguments")
+    public void shouldFindByActiveTrue(List<Book> books) {
+        this.library.saveAll(books);
+        List<Book> result = this.library.findByActiveTrue();
+        assertThat(result)
+                .isNotEmpty()
+                .hasSize(1)
+                .allMatch(b -> b.active());
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
     public void shouldFindByTitlePageable(List<Book> books) {
         this.library.saveAll(books);
         String title = "Effective Java";
