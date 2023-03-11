@@ -66,7 +66,6 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case DELETE_BY:
                 delete(method, params);
                 return Void.class;
-
             case OBJECT_METHOD:
                 return method.invoke(this, params);
             case FIND_ALL:
