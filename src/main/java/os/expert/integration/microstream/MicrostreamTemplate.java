@@ -2,6 +2,7 @@ package os.expert.integration.microstream;
 
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
 import jakarta.nosql.QueryMapper;
@@ -18,7 +19,9 @@ import java.util.Optional;
  */
 @ApplicationScoped
 @Typed({Template.class, MicrostreamTemplate.class})
-public class MicrostreamTemplate implements Template {
+@Default
+@Microstream
+class MicrostreamTemplate implements Template {
 
     private DataStructure data;
 
