@@ -90,12 +90,25 @@ public class MicrostreamTemplate implements Template {
 
     @Override
     public <T> QueryMapper.MapperFrom select(Class<T> type) {
-        throw new UnsupportedOperationException("The select is unsupported");
+        Objects.requireNonNull(type, "type is required");
+        if (metadata.type().equals(type)) {
+            return new MapperSelect(metadata, this);
+        }
+
+        throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
+                + type + " @Entity class " + metadata.type());
+
     }
 
     @Override
     public <T> QueryMapper.MapperDeleteFrom delete(Class<T> type) {
-        throw new UnsupportedOperationException("The delete is unsupported");
+        Objects.requireNonNull(type, "type is required");
+        if (metadata.type().equals(type)) {
+            return new MapperDelete(metadata, this);
+        }
+
+        throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
+                + type + " @Entity class " + metadata.type());
     }
 
     DataStructure data() {
