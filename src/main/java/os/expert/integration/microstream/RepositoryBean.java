@@ -9,11 +9,8 @@ import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.inject.spi.InjectionPoint;
 import jakarta.enterprise.inject.spi.PassivationCapable;
 import jakarta.enterprise.util.AnnotationLiteral;
-import jakarta.nosql.Template;
-import one.microstream.storage.types.StorageManager;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
@@ -33,6 +30,9 @@ public class RepositoryBean<T> implements Bean<T>, PassivationCapable {
     private static final AnnotationLiteral<Any> ANY_ANNOTATION = new AnnotationLiteral<>() {
     };
 
+    private static final AnnotationLiteral<Microstream> MICROSTREAM = new AnnotationLiteral<>() {
+    };
+
     private final Class type;
 
     private final Set<Type> types;
@@ -49,6 +49,7 @@ public class RepositoryBean<T> implements Bean<T>, PassivationCapable {
         this.qualifiers = new HashSet<>();
         qualifiers.add(DEFAULT_ANNOTATION);
         qualifiers.add(ANY_ANNOTATION);
+        qualifiers.add(MICROSTREAM);
     }
 
     @Override
