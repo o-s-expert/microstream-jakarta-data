@@ -18,17 +18,11 @@ package os.expert.integration.microstream;
 import jakarta.data.exceptions.MappingException;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toList;
 import static os.expert.integration.microstream.CompareCondition.of;
 
 abstract class AbstractMapperQuery {

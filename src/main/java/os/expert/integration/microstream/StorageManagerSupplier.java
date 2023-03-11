@@ -22,7 +22,6 @@ import jakarta.enterprise.inject.Produces;
 import one.microstream.persistence.binary.one.microstream.collections.lazy.BinaryHandlerLazyHashMap;
 import one.microstream.storage.embedded.configuration.types.EmbeddedStorageConfiguration;
 import one.microstream.storage.embedded.types.EmbeddedStorageFoundation;
-import one.microstream.storage.embedded.types.EmbeddedStorageManager;
 import one.microstream.storage.types.StorageManager;
 
 import java.util.function.Supplier;

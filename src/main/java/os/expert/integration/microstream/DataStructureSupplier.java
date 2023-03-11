@@ -18,9 +18,7 @@ package os.expert.integration.microstream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
-import jakarta.enterprise.inject.Typed;
 import jakarta.inject.Inject;
-import jakarta.nosql.Template;
 import one.microstream.storage.types.StorageManager;
 
 import java.util.function.Supplier;

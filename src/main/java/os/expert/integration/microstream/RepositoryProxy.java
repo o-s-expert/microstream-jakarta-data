@@ -19,19 +19,15 @@ import jakarta.data.exceptions.MappingException;
 import jakarta.data.repository.Pageable;
 import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Sort;
-import org.eclipse.jnosql.communication.query.ConditionQueryValue;
 import org.eclipse.jnosql.communication.query.DeleteQuery;
 import org.eclipse.jnosql.communication.query.QueryCondition;
-import org.eclipse.jnosql.communication.query.QueryValue;
 import org.eclipse.jnosql.communication.query.SelectQuery;
-import org.eclipse.jnosql.communication.query.ValueType;
 import org.eclipse.jnosql.communication.query.Where;
 import org.eclipse.jnosql.communication.query.method.DeleteMethodProvider;
 import org.eclipse.jnosql.communication.query.method.SelectMethodProvider;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -40,8 +36,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
-import static os.expert.integration.microstream.CompareCondition.of;
 import static os.expert.integration.microstream.ReturnType.pageable;
 
 class RepositoryProxy<T, K> implements InvocationHandler {
@@ -72,13 +66,15 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case DELETE_BY:
                 delete(method, params);
                 return Void.class;
+
+            case OBJECT_METHOD:
+                return method.invoke(this, params);
             case FIND_ALL:
             case ORDER_BY:
             case QUERY:
             default:
                 throw new MappingException("There is not support for Microstream for feature of the type: " + type);
-            case OBJECT_METHOD:
-                return method.invoke(this, params);
+
         }
     }
 
