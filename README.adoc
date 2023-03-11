@@ -7,3 +7,58 @@ Microstream Integration aims to explore the capability of Jakarta persistence sp
 
 * *Jakarta Data*’s goal is to provide a familiar and consistent, Jakarta-based programming model for data access while still retaining the particular traits of the underlying data store.
 * *Jakarta NoSQL* is a Java framework that streamlines the integration of Java applications with NoSQL databases.
+
+## Goals
+
+* Increase productivity performing common Microstream operations
+* Rich Object Mapping integrated
+* Java-based Query and Fluent-API
+* Explore repository capability
+
+## Jakarta NoSQL
+
+For mapping both Data and NoSQL specifications, you should use Jakarta NoSQL. https://github.com/eclipse/jnosql[Check the NoSQL for more information].
+
+[source, java]
+----
+@Entity
+public class Book {
+
+
+    @Id
+    private String isbn;
+    @Column
+    private String title;
+
+    @Column
+    private Integer edition;
+
+    @Column
+    private Year release;
+
+    @Column
+    private String author;
+
+    @Column
+    private boolean active;
+...
+}
+----
+
+After mapping an entity, you can explore the advantage of using a `Template` interface, which can increase productivity on NoSQL operations.
+
+[source, java]
+----
+@Inject
+Template template;
+...
+Book effectiveJava = new Book();
+template.insert(effectiveJava);
+
+List<Book> result = template.select(Book.class).where("title").eq("Effective Java").result();
+
+template.delete(Book.class).where("edition").lte(2).execute();
+
+----
+
+## Maven
