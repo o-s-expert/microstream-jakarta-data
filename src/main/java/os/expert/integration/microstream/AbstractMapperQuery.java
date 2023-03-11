@@ -97,7 +97,6 @@ abstract class AbstractMapperQuery {
         appendCondition(of(value.getClass()).lte(value, field));
     }
 
-
     protected FieldMetadata field() {
         FieldMetadata field = mapping.field(name)
                 .orElseThrow(() -> new MappingException("The field " +name+  " does not exist at the entity "
