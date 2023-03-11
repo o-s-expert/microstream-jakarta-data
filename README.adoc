@@ -2,3 +2,8 @@
 :toc: auto
 
 ## Introduction
+
+Microstream Integration aims to explore the capability of Jakarta persistence specifications to make your life as a Java developer easier.
+
+* *Jakarta Data*’s goal is to provide a familiar and consistent, Jakarta-based programming model for data access while still retaining the particular traits of the underlying data store.
+* *Jakarta NoSQL* is a Java framework that streamlines the integration of Java applications with NoSQL databases.
