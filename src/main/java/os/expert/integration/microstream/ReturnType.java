@@ -101,7 +101,7 @@ enum ReturnType {
         <T> Object convert(Stream<T> stream, Pageable pageable) {
             return stream.findFirst();
         }
-    }, DEFAULT{
+    }, DEFAULT {
         @Override
         boolean isCompatible(Class<?> type) {
             return false;
@@ -125,6 +125,9 @@ enum ReturnType {
     }
 
     static Pageable pageable(Object[] params) {
+        if (params == null) {
+            return null;
+        }
         for (Object param : params) {
             if (param instanceof Pageable pageable) {
                 return pageable;
@@ -141,6 +144,9 @@ enum ReturnType {
 
     private static List<Sort> sorts(Object[] params) {
         List<Sort> orderBy = new ArrayList<>();
+        if(params == null){
+            return orderBy;
+        }
         for (Object param : params) {
             if (param instanceof Sort sort) {
                 orderBy.add(sort);

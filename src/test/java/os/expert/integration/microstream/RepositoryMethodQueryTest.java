@@ -206,8 +206,8 @@ public class RepositoryMethodQueryTest {
         List<Book> result = this.library.findByActiveFalse();
         assertThat(result)
                 .isNotEmpty()
-                .hasSize(1)
-                .allMatch(b -> b.active());
+                .hasSize(4)
+                .noneMatch(b -> b.active());
     }
 
     @ParameterizedTest
