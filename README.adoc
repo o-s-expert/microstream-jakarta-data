@@ -19,7 +19,7 @@ Microstream Integration aims to explore the capability of Jakarta persistence sp
 
 For mapping both Data and NoSQL specifications, you should use Jakarta NoSQL. https://github.com/eclipse/jnosql[Check the NoSQL for more information].
 
-[source, java]
+[source,java]
 ----
 @Entity
 public class Book {
@@ -49,7 +49,7 @@ WARNING: Microstream integration supports only an entity with `Entity`; otherwis
 
 After mapping an entity, you can explore the advantage of using a `Template` interface, which can increase productivity on NoSQL operations.
 
-[source, java]
+[source,java]
 ----
 @Inject
 Template template;
@@ -67,7 +67,7 @@ template.delete(Book.class).where("edition").lte(2).execute();
 
 A repository abstraction aims to significantly reduce the boilerplate code required to implement data access layers for various persistence stores.
 
-[source, java]
+[source,java]
 ----
 @Repository
 public interface Library  extends PageableRepository<Book, String> {
@@ -82,9 +82,10 @@ List<Book> cleanCode = this.library.findByTitle("Clean Code");
 
 ## Qualifier
 
-Microstream provides a qualifier when there are other vendors for both: Jakarta NoSQL and Jakarta Data. You can add `@Microstream` qualifier.
+Microstream provides a qualifier when there are other vendors for both: Jakarta NoSQL and Jakarta Data.
+You can add `@Microstream` qualifier.
 
-[source, java]
+[source,java]
 ----
 @Inject
 @Microstream
@@ -98,7 +99,7 @@ private Library library;
 
 Add the Maven dependency:
 
-[source, xml]
+[source,xml]
 ----
 <dependency>
   <groupId>os.expert.integration</groupId>
@@ -107,9 +108,32 @@ Add the Maven dependency:
 </dependency>
 ----
 
-
 ## Overwrite on Production
 
-By default, it will run the application and create an embedded solution. Be aware it is only for `test` proposals.
+By default, it will run the application and create an embedded solution.
+Be aware it is only for `test` proposals.
 
-Microstream integrates with several persistence engines where you can setup it up quickly. You can use Redis, MySQL, and Amazon S3; https://docs.microstream.one/manual/storage/storage-targets/index.html[check more info here].
+Microstream integrates with several persistence engines where you can setup it up quickly.
+You can use Redis, MySQL, and Amazon S3; https://docs.microstream.one/manual/storage/storage-targets/index.html[check more info here].
+
+You can overwrite this behavior programmatically.
+
+[source,xml]
+----
+
+@Alternative
+@Priority(Interceptor.Priority.APPLICrATION)
+@ApplicationScoped
+class CustomSupplier implements Supplier<StorageManager>{
+
+  @Override
+  @Produces
+  @ApplicationScoped
+  public StorageManager get() {
+        StorageManager manager = //some configuration
+        return manager.start();
+}
+}
+----
+
+WARNING: The integration works with the `StorageManager started.
