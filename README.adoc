@@ -106,3 +106,10 @@ Add the Maven dependency:
   <version>0.0.1</version>
 </dependency>
 ----
+
+
+## Overwrite on Production
+
+By default, it will run the application and create an embedded solution. Be aware it is only for `test` proposals.
+
+Microstream integrates with several persistence engines where you can setup it up quickly. You can use Redis, MySQL, and Amazon S3; https://docs.microstream.one/manual/storage/storage-targets/index.html[check more info here].
