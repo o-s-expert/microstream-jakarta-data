@@ -84,6 +84,9 @@ public class DataStructure {
      * @return a collection view of the values contained in this map
      */
     public <V> Stream<V> values() {
+        if (data.isEmpty()) {
+            return Stream.empty();
+        }
         return (Stream<V>) this.data.values().stream();
     }
 
@@ -94,6 +97,7 @@ public class DataStructure {
     public void clear() {
         this.data.clear();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

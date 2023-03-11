@@ -46,10 +46,12 @@ class RepositoryProxy<T, K> implements InvocationHandler {
             case DEFAULT:
                 return method.invoke(repository, params);
             case FIND_BY:
-                Stream<T> values = query(method, params);
-                return ReturnType.of(method.getReturnType()).convert(values, pageable(params));
+                return ReturnType.of(method.getReturnType())
+                        .convert(query(method, params), pageable(params));
             case COUNT_BY:
+                return query(method, params).count();
             case EXISTS_BY:
+                return query(method, params).findFirst().isPresent();
             case FIND_ALL:
             case ORDER_BY:
             case DELETE_BY:

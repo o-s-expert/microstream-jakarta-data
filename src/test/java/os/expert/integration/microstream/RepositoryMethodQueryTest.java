@@ -222,12 +222,12 @@ public class RepositoryMethodQueryTest {
 
     @ParameterizedTest
     @MethodSource("arguments")
-    public void shouldExistByActiveTrue(List<Book> books) {
+    public void shouldExistsByActiveTrue(List<Book> books) {
         this.library.saveAll(books);
-        boolean result = this.library.existByActiveTrue();
+        boolean result = this.library.existsByActiveTrue();
         assertThat(result).isTrue();
         this.library.deleteAll();
-        assertThat(this.library.existByActiveTrue()).isFalse();
+        assertThat(this.library.existsByActiveTrue()).isFalse();
     }
 
     @ParameterizedTest
