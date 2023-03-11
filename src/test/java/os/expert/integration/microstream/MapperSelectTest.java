@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -133,15 +134,36 @@ class MapperSelectTest {
 
     @Test
     public void shouldSelectWhereNot() {
+        List<Book> result = this.template.select(Book.class).where("title")
+                .not().eq("Effective Java").result();
+        List<Book> expected = library().stream().filter(b -> !b.title().equals("Effective Java"))
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
     @Test
     public void shouldSelectWhereAnd() {
+        List<Book> result = this.template.select(Book.class).where("title")
+                .eq("Effective Java").and("edition").gt(2).result();
+
+        Predicate<Book> effective = b -> b.title().equals("Effective Java");
+        Predicate<Book> edition = b -> b.edition() > 2;
+        List<Book> expected = library().stream().filter(effective.and(edition))
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
     public void shouldSelectWhereOr() {
+        List<Book> result = this.template.select(Book.class).where("title")
+                .eq("Effective Java").or("edition").gt(2).result();
+
+        Predicate<Book> effective = b -> b.title().equals("Effective Java");
+        Predicate<Book> edition = b -> b.edition() > 2;
+        List<Book> expected = library().stream().filter(effective.or(edition))
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
