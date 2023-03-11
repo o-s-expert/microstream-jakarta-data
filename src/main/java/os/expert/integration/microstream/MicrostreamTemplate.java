@@ -20,7 +20,6 @@ import java.util.Optional;
 @Typed({Template.class, MicrostreamTemplate.class})
 public class MicrostreamTemplate implements Template {
 
-
     private DataStructure data;
 
     private EntityMetadata metadata;
@@ -30,7 +29,6 @@ public class MicrostreamTemplate implements Template {
         this.data = data;
         this.metadata = metadata;
     }
-
 
     @Deprecated
     MicrostreamTemplate() {
