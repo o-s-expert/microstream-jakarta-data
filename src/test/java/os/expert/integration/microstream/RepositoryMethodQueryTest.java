@@ -232,6 +232,16 @@ public class RepositoryMethodQueryTest {
 
     @ParameterizedTest
     @MethodSource("arguments")
+    public void shouldDeleteByActiveTrue(List<Book> books) {
+        this.library.saveAll(books);
+        this.library.deleteByActiveTrue();
+        boolean result = this.library.existsByActiveTrue();
+        assertThat(result).isFalse();
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("arguments")
     public void shouldFindByTitlePageable(List<Book> books) {
         this.library.saveAll(books);
         String title = "Effective Java";
