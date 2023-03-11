@@ -118,7 +118,7 @@ You can use Redis, MySQL, and Amazon S3; https://docs.microstream.one/manual/sto
 
 You can overwrite this behavior programmatically.
 
-[source,xml]
+[source,java]
 ----
 
 @Alternative
