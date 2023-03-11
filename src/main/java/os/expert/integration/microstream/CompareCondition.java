@@ -9,34 +9,34 @@ enum CompareCondition {
 
     COMPARABLE {
         @Override
-        <T> Predicate<T> greater(Object param, FieldMetadata field) {
+        <T> Predicate<T> gt(Object param, FieldMetadata field) {
             return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))  <= -1;
         }
 
         @Override
-        <T> Predicate<T> lesser(Object param, FieldMetadata field) {
+        <T> Predicate<T> lt(Object param, FieldMetadata field) {
             return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))>= 1;
         }
 
         @Override
-        <T> Predicate<T> greaterEquals(Object param, FieldMetadata field) {
+        <T> Predicate<T> gte(Object param, FieldMetadata field) {
             return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))<= 0;
         }
 
         @Override
-        <T> Predicate<T> lesserEquals(Object param, FieldMetadata field) {
+        <T> Predicate<T> lte(Object param, FieldMetadata field) {
             return t -> ((Comparable) param).compareTo(checkTypes(field, t, param))  >= 0;
         }
     };
 
 
-    abstract <T> Predicate<T> greater(Object param, FieldMetadata field);
+    abstract <T> Predicate<T> gt(Object param, FieldMetadata field);
 
-    abstract <T> Predicate<T> lesser(Object param, FieldMetadata field);
+    abstract <T> Predicate<T> lt(Object param, FieldMetadata field);
 
-    abstract <T> Predicate<T> greaterEquals(Object param, FieldMetadata field);
+    abstract <T> Predicate<T> gte(Object param, FieldMetadata field);
 
-    abstract <T> Predicate<T> lesserEquals(Object param, FieldMetadata field);
+    abstract <T> Predicate<T> lte(Object param, FieldMetadata field);
 
     private static <T> Object checkTypes(FieldMetadata field, T entity, Object param) {
         Object value = field.get(entity);

@@ -26,7 +26,7 @@ final class Predicates {
                 .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
                         "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
-        return of(param.getClass()).lesserEquals(param, field);
+        return of(param.getClass()).lte(param, field);
     }
 
     static <T> Predicate<T> lt(EntityMetadata metadata, Method method, Object[] params,
@@ -37,7 +37,7 @@ final class Predicates {
                 .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
                         "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
-        return of(param.getClass()).lesser(param, field);
+        return of(param.getClass()).lt(param, field);
     }
 
     static <T> Predicate<T> gte(EntityMetadata metadata, Method method, Object[] params,
@@ -48,7 +48,7 @@ final class Predicates {
                 .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
                         "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
-        return of(param.getClass()).greaterEquals(param, field);
+        return of(param.getClass()).gte(param, field);
     }
 
     static <T> Predicate<T> gt(EntityMetadata metadata, Method method, Object[] params,
@@ -59,7 +59,7 @@ final class Predicates {
                 .orElseThrow(() -> new MappingException("The the entity " + metadata.type() + " " +
                         "there is no field with the name: " + condition.name()));
         Object param = param(method, params, value, paramIndex);
-        return of(param.getClass()).greater(param, field);
+        return of(param.getClass()).gt(param, field);
     }
 
     static <T> Predicate<T> eq(EntityMetadata metadata, Method method, Object[] params,

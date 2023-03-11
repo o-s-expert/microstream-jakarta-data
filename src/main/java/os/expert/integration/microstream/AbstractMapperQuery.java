@@ -80,25 +80,25 @@ abstract class AbstractMapperQuery {
     protected <T> void gteImpl(T value) {
         requireNonNull(value, "value is required");
         FieldMetadata field = field();
-        appendCondition(of(value.getClass()).greaterEquals(value, field));
+        appendCondition(of(value.getClass()).gte(value, field));
     }
 
     protected <T> void gtImpl(T value) {
         requireNonNull(value, "value is required");
         FieldMetadata field = field();
-        appendCondition(of(value.getClass()).greater(value, field));
+        appendCondition(of(value.getClass()).gt(value, field));
     }
 
     protected <T> void ltImpl(T value) {
         requireNonNull(value, "value is required");
         FieldMetadata field = field();
-        appendCondition(of(value.getClass()).lesser(value, field));
+        appendCondition(of(value.getClass()).lt(value, field));
     }
 
     protected <T> void lteImpl(T value) {
         requireNonNull(value, "value is required");
         FieldMetadata field = field();
-        appendCondition(of(value.getClass()).lesserEquals(value, field));
+        appendCondition(of(value.getClass()).lte(value, field));
     }
 
 

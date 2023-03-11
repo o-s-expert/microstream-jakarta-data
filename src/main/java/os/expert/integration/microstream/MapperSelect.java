@@ -1,2 +1,4 @@
-package os.expert.integration.microstream;public class MapperSelect {
+package os.expert.integration.microstream;
+
+class MapperSelect {
 }
