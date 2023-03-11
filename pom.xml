@@ -19,6 +19,12 @@
         <junit.version>5.9.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <classgraph.version>4.8.151</classgraph.version>
+        <maven-javadoc-plugin.vesion>3.3.2</maven-javadoc-plugin.vesion>
+        <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
+        <maven.compile.version>3.8.1</maven.compile.version>
+        <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
+        <jacoco.maven.version>0.8.8</jacoco.maven.version>
+        <maven.checkstyle.plugin.version>3.2.0</maven.checkstyle.plugin.version>
     </properties>
 
     <dependencies>
@@ -120,5 +126,231 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compile.version}</version>
+                <configuration>
+                    <target>${maven.compiler.target}</target>
+                    <source>${maven.compiler.source}</source>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${maven.surefire.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.maven.version}</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${maven.checkstyle.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>10.3</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>verify-style</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <excludes>**/module-info.java,${checkstyle.excludes}</excludes>
+                    <logViolationsToConsole>true</logViolationsToConsole>
+                    <consoleOutput>true</consoleOutput>
+                    <checkstyleRules>
+                        <module name="Checker">
+
+                            <module name="FileLength">
+                                <property name="max" value="3500"/>
+                                <property name="fileExtensions" value="java"/>
+                            </module>
+
+                            <module name="LineLength">
+                                <property name="max" value="180"/>
+                                <property name="ignorePattern" value="@version|@see"/>
+                            </module>
+
+                            <module name="FileTabCharacter"/>
+
+                            <module name="TreeWalker">
+                                <module name="SuppressionCommentFilter"/>
+                                <module name="ConstantName">
+                                    <property name="format" value="^(_?[a-z][a-zA-Z0-9]*|([A-Z](_?[A-Z0-9]+)*))$"/>
+                                </module>
+
+                                <module name="LocalVariableName"/>
+                                <module name="MethodName">
+                                    <property name="format" value="^_?[a-z][a-zA-Z0-9]*$"/>
+                                </module>
+                                <module name="PackageName"/>
+                                <module name="LocalFinalVariableName"/>
+                                <module name="ParameterName"/>
+                                <module name="StaticVariableName"/>
+                                <module name="TypeName">
+                                    <property name="format" value="^_?[A-Z][a-zA-Z0-9]*$"/>
+                                </module>
+
+                                <module name="AvoidStarImport">
+                                    <property name="excludes"
+                                              value="java.io,java.net,java.util,jakarta.enterprise.inject.spi,jakarta.enterprise.context"/>
+                                </module>
+                                <module name="IllegalImport"/>
+                                <module name="RedundantImport"/>
+                                <module name="UnusedImports"/>
+
+                                <module name="MethodLength">
+                                    <property name="max" value="250"/>
+                                </module>
+                                <module name="ParameterNumber">
+                                    <property name="max" value="15"/>
+                                </module>
+
+                                <module name="EmptyBlock">
+                                    <property name="option" value="text"/>
+                                </module>
+
+                                <module name="NeedBraces">
+                                    <property name="tokens"
+                                              value="LITERAL_DO, LITERAL_ELSE, LITERAL_FOR, LITERAL_WHILE"/>
+                                </module>
+                                <module name="LeftCurly">
+                                    <property name="option" value="EOL"/>
+                                </module>
+                                <module name="RightCurly">
+                                    <property name="option" value="SAME"/>
+                                </module>
+
+                                <module name="EmptyStatement"/>
+                                <module name="EqualsHashCode"/>
+                                <module name="DefaultComesLast"/>
+                                <module name="MissingSwitchDefault"/>
+                                <module name="FallThrough"/>
+                                <module name="MultipleVariableDeclarations"/>
+
+                                <module name="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck">
+                                    <property name="severity" value="ignore"/>
+                                </module>
+
+                                <module name="HideUtilityClassConstructor"/>
+
+                                <module name="com.puppycrawl.tools.checkstyle.checks.design.VisibilityModifierCheck">
+                                    <property name="packageAllowed" value="false"/>
+                                    <property name="protectedAllowed" value="true"/>
+                                    <property name="publicMemberPattern" value="^serialVersionUID"/>
+                                    <property name="severity" value="warning"/>
+                                </module>
+
+                                <module name="UpperEll"/>
+
+                                <module name="AnnotationLocation">
+                                    <property name="allowSamelineMultipleAnnotations" value="false"/>
+                                    <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+                                    <property name="allowSamelineParameterizedAnnotation" value="false"/>
+                                    <property name="tokens"
+                                              value="CLASS_DEF, INTERFACE_DEF, ENUM_DEF, METHOD_DEF, CTOR_DEF, VARIABLE_DEF, ANNOTATION_DEF"/>
+                                </module>
+                            </module>
+                        </module>
+                    </checkstyleRules>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>0.13</version>
+                <configuration>
+                    <includes>
+                        <include>src/**/*.java</include>
+                        <include>src/**/*.xml</include>
+                        <include>pom.xml</include>
+                    </includes>
+                    <excludes></excludes>
+                    <licenses>
+                        <license implementation="org.apache.rat.analysis.license.SimplePatternBasedLicense">
+                            <licenseFamilyCategory>AL20-EPL10</licenseFamilyCategory>
+                            <licenseFamilyName>Apache License, 2.0 and Eclipse Public License, 1.0</licenseFamilyName>
+                            <patterns>
+                                <pattern>Apache License v2.0</pattern>
+                                <pattern>Eclipse Public License v1.0</pattern>
+                            </patterns>
+                        </license>
+                    </licenses>
+                    <licenseFamilies>
+                        <licenseFamily implementation="org.apache.rat.license.SimpleLicenseFamily">
+                            <familyName>Apache License, 2.0 and Eclipse Public License, 1.0</familyName>
+                        </licenseFamily>
+                    </licenseFamilies>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.vesion}</version>
+                <configuration>
+                    <source>8</source>
+                    <detectJavaApiLink>false</detectJavaApiLink>
+                </configuration>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar.maven.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>
