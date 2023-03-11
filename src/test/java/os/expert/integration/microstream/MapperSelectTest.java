@@ -9,8 +9,12 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class MapperSelectTest {
 
@@ -25,60 +29,107 @@ class MapperSelectTest {
         this.data = new DataStructure();
         this.metadata = EntityMetadata.of(Book.class);
         this.template = new MicrostreamTemplate(data, metadata);
-
+        this.template.insert(library());
     }
 
 
 
     @Test
     public void shouldExecuteSelectFrom() {
-        this.template.insert(library());
         List<Book> result = this.template.select(Book.class).result();
-        org.assertj.core.api.Assertions.assertThat()
+        assertThat(result).isNotEmpty()
+                .containsAll(library());
     }
 
     @Test
     public void shouldSelectOrderAsc() {
+        List<Book> result = this.template.select(Book.class).orderBy("isbn")
+                .asc().result();
+
+        assertThat(result).isNotEmpty()
+                .containsExactly(library().toArray(Book[]::new));
     }
 
     @Test
     public void shouldSelectOrderDesc() {
+        List<Book> result = this.template.select(Book.class).orderBy("isbn")
+                .desc().result();
+        List<Book> expected = library().stream().sorted(Comparator.comparing(Book::isbn).reversed())
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty()
+                .containsExactly(expected.toArray(Book[]::new));
     }
 
     @Test
     public void shouldSelectLimit() {
+        List<Book> result = this.template.select(Book.class).orderBy("isbn")
+                .desc().limit(2).result();
+        List<Book> expected = library().stream().sorted(Comparator.comparing(Book::isbn).reversed())
+                .limit(2)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty()
+                .containsExactly(expected.toArray(Book[]::new));
     }
 
     @Test
     public void shouldSelectStart() {
+        List<Book> result = this.template.select(Book.class).orderBy("isbn")
+                .desc().limit(3).result();
+        List<Book> expected = library().stream().sorted(Comparator.comparing(Book::isbn).reversed())
+                .limit(3)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty()
+                .containsExactly(expected.toArray(Book[]::new));
     }
 
 
     @Test
     public void shouldSelectWhereEq() {
+        List<Book> result = this.template.select(Book.class).where("title")
+                .eq("Effective Java").result();
+        List<Book> expected = library().stream().filter(b -> b.title().equals("Effective Java"))
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
     @Test
     public void shouldSelectWhereGt() {
+        List<Book> result = this.template.select(Book.class).where("edition")
+                .gt(2).result();
+        List<Book> expected = library().stream().filter(b -> b.edition()> 2)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
     public void shouldSelectWhereGte() {
+        List<Book> result = this.template.select(Book.class).where("edition")
+                .gte(2).result();
+        List<Book> expected = library().stream().filter(b -> b.edition()>= 2)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
     @Test
     public void shouldSelectWhereLt() {
+        List<Book> result = this.template.select(Book.class).where("edition")
+                .lt(2).result();
+        List<Book> expected = library().stream().filter(b -> b.edition()< 2)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
     public void shouldSelectWhereLte() {
+        List<Book> result = this.template.select(Book.class).where("edition")
+                .lte(2).result();
+        List<Book> expected = library().stream().filter(b -> b.edition()<= 2)
+                .collect(Collectors.toUnmodifiableList());
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
-    @Test
-    public void shouldSelectWhereBetween() {
-    }
 
     @Test
     public void shouldSelectWhereNot() {
@@ -92,23 +143,6 @@ class MapperSelectTest {
     @Test
     public void shouldSelectWhereOr() {
     }
-
-    @Test
-    public void shouldConvertField() {
-    }
-
-    @Test
-    public void shouldUseAttributeConverter() {
-    }
-
-    @Test
-    public void shouldQueryByEmbeddable() {
-    }
-
-    @Test
-    public void shouldQueryBySubEntity() {
-    }
-
 
     @Test
     public void shouldResult() {

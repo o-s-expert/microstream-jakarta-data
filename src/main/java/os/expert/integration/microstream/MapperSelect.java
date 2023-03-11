@@ -138,9 +138,10 @@ class MapperSelect extends AbstractMapperQuery implements QueryMapper.MapperFrom
             values = values.filter((Predicate<? super T>) condition);
         }
         if (!sorts.isEmpty()) {
-            Optional<Comparator<T>> comparator = sorts.stream()
-                    .map(c -> (Comparator<T>) c).reduce(Comparator::thenComparing);
-
+            Comparator<T> comparator = sorts.stream()
+                    .map(c -> (Comparator<T>) c).reduce(Comparator::thenComparing)
+                    .orElseThrow();
+            values = values.sorted(comparator);
         }
         if (start > 0) {
             values = values.skip(start);
