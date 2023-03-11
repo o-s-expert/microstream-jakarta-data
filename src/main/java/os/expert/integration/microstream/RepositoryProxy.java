@@ -5,11 +5,13 @@ import jakarta.data.repository.Pageable;
 import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Sort;
 import org.eclipse.jnosql.communication.query.ConditionQueryValue;
+import org.eclipse.jnosql.communication.query.DeleteQuery;
 import org.eclipse.jnosql.communication.query.QueryCondition;
 import org.eclipse.jnosql.communication.query.QueryValue;
 import org.eclipse.jnosql.communication.query.SelectQuery;
 import org.eclipse.jnosql.communication.query.ValueType;
 import org.eclipse.jnosql.communication.query.Where;
+import org.eclipse.jnosql.communication.query.method.DeleteMethodProvider;
 import org.eclipse.jnosql.communication.query.method.SelectMethodProvider;
 
 import java.lang.reflect.InvocationHandler;
@@ -52,9 +54,10 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 return query(method, params).count();
             case EXISTS_BY:
                 return query(method, params).findFirst().isPresent();
+            case DELETE_BY:
+                delete(method, params);
             case FIND_ALL:
             case ORDER_BY:
-            case DELETE_BY:
             case QUERY:
             default:
                 throw new MappingException("There is not support for Microstream for feature of the type: " + type);
@@ -71,6 +74,24 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         return predicate;
     }
 
+
+    private void delete(Method method, Object[] params) {
+        EntityMetadata metadata = template.metadata();
+        DeleteMethodProvider provider = DeleteMethodProvider.INSTANCE;
+        DeleteQuery query = provider.apply(method, "");
+        Predicate<T> predicate = query
+                .where()
+                .map(w -> {
+                    Predicate<T> p = predicate(w, method, params, metadata);
+                    return p;
+                }).orElse(null);
+
+        Stream<T> values = repository.findAll();
+        if (predicate != null) {
+            values = values.filter(predicate);
+        }
+        this.repository.deleteAll(values.collect(Collectors.toUnmodifiableList()));
+    }
 
     private Stream<T> query(Method method, Object[] params) {
         EntityMetadata metadata = template.metadata();
