@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -136,7 +137,11 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
     @Override
     public void deleteAll(Iterable<? extends T> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        entities.forEach(this::delete);
+        EntityMetadata metadata = this.template.metadata();
+        FieldMetadata id = metadata.id();
+        Set<Object> keys = StreamSupport.stream(entities.spliterator(), false)
+                .map(id::get).collect(Collectors.toUnmodifiableSet());
+       this.template.delete(keys);
     }
 
     @Override
