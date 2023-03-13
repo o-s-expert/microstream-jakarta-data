@@ -130,7 +130,7 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
     @Override
     public void deleteAllById(Iterable<K> ids) {
         Objects.requireNonNull(ids, "ids is required");
-        ids.forEach(this::deleteById);
+       this.template.delete(ids);
     }
 
     @Override
@@ -141,8 +141,7 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
 
     @Override
     public void deleteAll() {
-        DataStructure data = this.template.data();
-        data.clear();
+        this.template.deleteAll();
     }
 
     private Class<?> type() {
