@@ -44,8 +44,7 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
         EntityMetadata metadata = this.template.metadata();
 
         Comparator<T> comparator = comparator(pageable, metadata);
-        DataStructure data = this.template.data();
-        Stream<T> entities = data.values();
+        Stream<T> entities = this.template.entities();
 
         if (Objects.nonNull(comparator)) {
             entities = entities.sorted(comparator);
@@ -90,7 +89,7 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
 
     @Override
     public Stream<T> findAll() {
-        return this.template.data().values();
+        return this.template.entities();
     }
 
     @Override
@@ -105,7 +104,7 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
 
     @Override
     public long count() {
-        return this.template.data().size();
+        return this.template.size();
     }
 
     @Override

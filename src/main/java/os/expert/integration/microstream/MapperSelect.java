@@ -148,7 +148,7 @@ class MapperSelect extends AbstractMapperQuery implements QueryMapper.MapperFrom
 
     @Override
     public <T> Stream<T> stream() {
-        Stream<T> values = this.template.data().values();
+        Stream<T> values = this.template.entities();
         if (condition != null) {
             values = values.filter((Predicate<? super T>) condition);
         }

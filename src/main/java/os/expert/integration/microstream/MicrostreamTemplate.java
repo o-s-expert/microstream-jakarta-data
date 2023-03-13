@@ -118,8 +118,12 @@ class MicrostreamTemplate implements Template {
         return this.data.values();
     }
 
-    int size() {
-        return this.size();
+    boolean isEmpty() {
+        return this.data.isEmpty();
+    }
+
+    long size() {
+        return this.data.size();
     }
 
     @Override
@@ -161,6 +165,5 @@ class MicrostreamTemplate implements Template {
         entities.forEach(this::save);
         return entities;
     }
-
 
 }

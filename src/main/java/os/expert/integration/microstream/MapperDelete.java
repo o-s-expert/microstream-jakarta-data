@@ -116,7 +116,7 @@ class MapperDelete extends AbstractMapperQuery implements QueryMapper.MapperDele
     }
 
     private <T> void delete() {
-        Stream<T> values = this.template.data().values();
+        Stream<T> values = this.template.entities();
         if (condition != null) {
             values = values.filter((Predicate<T>) condition);
         }
