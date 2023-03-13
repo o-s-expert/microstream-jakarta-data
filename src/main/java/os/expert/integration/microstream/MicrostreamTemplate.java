@@ -55,11 +55,9 @@ class MicrostreamTemplate implements Template {
     @Override
     @Transaction
     public <T> T insert(T entity) {
-        Objects.requireNonNull(entity, "entity is required");
-        Object id = this.metadata.id().get(entity);
-        this.data.put(id, entity);
-        return entity;
+        return save(entity);
     }
+
 
     @Override
     public <T> T insert(T entity, Duration ttl) {
@@ -69,9 +67,7 @@ class MicrostreamTemplate implements Template {
     @Override
     @Transaction
     public <T> Iterable<T> insert(Iterable<T> entities) {
-        Objects.requireNonNull(entities, "entities is required");
-        entities.forEach(this::insert);
-        return entities;
+        return save(entities);
     }
 
     @Override
@@ -82,13 +78,13 @@ class MicrostreamTemplate implements Template {
     @Override
     @Transaction
     public <T> T update(T entity) {
-        return insert(entity);
+        return save(entity);
     }
 
     @Override
     @Transaction
     public <T> Iterable<T> update(Iterable<T> entities) {
-        return insert(entities);
+        return save(entities);
     }
 
     @Override
@@ -135,5 +131,18 @@ class MicrostreamTemplate implements Template {
 
     EntityMetadata metadata() {
         return metadata;
+    }
+
+    private <T> T save(T entity) {
+        Objects.requireNonNull(entity, "entity is required");
+        Object id = this.metadata.id().get(entity);
+        this.data.put(id, entity);
+        return entity;
+    }
+
+    private <T> Iterable<T> save(Iterable<T> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        entities.forEach(this::save);
+        return entities;
     }
 }
