@@ -164,4 +164,14 @@ class MicrostreamTemplateTest {
         assertThat(this.template.isEmpty()).isFalse();
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldSize(List<Book> books){
+        assertThat(this.template.isEmpty()).isTrue();
+        assertThat(this.template.size()).isEqualTo(0);
+        this.template.insert(books);
+        assertThat(this.template.isEmpty()).isFalse();
+        assertThat(this.template.size()).isEqualTo(books.size());
+    }
+
 }
