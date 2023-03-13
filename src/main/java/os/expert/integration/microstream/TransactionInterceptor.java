@@ -28,8 +28,6 @@ import one.microstream.storage.types.StorageManager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.util.Optional.ofNullable;
-
 @Transaction
 @Interceptor
 @Priority(Interceptor.Priority.APPLICATION)
@@ -43,16 +41,15 @@ class TransactionInterceptor {
     @AroundInvoke
     public Object execute(InvocationContext context) throws Exception {
 
-        LOGGER.log(Level.FINEST,         "Executing a transaction at the method: " + context.getMethod());
+        LOGGER.log(Level.FINEST, "Executing a transaction at the method: " + context.getMethod());
 
         Object proceed = context.proceed();
 
-        XThreads.executeSynchronized(() ->
-        {
+        XThreads.executeSynchronized(() -> {
             final Object root = manager.root();
             final Storer storer = manager.createEagerStorer();
             final long storeId = storer.store(root);
-            LOGGER.log(Level.WARNING, "Store the root it might return performance issue " + storeId);
+            LOGGER.log(Level.WARNING, "Store the root: " + storeId);
             storer.commit();
         });
 
