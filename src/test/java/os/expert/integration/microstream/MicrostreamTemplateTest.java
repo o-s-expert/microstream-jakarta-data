@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -35,7 +36,7 @@ class MicrostreamTemplateTest {
 
     private EntityMetadata metadata;
 
-    private Template template;
+    private MicrostreamTemplate template;
 
     @BeforeEach
     public void setUp() {
@@ -136,7 +137,31 @@ class MicrostreamTemplateTest {
         optional = this.template.find(Book.class, book.isbn());
         assertThat(optional)
                 .isNotPresent();
+    }
 
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldDeleteAll(List<Book> books) {
+        this.template.insert(books);
+        assertThat(this.template.isEmpty()).isFalse();
+        this.template.deleteAll();
+        assertThat(this.template.isEmpty()).isTrue();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldReturnEntities(List<Book> books) {
+        this.template.insert(books);
+        Stream<Book> entities = this.template.entities();
+        assertThat(entities).containsAll(books);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BooksArgumentProvider.class)
+    public void shouldIsEmpty(List<Book> books){
+        assertThat(this.template.isEmpty()).isTrue();
+        this.template.insert(books);
+        assertThat(this.template.isEmpty()).isFalse();
     }
 
 }
