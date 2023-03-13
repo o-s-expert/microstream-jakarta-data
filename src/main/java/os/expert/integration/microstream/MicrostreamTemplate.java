@@ -26,6 +26,7 @@ import jakarta.nosql.Template;
 import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * The Microstream implementation of {@link Template}
@@ -113,6 +114,14 @@ class MicrostreamTemplate implements Template {
         this.data.clear();
     }
 
+    <T> Stream<T> entities() {
+        return this.data.values();
+    }
+
+    int size() {
+        return this.size();
+    }
+
     @Override
     public <T> QueryMapper.MapperFrom select(Class<T> type) {
         Objects.requireNonNull(type, "type is required");
@@ -134,10 +143,6 @@ class MicrostreamTemplate implements Template {
 
         throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
                 + type + " @Entity class " + metadata.type());
-    }
-
-    DataStructure data() {
-        return data;
     }
 
     EntityMetadata metadata() {
