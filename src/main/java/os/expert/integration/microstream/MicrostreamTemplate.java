@@ -102,6 +102,17 @@ class MicrostreamTemplate implements Template {
         this.data.remove(id);
     }
 
+    @Transaction
+    <T, K> void delete(Iterable<K> ids) {
+        Objects.requireNonNull(ids, "ids is required");
+        ids.forEach(this.data::remove);
+    }
+
+    @Transaction
+    void deleteAll() {
+        this.data.clear();
+    }
+
     @Override
     public <T> QueryMapper.MapperFrom select(Class<T> type) {
         Objects.requireNonNull(type, "type is required");
@@ -145,4 +156,6 @@ class MicrostreamTemplate implements Template {
         entities.forEach(this::save);
         return entities;
     }
+
+
 }
