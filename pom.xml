@@ -40,6 +40,7 @@
         <maven.surefire.plugin.version>2.22.2</maven.surefire.plugin.version>
         <jacoco.maven.version>0.8.8</jacoco.maven.version>
         <maven.checkstyle.plugin.version>3.2.0</maven.checkstyle.plugin.version>
+        <apache.rat.version>0.15</apache.rat.version>
     </properties>
 
     <dependencies>
@@ -335,10 +336,39 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>${maven-javadoc-plugin.vesion}</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
-                    <source>8</source>
-                    <detectJavaApiLink>false</detectJavaApiLink>
+                    <source>${maven.compiler.source}</source>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.rat</groupId>
+                <artifactId>apache-rat-plugin</artifactId>
+                <version>${apache.rat.version}</version>
+                <configuration>
+                    <includes>
+                        <include>src/**/*.java</include>
+                        <include>src/**/*.xml</include>
+                        <include>pom.xml</include>
+                    </includes>
+                    <excludes>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <pluginManagement>
