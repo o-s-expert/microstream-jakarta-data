@@ -21,7 +21,7 @@
 
     <groupId>expert.os.integration</groupId>
     <artifactId>microstream-jakarta-data</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
