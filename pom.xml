@@ -23,6 +23,35 @@
     <artifactId>microstream-jakarta-data</artifactId>
     <version>0.0.1</version>
 
+    <name>Microstream Integration Jakarta persistence layers</name>
+    <description>Microstream Integration aims to explore the capability of Jakarta persistence
+        specifications to make your life as a Java developer easier.
+    </description>
+    <url>https://microstream.one/</url>
+
+    <licenses>
+        <license>
+            <name>Apache-2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <connection>scm:git:git://github.com/ultimate-sophistication/microstream-jakarta-data.git</connection>
+        <developerConnection>scm:git:ssh://github.com:ultimate-sophistication/microstream-jakarta-data.git</developerConnection>
+        <url>https://github.com/ultimate-sophistication/microstream-jakarta-data</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Otavio Santana</name>
+            <email>otavio@os.expert</email>
+            <organization>Microstream</organization>
+            <organizationUrl>https://microstream.one/</organizationUrl>
+        </developer>
+    </developers>
+
+
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
