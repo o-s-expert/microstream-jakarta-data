@@ -17,6 +17,7 @@ package expert.os.integration.microstream;
 
 
 import jakarta.annotation.Priority;
+import jakarta.data.exceptions.MappingException;
 import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
@@ -43,16 +44,25 @@ class TransactionInterceptor {
 
         LOGGER.log(Level.FINEST, "Executing a transaction at the method: " + context.getMethod());
 
-        Object proceed = context.proceed();
-
-        XThreads.executeSynchronized(() -> {
+        Object result = XThreads.executeSynchronized(() -> {
+            Object proceed = proceed(context);
             final Object root = manager.root();
             final Storer storer = manager.createEagerStorer();
             final long storeId = storer.store(root);
             LOGGER.log(Level.WARNING, "Store the root: " + storeId);
             storer.commit();
+            return proceed;
         });
 
-        return proceed;
+        return result;
+    }
+
+    private static Object proceed(InvocationContext context) {
+        try {
+            return context.proceed();
+        } catch (Exception extension) {
+            throw new MappingException("There is an issue at the Microstream interceptor", extension);
+        }
+
     }
 }
