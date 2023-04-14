@@ -33,18 +33,13 @@ class ClassScannerTest {
 
     @Test
     public void shouldReturnEntity() {
-        Set<Class<?>> entities = this.scanner.entity().stream()
-                .collect(Collectors.toUnmodifiableSet());
-        Assertions.assertThat(entities).hasSize(1)
+        Assertions.assertThat(this.scanner.entities()).hasSize(1)
                 .contains(Book.class);
     }
 
     @Test
     public void shouldReturnRepository() {
-        Set<Class<?>> repositories = this.scanner.repository()
-                .stream()
-                .collect(Collectors.toUnmodifiableSet());
-        Assertions.assertThat(repositories).hasSize(1)
+        Assertions.assertThat(this.scanner.repositories()).hasSize(1)
                 .contains(Library.class);
     }
 
