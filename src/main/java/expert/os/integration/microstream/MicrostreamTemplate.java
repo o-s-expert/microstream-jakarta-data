@@ -16,6 +16,7 @@
 package expert.os.integration.microstream;
 
 
+import jakarta.data.exceptions.MappingException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Typed;
@@ -41,12 +42,12 @@ class MicrostreamTemplate implements Template {
 
     private DataStructure data;
 
-    private EntityMetadata metadata;
+    private Entities entities;
 
     @Inject
-    MicrostreamTemplate(DataStructure data, EntityMetadata metadata) {
+    MicrostreamTemplate(DataStructure data, Entities entities) {
         this.data = data;
-        this.metadata = metadata;
+        this.entities = entities;
     }
 
     @Deprecated
@@ -129,33 +130,22 @@ class MicrostreamTemplate implements Template {
     @Override
     public <T> QueryMapper.MapperFrom select(Class<T> type) {
         Objects.requireNonNull(type, "type is required");
-        if (metadata.type().equals(type)) {
-            return new MapperSelect(metadata, this);
-        }
-
-        throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
-                + type + " @Entity class " + metadata.type());
-
+        EntityMetadata metadata = metadata(type);
+        return new MapperSelect(metadata, this);
     }
 
     @Override
     public <T> QueryMapper.MapperDeleteFrom delete(Class<T> type) {
         Objects.requireNonNull(type, "type is required");
-        if (metadata.type().equals(type)) {
-            return new MapperDelete(metadata, this);
-        }
-
-        throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
-                + type + " @Entity class " + metadata.type());
+        EntityMetadata metadata = metadata(type);
+        return new MapperDelete(metadata, this);
     }
 
-    EntityMetadata metadata() {
-        return metadata;
-    }
 
     private <T> T save(T entity) {
         Objects.requireNonNull(entity, "entity is required");
-        Object id = this.metadata.id().get(entity);
+        EntityMetadata metadata = metadata(entity.getClass());
+        Object id = metadata.id().get(entity);
         this.data.put(id, entity);
         return entity;
     }
@@ -164,6 +154,13 @@ class MicrostreamTemplate implements Template {
         Objects.requireNonNull(entities, "entities is required");
         entities.forEach(this::save);
         return entities;
+    }
+
+    private <T> EntityMetadata metadata(Class<T> type) {
+        Optional<EntityMetadata> metadata = entities.findType(type);
+        return metadata
+                .orElseThrow(() -> new MappingException("The enity type is not found on mapping: "
+                        + type + " The type most annotated with @Entity"));
     }
 
 }
