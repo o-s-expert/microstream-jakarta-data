@@ -19,7 +19,6 @@ import jakarta.data.repository.CrudRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
-import java.lang.reflect.Type;
 
 enum RepositoryProxySupplier {
 
