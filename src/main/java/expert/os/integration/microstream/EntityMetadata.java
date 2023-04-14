@@ -16,7 +16,6 @@
 package expert.os.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
-import jakarta.enterprise.inject.Vetoed;
 import jakarta.nosql.Column;
 import jakarta.nosql.Id;
 
@@ -32,29 +31,14 @@ import java.util.Optional;
  * This instance is the meta-info of a loaded class that has the  {@link jakarta.nosql.Entity} annotation.
  * It represents the information of an entity on Jakarta NoSQL as metadata.
  */
-final class EntityMetadata {
+record EntityMetadata(FieldMetadata id, List<FieldMetadata> fields, Class<?> type) {
 
-    private final FieldMetadata id;
-    private final List<FieldMetadata> fields;
-    private final Class<?> type;
 
-    private EntityMetadata(FieldMetadata id, List<FieldMetadata> fields, Class<?> type) {
-        this.id = id;
-        this.fields = fields;
-        this.type = type;
-    }
-
-    List<FieldMetadata> fields() {
+    @Override
+    public List<FieldMetadata> fields() {
         return Collections.unmodifiableList(fields);
     }
 
-    FieldMetadata id() {
-        return id;
-    }
-
-    Class<?> type() {
-        return type;
-    }
 
     Optional<FieldMetadata> field(String name) {
         if (id.name().equals(name)) {
@@ -62,34 +46,6 @@ final class EntityMetadata {
         }
         return this.fields.stream().filter(f -> f.name().equals(name))
                 .findFirst();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        EntityMetadata that = (EntityMetadata) o;
-        return Objects.equals(id, that.id)
-                && Objects.equals(fields, that.fields)
-                && Objects.equals(type, that.type);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, fields, type);
-    }
-
-    @Override
-    public String toString() {
-        return "EntityMetadata{" +
-                "id=" + id +
-                ", fields=" + fields +
-                ", type=" + type +
-                '}';
     }
 
     static EntityMetadata of(Class<?> type) {
@@ -110,6 +66,4 @@ final class EntityMetadata {
         }
         return new EntityMetadata(id, fields, type);
     }
-
-
 }
