@@ -21,7 +21,6 @@ import jakarta.data.repository.Pageable;
 import jakarta.data.repository.PageableRepository;
 import jakarta.data.repository.Sort;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
