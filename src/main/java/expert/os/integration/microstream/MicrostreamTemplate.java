@@ -156,7 +156,7 @@ class MicrostreamTemplate implements Template {
         return entities;
     }
 
-    private <T> EntityMetadata metadata(Class<T> type) {
+    <T> EntityMetadata metadata(Class<T> type) {
         Optional<EntityMetadata> metadata = entities.findType(type);
         return metadata
                 .orElseThrow(() -> new MappingException("The enity type is not found on mapping: "

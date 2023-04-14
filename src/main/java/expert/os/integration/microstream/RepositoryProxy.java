@@ -42,9 +42,12 @@ class RepositoryProxy<T, K> implements InvocationHandler {
 
     private final MicrostreamTemplate template;
 
-    RepositoryProxy(PageableRepository<T, K> repository, MicrostreamTemplate template) {
+    private final Class<T> type;
+
+    RepositoryProxy(PageableRepository<T, K> repository, MicrostreamTemplate template, Class<T> type) {
         this.repository = repository;
         this.template = template;
+        this.type = type;
     }
 
 
@@ -85,7 +88,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
 
 
     private void delete(Method method, Object[] params) {
-        EntityMetadata metadata = template.metadata();
+        EntityMetadata metadata = template.metadata(this.type);
         DeleteMethodProvider provider = DeleteMethodProvider.INSTANCE;
         DeleteQuery query = provider.apply(method, "");
         Predicate<T> predicate = query
@@ -103,7 +106,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
     }
 
     private Stream<T> query(Method method, Object[] params) {
-        EntityMetadata metadata = template.metadata();
+        EntityMetadata metadata = template.metadata(this.type);
         SelectMethodProvider provider = SelectMethodProvider.INSTANCE;
         SelectQuery query = provider.apply(method, "");
         Predicate<T> predicate = query
