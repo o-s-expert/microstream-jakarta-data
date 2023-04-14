@@ -16,6 +16,7 @@
 package expert.os.integration.microstream;
 
 
+import jakarta.data.exceptions.MappingException;
 import jakarta.data.exceptions.NonUniqueResultException;
 import jakarta.nosql.Template;
 import org.junit.jupiter.api.Assertions;
@@ -48,7 +49,6 @@ class MapperSelectTest {
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());
     }
-
 
 
     @Test
@@ -221,7 +221,7 @@ class MapperSelectTest {
 
     @Test
     public void shouldReturnErrorWhenDifferentType() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> template.select(String.class).orderBy(null));
+        Assertions.assertThrows(MappingException.class, () -> template.select(String.class).orderBy(null));
     }
 
     private List<Book> library() {
