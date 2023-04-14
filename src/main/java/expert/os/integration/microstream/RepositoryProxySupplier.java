@@ -19,6 +19,7 @@ import jakarta.data.repository.CrudRepository;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 
 enum RepositoryProxySupplier {
 
@@ -35,7 +36,7 @@ enum RepositoryProxySupplier {
      * @return a Repository interface
      */
     <T, K, R extends CrudRepository<T, K>> R get(Class<R> type, MicrostreamTemplate template) {
-        ParameterizedType parameterizedType = (ParameterizedType) this.getClass().getGenericSuperclass();
+        ParameterizedType parameterizedType = (ParameterizedType) type.getGenericInterfaces()[0];
         Class<T> entity = (Class<T>) parameterizedType.getActualTypeArguments()[0];
         MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template, entity);
         RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository, template, entity);
