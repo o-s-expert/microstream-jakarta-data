@@ -21,7 +21,7 @@ import jakarta.enterprise.inject.Produces;
 import java.util.function.Supplier;
 
 @ApplicationScoped
-class EntityMetadataSupplier implements Supplier<Entities> {
+class EntitiesSupplier implements Supplier<Entities> {
 
     @Override
     @Produces
