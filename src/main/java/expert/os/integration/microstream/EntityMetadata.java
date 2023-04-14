@@ -16,6 +16,7 @@
 package expert.os.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
+import jakarta.enterprise.inject.Vetoed;
 import jakarta.nosql.Column;
 import jakarta.nosql.Id;
 
@@ -26,6 +27,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+
+/**
+ * This instance is the meta-info of a loaded class that has the  {@link jakarta.nosql.Entity} annotation.
+ * It represents the information of an entity on Jakarta NoSQL as metadata.
+ */
 final class EntityMetadata {
 
     private final FieldMetadata id;
