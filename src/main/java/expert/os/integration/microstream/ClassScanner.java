@@ -18,7 +18,6 @@ package expert.os.integration.microstream;
 
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
-import jakarta.data.exceptions.MappingException;
 import jakarta.data.repository.DataRepository;
 import jakarta.data.repository.Repository;
 import jakarta.nosql.Entity;
@@ -40,7 +39,6 @@ public enum ClassScanner {
 
     private final Set<Class<?>> entities;
     private final Set<Class<?>> repositories;
-
 
     ClassScanner() {
         this.entities = new HashSet<>();
