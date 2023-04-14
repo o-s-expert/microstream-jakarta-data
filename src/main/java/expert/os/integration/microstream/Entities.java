@@ -16,9 +16,26 @@
 package expert.os.integration.microstream;
 
 import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * Represents a collection of {@link EntityMetadata}
  */
 record Entities(Map<Class<?>, EntityMetadata> entities) {
+
+    Optional<EntityMetadata> findType(Class<?> type) {
+        return Optional.ofNullable(this.entities.get(type));
+    }
+
+    static Entities of(Set<Class<?>> entities) {
+        Objects.requireNonNull(entities, "entities is required");
+        return new Entities(entities.stream()
+                .collect(toMap(Function.identity(), EntityMetadata::of)));
+    }
 }
