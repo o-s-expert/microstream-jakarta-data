@@ -22,26 +22,25 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MapperDeleteTest {
 
     private DataStructure data;
 
-    private EntityMetadata metadata;
 
     private Template template;
 
     @BeforeEach
     public void setUp() {
         this.data = new DataStructure();
-        this.metadata = EntityMetadata.of(Book.class);
-        this.template = new MicrostreamTemplate(data, metadata);
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());
     }
 

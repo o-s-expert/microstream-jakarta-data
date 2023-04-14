@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,6 @@ import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("The Microstream's PageableRepository default methods")
 public class RepositoryBasicOperationsTest {
@@ -44,14 +44,11 @@ public class RepositoryBasicOperationsTest {
 
     private MicrostreamTemplate template;
 
-    private EntityMetadata metadata;
-
-
     @BeforeEach
     public void setUp() {
-        this.metadata = EntityMetadata.of(Book.class);
+        Entities entities = Entities.of(Collections.singleton(Book.class));
         this.data = new DataStructure();
-        this.template = new MicrostreamTemplate(data, metadata);
+        this.template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
     }
 
