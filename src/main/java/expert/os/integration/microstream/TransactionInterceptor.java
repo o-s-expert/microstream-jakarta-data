@@ -49,7 +49,7 @@ class TransactionInterceptor {
             final Object root = manager.root();
             final Storer storer = manager.createEagerStorer();
             final long storeId = storer.store(root);
-            LOGGER.log(Level.WARNING, "Store the root: " + storeId);
+            LOGGER.log(Level.FINEST, "Store the root: " + storeId);
             storer.commit();
             return proceed;
         });
