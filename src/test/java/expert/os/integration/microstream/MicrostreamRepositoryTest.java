@@ -26,6 +26,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -44,14 +45,13 @@ public class MicrostreamRepositoryTest {
 
     private MicrostreamTemplate template;
 
-    private EntityMetadata metadata;
 
     @BeforeEach
     public void setUp() {
-        this.metadata = EntityMetadata.of(Book.class);
+        Entities entities = Entities.of(Collections.singleton(Book.class));
         this.data = new DataStructure();
-        this.template = new MicrostreamTemplate(data, metadata);
-        this.library = new MicrostreamRepository<>(template);
+        this.template = new MicrostreamTemplate(data, entities);
+        this.library = new MicrostreamRepository<>(template, Book.class);
     }
 
     @ParameterizedTest

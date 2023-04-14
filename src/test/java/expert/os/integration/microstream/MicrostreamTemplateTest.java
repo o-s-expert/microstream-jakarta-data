@@ -40,8 +40,8 @@ class MicrostreamTemplateTest {
     @BeforeEach
     public void setUp() {
         this.data = new DataStructure();
-        this.metadata = EntityMetadata.of(Book.class);
-        this.template = new MicrostreamTemplate(data, metadata);
+       Entities entities = Entities.of(Collections.singleton(Book.class));
+        this.template = new MicrostreamTemplate(data, entities);
 
     }
 

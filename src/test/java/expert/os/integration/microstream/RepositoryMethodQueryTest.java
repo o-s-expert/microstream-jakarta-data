@@ -29,6 +29,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Queue;
 import java.util.Set;
@@ -43,18 +44,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RepositoryMethodQueryTest {
 
     private Library library;
-    private DataStructure data;
-
     private MicrostreamTemplate template;
-
-    private EntityMetadata metadata;
 
 
     @BeforeEach
     public void setUp() {
-        this.metadata = EntityMetadata.of(Book.class);
-        this.data = new DataStructure();
-        this.template = new MicrostreamTemplate(data, metadata);
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        DataStructure data = new DataStructure();
+        this.template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
     }
 
