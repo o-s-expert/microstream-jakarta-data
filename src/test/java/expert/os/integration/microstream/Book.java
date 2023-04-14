@@ -24,8 +24,6 @@ import java.util.Objects;
 
 @Entity
 public class Book {
-
-
     @Id
     private String isbn;
     @Column
