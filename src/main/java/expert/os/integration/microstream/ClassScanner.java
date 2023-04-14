@@ -23,6 +23,7 @@ import jakarta.data.repository.DataRepository;
 import jakarta.data.repository.Repository;
 import jakarta.nosql.Entity;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -37,13 +38,13 @@ public enum ClassScanner {
 
     INSTANCE;
 
-    private final Class<?> entity;
-    private final Class<?> repository;
+    private final Set<Class<?>> entities;
+    private final Set<Class<?>> repositories;
 
 
     ClassScanner() {
-        Set<Class<?>> entities = new HashSet<>();
-        Set<Class<?>> repositories = new HashSet<>();
+        this.entities = new HashSet<>();
+        this.repositories = new HashSet<>();
 
         Logger logger = Logger.getLogger(ClassScanner.class.getName());
         logger.fine("Starting scan class to find entities, embeddable and repositories.");
@@ -55,26 +56,16 @@ public enum ClassScanner {
         logger.fine(String.format("Finished the class scan with entities %d, and repositories: %d"
                 , entities.size(), repositories.size()));
 
-        if (entities.size() > 1) {
-            throw new MappingException("Microstream Jakarta Data does not support more than one entity using jakarta.nosql.Entity");
-        }
-
-        if (repositories.size() > 1) {
-            throw new MappingException("Microstream Jakarta Data does not support more than one Repository");
-        }
-
-        this.entity = entities.stream().findFirst().orElse(null);
-        this.repository = repositories.stream().findFirst().orElse(null);
     }
 
 
     /**
-     * Returns the class that that has the {@link Entity} annotation
+     * Returns the classes that that has the {@link Entity} annotation
      *
-     * @return the class with {@link Entity} annotation or {@link Optional#empty()}
+     * @return the classes with {@link Entity}
      */
-    public Optional<Class<?>> entity() {
-        return Optional.ofNullable(entity);
+    public Set<Class<?>> entities() {
+        return Collections.unmodifiableSet(this.entities);
     }
 
     /**
@@ -82,8 +73,8 @@ public enum ClassScanner {
      *
      * @return the repository or the {@link Optional#empty()}
      */
-    public Optional<Class<?>> repository() {
-        return Optional.ofNullable(repository);
+    public Set<Class<?>> repository() {
+        Collections.unmodifiableSet(this.repositories);
     }
 
 }
