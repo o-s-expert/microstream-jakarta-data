@@ -29,9 +29,6 @@ class DataStructureSupplier implements Supplier<DataStructure> {
     @Inject
     private StorageManager manager;
 
-    @Inject
-    private EntityMetadata metadata;
-
     @Override
     @Produces
     @ApplicationScoped

@@ -26,7 +26,13 @@ import static java.util.stream.Collectors.toMap;
 /**
  * Represents a collection of {@link EntityMetadata}
  */
-record Entities(Map<Class<?>, EntityMetadata> entities) {
+class Entities {
+
+    private Map<Class<?>, EntityMetadata> entities;
+
+    Entities(Map<Class<?>, EntityMetadata> entities) {
+        this.entities = entities;
+    }
 
     Optional<EntityMetadata> findType(Class<?> type) {
         return Optional.ofNullable(this.entities.get(type));
