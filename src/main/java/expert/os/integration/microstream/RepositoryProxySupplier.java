@@ -38,7 +38,7 @@ enum RepositoryProxySupplier {
         ParameterizedType parameterizedType = (ParameterizedType) this.getClass().getGenericSuperclass();
         Class<T> entity = (Class<T>) parameterizedType.getActualTypeArguments()[0];
         MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template, entity);
-        RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository, template);
+        RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository, template, entity);
         return (R) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class[]{type},
                 handler);
