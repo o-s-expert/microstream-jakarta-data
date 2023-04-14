@@ -73,7 +73,7 @@ public enum ClassScanner {
      *
      * @return the repository or the {@link Optional#empty()}
      */
-    public Set<Class<?>> repository() {
+    public Set<Class<?>> repositories() {
         Collections.unmodifiableSet(this.repositories);
     }
 
