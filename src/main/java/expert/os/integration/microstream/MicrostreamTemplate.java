@@ -115,7 +115,7 @@ class MicrostreamTemplate implements Template {
 
     <T, K> void delete(Iterable<K> ids) {
         Objects.requireNonNull(ids, "ids is required");
-        ids.forEach(this.data::remove);
+        this.data.remove(ids);
     }
 
     void deleteAll() {
