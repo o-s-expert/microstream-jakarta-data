@@ -16,13 +16,17 @@
 package expert.os.integration.microstream;
 
 import jakarta.nosql.Template;
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,13 +34,16 @@ import java.util.function.Predicate;
 
 public class MapperDeleteTest {
 
-    private DataStructure data;
+    private DataStorage data;
 
     private Template template;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
+        Persister persister = Mockito.mock(Persister.class);
+        Storer storer = Mockito.mock(Storer.class);
+        Mockito.when(persister.createEagerStorer()).thenReturn(storer);
+        this.data = new DataStorage(new HashMap<>(), persister);
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());

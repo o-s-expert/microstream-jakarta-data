@@ -25,9 +25,13 @@ import jakarta.nosql.QueryMapper;
 import jakarta.nosql.Template;
 
 import java.time.Duration;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The Microstream implementation of {@link Template}
@@ -50,12 +54,12 @@ import java.util.stream.Stream;
 @Microstream
 class MicrostreamTemplate implements Template {
 
-    private DataStructure data;
+    private DataStorage data;
 
     private Entities entities;
 
     @Inject
-    MicrostreamTemplate(DataStructure data, Entities entities) {
+    MicrostreamTemplate(DataStorage data, Entities entities) {
         this.data = data;
         this.entities = entities;
     }
@@ -65,7 +69,6 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T> T insert(T entity) {
         return save(entity);
     }
@@ -77,7 +80,6 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T> Iterable<T> insert(Iterable<T> entities) {
         return save(entities);
     }
@@ -88,13 +90,11 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T> T update(T entity) {
         return save(entity);
     }
 
     @Override
-    @Transaction
     public <T> Iterable<T> update(Iterable<T> entities) {
         return save(entities);
     }
@@ -108,20 +108,17 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T, K> void delete(Class<T> type, K id) {
         Objects.requireNonNull(type, "type is required");
         Objects.requireNonNull(id, "id is required");
         this.data.remove(id);
     }
 
-    @Transaction
     <T, K> void delete(Iterable<K> ids) {
         Objects.requireNonNull(ids, "ids is required");
-        ids.forEach(this.data::remove);
+        this.data.remove(ids);
     }
 
-    @Transaction
     void deleteAll() {
         this.data.clear();
     }
@@ -130,6 +127,14 @@ class MicrostreamTemplate implements Template {
         return this.data.values();
     }
 
+    <T> Stream<T> entities(Predicate<?> filter, List<Comparator<?>> sorts,
+                           long start, long limit) {
+        return this.data.values((Predicate<Object>) filter, sorts, start, limit);
+    }
+
+    void remove(Predicate<Object> filter){
+        this.data.remove(filter);
+    }
     boolean isEmpty() {
         return this.data.isEmpty();
     }
@@ -155,15 +160,17 @@ class MicrostreamTemplate implements Template {
 
     private <T> T save(T entity) {
         Objects.requireNonNull(entity, "entity is required");
-        EntityMetadata metadata = metadata(entity.getClass());
-        Object id = metadata.id().get(entity);
-        this.data.put(id, entity);
+        Entry entry = entry(entity);
+        this.data.put(entry.key(), entry.value());
         return entity;
     }
 
     private <T> Iterable<T> save(Iterable<T> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        entities.forEach(this::save);
+
+        List<Entry> entries = StreamSupport.stream(entities.spliterator(), false)
+                .map(this::entry).toList();
+        this.data.put(entries);
         return entities;
     }
 
@@ -173,5 +180,11 @@ class MicrostreamTemplate implements Template {
                 .orElseThrow(() -> new MappingException("The enity type is not found on mapping: "
                         + type + " The type most annotated with @Entity"));
     }
+
+    private <T> Entry entry(T entity) {
+        EntityMetadata metadata = metadata(entity.getClass());
+        return metadata.entry(entity);
+    }
+
 
 }

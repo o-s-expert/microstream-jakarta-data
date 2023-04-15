@@ -15,19 +15,32 @@
 
 package expert.os.integration.microstream;
 
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
-class DataStructureTest {
+class DataStorageTest {
 
-    private DataStructure data;
+    private DataStorage data;
+
+    private Persister persister;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
+        this.persister = Mockito.mock(Persister.class);
+        Storer storer = Mockito.mock(Storer.class);
+        Mockito.when(persister.createEagerStorer()).thenReturn(storer);
+        this.data = new DataStorage(new HashMap<>(), persister);
     }
 
     @Test
@@ -40,6 +53,8 @@ class DataStructureTest {
                 .isNotNull()
                 .matches(p -> p.size() == 3);
 
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
     }
 
     @Test
@@ -67,6 +82,8 @@ class DataStructureTest {
 
         this.data.remove("one");
 
+        Mockito.verify(this.persister, Mockito.times(2))
+                .createEagerStorer();
         Assertions.assertThat(this.data.get("one"))
                 .isNotPresent();
     }
@@ -79,6 +96,9 @@ class DataStructureTest {
 
         Assertions.assertThat(this.data.size())
                 .isEqualTo(3);
+
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
     }
 
     @Test
@@ -93,6 +113,9 @@ class DataStructureTest {
         Assertions.assertThat(this.data.isEmpty())
                 .isFalse();
 
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
+
     }
 
     @Test
@@ -104,7 +127,40 @@ class DataStructureTest {
         Assertions.assertThat(this.data.values())
                 .hasSize(3)
                 .contains(1, 2, 4);
+
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
     }
 
+    @Test
+    public void shouldPutEntries() {
+        List<Entry> entries = List.of(Entry.of("one", 1), Entry.of("two", 2), Entry.of("four", 4));
+        this.data.put(entries);
+        Assertions.assertThat(this.data.values())
+                .hasSize(3)
+                .contains(1, 2, 4);
+        Mockito.verify(this.persister, Mockito.only())
+                .createEagerStorer();
+    }
 
+    @Test
+    public void shouldRemoveMultipleIds() {
+        List<Entry> entries = List.of(Entry.of("one", 1), Entry.of("two", 2), Entry.of("four", 4));
+        this.data.put(entries);
+        this.data.remove(List.of("one", "two", "four"));
+        Mockito.verify(this.persister, Mockito.times(2))
+                .createEagerStorer();
+    }
+
+    @Test
+    public void shouldReturnValueFromPredicate() {
+        List<Entry> entries = List.of(Entry.of("one", 1), Entry.of("two", 2), Entry.of("four", 4));
+        this.data.put(entries);
+        Predicate<Object> predicate = e -> e.equals(1);
+        Stream<Integer> values = this.data.values(predicate, Collections.emptyList(), 0, 0);
+        Assertions.assertThat(values)
+                .isNotEmpty()
+                .isNotNull().hasSize(1)
+                .contains(1);
+    }
 }

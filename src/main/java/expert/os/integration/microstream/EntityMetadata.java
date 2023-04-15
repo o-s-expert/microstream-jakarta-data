@@ -53,6 +53,12 @@ record EntityMetadata(FieldMetadata id, List<FieldMetadata> fields, Class<?> typ
         return this.type::isInstance;
     }
 
+    <T> Entry entry(T entity) {
+        Objects.requireNonNull(entity, "entity is required");
+        Object key = this.id.get(entity);
+        return Entry.of(key, entity);
+    }
+
     static EntityMetadata of(Class<?> type) {
         Objects.requireNonNull(type, "type is required");
         List<FieldMetadata> fields = new ArrayList<>();
@@ -71,4 +77,5 @@ record EntityMetadata(FieldMetadata id, List<FieldMetadata> fields, Class<?> typ
         }
         return new EntityMetadata(id, fields, type);
     }
+
 }

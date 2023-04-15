@@ -15,12 +15,16 @@
 
 package expert.os.integration.microstream;
 
+import one.microstream.collections.lazy.LazyHashMap;
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.Mockito;
 
 import java.time.Duration;
 import java.util.Collections;
@@ -37,7 +41,10 @@ class MicrostreamTemplateTest {
 
     @BeforeEach
     public void setUp() {
-        DataStructure data = new DataStructure();
+        Persister persister = Mockito.mock(Persister.class);
+        Storer storer = Mockito.mock(Storer.class);
+        Mockito.when(persister.createEagerStorer()).thenReturn(storer);
+        DataStorage data = new DataStorage(new LazyHashMap<>(), persister);
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
 

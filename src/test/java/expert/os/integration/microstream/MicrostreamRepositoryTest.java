@@ -19,11 +19,15 @@ package expert.os.integration.microstream;
 import jakarta.data.repository.Page;
 import jakarta.data.repository.Pageable;
 import jakarta.data.repository.Sort;
+import one.microstream.collections.lazy.LazyHashMap;
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -41,7 +45,7 @@ public class MicrostreamRepositoryTest {
 
     private MicrostreamRepository<Book, String> library;
 
-    private DataStructure data;
+    private DataStorage data;
 
     private MicrostreamTemplate template;
 
@@ -49,7 +53,10 @@ public class MicrostreamRepositoryTest {
     @BeforeEach
     public void setUp() {
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
-        this.data = new DataStructure();
+        Persister persister = Mockito.mock(Persister.class);
+        Storer storer = Mockito.mock(Storer.class);
+        Mockito.when(persister.createEagerStorer()).thenReturn(storer);
+        this.data = new DataStorage(new LazyHashMap<>(), persister);
         this.template = new MicrostreamTemplate(data, entities);
         this.library = new MicrostreamRepository<>(template, Book.class);
     }

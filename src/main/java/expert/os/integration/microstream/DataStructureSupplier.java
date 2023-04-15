@@ -19,12 +19,14 @@ package expert.os.integration.microstream;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
+import one.microstream.collections.lazy.LazyHashMap;
 import one.microstream.storage.types.StorageManager;
 
+import java.util.Map;
 import java.util.function.Supplier;
 
 @ApplicationScoped
-class DataStructureSupplier implements Supplier<DataStructure> {
+class DataStructureSupplier implements Supplier<DataStorage> {
 
     @Inject
     private StorageManager manager;
@@ -32,20 +34,20 @@ class DataStructureSupplier implements Supplier<DataStructure> {
     @Override
     @Produces
     @ApplicationScoped
-    public DataStructure get() {
+    public DataStorage get() {
 
         Object root = manager.root();
-        DataStructure data;
+        Map<Object, Object> data;
         if (root == null) {
-            data = new DataStructure();
+            data = new LazyHashMap<>();
             manager.setRoot(data);
             manager.storeRoot();
-        } else if (root instanceof DataStructure dataStructure) {
-            data = dataStructure;
+        } else if (root instanceof LazyHashMap dataStorage) {
+            data = dataStorage;
         } else {
             throw new IllegalArgumentException("The current root structure is incompatible with DataStructure. " +
                     "The current structure class: " + root.getClass());
         }
-        return data;
+        return DataStorage.of(data, manager);
     }
 }

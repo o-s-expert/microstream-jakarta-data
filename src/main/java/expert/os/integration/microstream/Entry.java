@@ -15,17 +15,22 @@
 
 package expert.os.integration.microstream;
 
-import jakarta.interceptor.InterceptorBinding;
+import java.util.Objects;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+/**
+ * A structure that represents the {@link java.util.Map.Entry}
+ *
+ * @param key   the   {@link java.util.Map.Entry#getKey()}
+ * @param value {@link java.util.Map.Entry#getValue()} ()}
+ */
+record Entry(Object key, Object value) {
 
-@Inherited
-@InterceptorBinding
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD, ElementType.TYPE})
-@interface Transaction {
+    public Entry {
+        Objects.requireNonNull(key, "key is required");
+        Objects.requireNonNull(value, "value is required");
+    }
+
+    public static Entry of(Object key, Object value) {
+        return new Entry(key, value);
+    }
 }

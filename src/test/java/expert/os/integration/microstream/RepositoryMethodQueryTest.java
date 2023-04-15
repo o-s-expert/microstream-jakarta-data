@@ -20,12 +20,16 @@ import jakarta.data.exceptions.MappingException;
 import jakarta.data.repository.Page;
 import jakarta.data.repository.Pageable;
 import jakarta.data.repository.Sort;
+import one.microstream.collections.lazy.LazyHashMap;
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 
 import java.time.Year;
 import java.util.ArrayList;
@@ -48,7 +52,10 @@ public class RepositoryMethodQueryTest {
     @BeforeEach
     public void setUp() {
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
-        DataStructure data = new DataStructure();
+        Persister persister = Mockito.mock(Persister.class);
+        Storer storer = Mockito.mock(Storer.class);
+        Mockito.when(persister.createEagerStorer()).thenReturn(storer);
+        DataStorage data = new DataStorage(new LazyHashMap<>(), persister);
         MicrostreamTemplate template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
         template.insert(garage());
