@@ -29,9 +29,11 @@ class DataStorageTest {
 
     private DataStorage data;
 
+    private Persister persister;
+
     @BeforeEach
     public void setUp() {
-        Persister persister = Mockito.mock(Persister.class);
+        this.persister = Mockito.mock(Persister.class);
         Storer storer = Mockito.mock(Storer.class);
         Mockito.when(persister.createEagerStorer()).thenReturn(storer);
         this.data = new DataStorage(new HashMap<>(), persister);
@@ -47,6 +49,8 @@ class DataStorageTest {
                 .isNotNull()
                 .matches(p -> p.size() == 3);
 
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
     }
 
     @Test
@@ -74,6 +78,8 @@ class DataStorageTest {
 
         this.data.remove("one");
 
+        Mockito.verify(this.persister, Mockito.times(2))
+                .createEagerStorer();
         Assertions.assertThat(this.data.get("one"))
                 .isNotPresent();
     }
@@ -86,6 +92,9 @@ class DataStorageTest {
 
         Assertions.assertThat(this.data.size())
                 .isEqualTo(3);
+
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
     }
 
     @Test
@@ -100,6 +109,9 @@ class DataStorageTest {
         Assertions.assertThat(this.data.isEmpty())
                 .isFalse();
 
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
+
     }
 
     @Test
@@ -111,7 +123,9 @@ class DataStorageTest {
         Assertions.assertThat(this.data.values())
                 .hasSize(3)
                 .contains(1, 2, 4);
-    }
 
+        Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
+    }
 
 }
