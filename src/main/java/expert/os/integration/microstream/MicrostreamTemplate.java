@@ -93,7 +93,8 @@ class MicrostreamTemplate implements Template {
     public <T, K> Optional<T> find(Class<T> type, K id) {
         Objects.requireNonNull(type, "type is required");
         Objects.requireNonNull(id, "id is required");
-        return data.get(id);
+        Optional<T> entity = data.get(id);
+        return entity.filter(type::isInstance);
     }
 
     @Override
