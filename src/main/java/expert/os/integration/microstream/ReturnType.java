@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
@@ -100,11 +101,7 @@ enum ReturnType {
         @Override
         <T> Object convert(Stream<T> stream, Pageable pageable) {
             List<T> entities = stream.collect(Collectors.toUnmodifiableList());
-            if (pageable != null) {
-                return MicrostreamPage.of(entities, pageable);
-            } else {
-                return MicrostreamPage.of(entities, Pageable.ofSize(entities.size()));
-            }
+            return MicrostreamPage.of(entities, Objects.requireNonNullElseGet(pageable, () -> Pageable.ofSize(entities.size())));
         }
     }, OPTIONAL {
         @Override

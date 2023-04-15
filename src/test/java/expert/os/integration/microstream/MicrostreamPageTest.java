@@ -26,7 +26,7 @@ import java.util.Collections;
 
 class MicrostreamPageTest {
 
-    private Person otavio = Person.of("otaviojava","Otavio",
+    private final Person otavio = Person.of("otaviojava","Otavio",
             LocalDate.of(1988, Month.JANUARY, 9));
     @Test
     public void shouldReturnErrorWhenNull() {

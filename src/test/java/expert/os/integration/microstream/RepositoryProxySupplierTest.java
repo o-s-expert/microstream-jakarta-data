@@ -30,7 +30,7 @@ class RepositoryProxySupplierTest {
 
     private MicrostreamTemplate template;
 
-    private RepositoryProxySupplier supplier = RepositoryProxySupplier.INSTANCE;
+    private final RepositoryProxySupplier supplier = RepositoryProxySupplier.INSTANCE;
 
     @BeforeEach
     public void setUp() {

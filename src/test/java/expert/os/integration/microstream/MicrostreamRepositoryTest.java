@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toUnmodifiableList;
@@ -48,7 +49,7 @@ public class MicrostreamRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        Entities entities = Entities.of(Collections.singleton(Book.class));
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.data = new DataStructure();
         this.template = new MicrostreamTemplate(data, entities);
         this.library = new MicrostreamRepository<>(template, Book.class);
@@ -166,7 +167,7 @@ public class MicrostreamRepositoryTest {
 
         this.library.saveAll(books);
         Stream<Book> found = this.library.findAllById(books.stream().map(Book::isbn)
-                .collect(toUnmodifiableList()));
+                .toList());
 
         Assertions.assertThat(found)
                 .hasSize(3)
