@@ -246,8 +246,20 @@ class MicrostreamTemplateTest {
         this.template.insert(book);
         this.template.insert(carConflict);
 
+        assertThat(this.template.find(Book.class, book.isbn()))
+                .isNotNull().isEmpty();
+
+        Optional<Car> optional = this.template.find(Car.class, carConflict.plate());
+
+        assertThat(optional).isNotNull().isNotEmpty();
+
+        optional.ifPresent(c ->
+                SoftAssertions.assertSoftly(soft -> {
+                    soft.assertThat(c.plate()).isEqualTo(carConflict.plate());
+                    soft.assertThat(c.model()).isEqualTo(carConflict.model());
+                    soft.assertThat(c.release()).isEqualTo(carConflict.release());
+                })
+        );
     }
-    //should save with conflifict
-    //find when there id with car, but the id is Book
     //delete when there id with car, but the id is Book
 }
