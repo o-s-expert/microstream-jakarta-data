@@ -18,6 +18,7 @@ package expert.os.integration.microstream;
 import one.microstream.collections.lazy.LazyHashMap;
 import one.microstream.persistence.types.Persister;
 import one.microstream.persistence.types.Storer;
+import one.microstream.storage.types.StorageManager;
 
 import java.util.Collection;
 import java.util.Map;
@@ -147,9 +148,16 @@ class DataStorage {
                 '}';
     }
 
+    static DataStorage of(Map<Object, Object> data, StorageManager manager) {
+        Objects.requireNonNull(data, "data is required");
+        Objects.requireNonNull(manager, "manager is required");
+        return new DataStorage(data, manager);
+    }
+
     private synchronized void commit() {
         Storer eagerStorer = persister.createEagerStorer();
         eagerStorer.store(this.data);
         eagerStorer.commit();
     }
+
 }
