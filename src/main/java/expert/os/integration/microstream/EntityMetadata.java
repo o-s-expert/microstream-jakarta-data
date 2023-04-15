@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 
 /**
@@ -46,6 +47,10 @@ record EntityMetadata(FieldMetadata id, List<FieldMetadata> fields, Class<?> typ
         }
         return this.fields.stream().filter(f -> f.name().equals(name))
                 .findFirst();
+    }
+
+    Predicate<?> isInstance() {
+        return this.type::isInstance;
     }
 
     static EntityMetadata of(Class<?> type) {
