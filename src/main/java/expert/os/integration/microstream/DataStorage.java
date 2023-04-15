@@ -20,6 +20,7 @@ import one.microstream.persistence.types.Persister;
 import one.microstream.persistence.types.Storer;
 import one.microstream.storage.types.StorageManager;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -137,7 +138,9 @@ class DataStorage {
         if (data.isEmpty()) {
             return Stream.empty();
         }
-        return (Stream<V>) this.data.values().stream();
+        List<V> entries = new ArrayList<>();
+        entries.addAll((Collection<? extends V>) this.data.values());
+        return entries.stream();
     }
 
     /**
