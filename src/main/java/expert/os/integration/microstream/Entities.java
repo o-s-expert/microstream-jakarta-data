@@ -35,6 +35,7 @@ class Entities {
     }
 
     Optional<EntityMetadata> findType(Class<?> type) {
+        Objects.requireNonNull(type, "type is required");
         return Optional.ofNullable(this.entities.get(type));
     }
 
