@@ -80,12 +80,11 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         }
     }
 
-    private <T> Predicate<T> predicate(Where where, Method method, Object[] params, EntityMetadata metadata) {
+    private Predicate<T> predicate(Where where, Method method, Object[] params, EntityMetadata metadata) {
         QueryCondition condition = where.condition();
-
         AtomicInteger paramIndex = new AtomicInteger(0);
         Predicate<T> predicate = Predicates.condition(condition, metadata, method, params, paramIndex);
-        return predicate;
+        return metadata.<T>isInstance().and(predicate);
     }
 
 
@@ -98,12 +97,10 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 .map(w -> {
                     Predicate<T> p = predicate(w, method, params, metadata);
                     return p;
-                }).orElse(null);
+                }).orElse(metadata.isInstance());
 
         Stream<T> values = repository.findAll();
-        if (predicate != null) {
-            values = values.filter(predicate);
-        }
+        values = values.filter(predicate);
         this.repository.deleteAll(values.collect(Collectors.toUnmodifiableList()));
     }
 
@@ -116,12 +113,9 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 .map(w -> {
                     Predicate<T> p = predicate(w, method, params, metadata);
                     return p;
-                }).orElse(null);
-
+                }).orElse(metadata.isInstance());
         Stream<T> values = repository.findAll();
-        if (predicate != null) {
-            values = values.filter(predicate);
-        }
+        values = values.filter(predicate);
         Pageable pageable = ReturnType.pageable(params);
         long skip = pageable == null ? query.skip() : MicrostreamPage.skip(pageable);
         long limit = pageable == null ? query.limit() : pageable.size();
@@ -140,11 +134,12 @@ class RepositoryProxy<T, K> implements InvocationHandler {
         return values;
     }
 
-    private <T> Comparator<T> comparator(List<Sort> sorts, EntityMetadata metadata) {
+
+    private Comparator<T> comparator(List<Sort> sorts, EntityMetadata metadata) {
         Comparator<T> comparator = null;
         for (Sort sort : sorts) {
             Optional<FieldMetadata> field = metadata.field(sort.property());
-            Comparator comparator1 = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
+            Comparator<T> comparator1 = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
                     .orElseThrow(() -> new MappingException("There is not field with the name " + sort.property() +
                             " to order"));
             if (comparator == null) {
