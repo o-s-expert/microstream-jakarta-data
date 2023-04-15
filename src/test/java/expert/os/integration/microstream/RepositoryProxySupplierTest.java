@@ -17,8 +17,12 @@ package expert.os.integration.microstream;
 
 import jakarta.data.repository.CrudRepository;
 import jakarta.data.repository.PageableRepository;
+import one.microstream.collections.lazy.LazyHashMap;
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.util.Collections;
 
@@ -33,7 +37,10 @@ class RepositoryProxySupplierTest {
 
     @BeforeEach
     public void setUp() {
-        DataStorage data = new DataStorage(data, persister);
+        Persister persister = Mockito.mock(Persister.class);
+        Storer storer = Mockito.mock(Storer.class);
+        Mockito.when(persister.createEagerStorer()).thenReturn(storer);
+        DataStorage data = new DataStorage(new LazyHashMap<>(), persister);
         Entities entities = Entities.of(Collections.singleton(Book.class));
         this.template = new MicrostreamTemplate(data, entities);
 
