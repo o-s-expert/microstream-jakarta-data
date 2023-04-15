@@ -100,6 +100,16 @@ class DataStorage {
     }
 
     /**
+     * Removes the mapping for a key from this map if it is present as Bulk operation.
+     * @param keys the keys entries
+     * @param <K> the key type
+     */
+    public synchronized <K> void remove(Iterable<K> keys) {
+        Objects.requireNonNull(keys, "keys is required");
+        keys.forEach(this.data::remove);
+        this.commit();
+    }
+    /**
      * Returns the number of key-value mappings in this map.
      *
      * @return the number of key-value mappings in this map
