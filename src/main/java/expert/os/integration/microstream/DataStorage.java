@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -68,7 +67,8 @@ class DataStorage {
      */
     public synchronized void put(List<Entry> entries) {
         Objects.requireNonNull(entries, "entries is required");
-        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key, Entry::value));
+        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key,
+                Entry::value, (e, e2) -> e));
         this.data.putAll(entities);
         this.commit();
     }
