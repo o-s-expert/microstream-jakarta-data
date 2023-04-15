@@ -25,9 +25,12 @@ import jakarta.nosql.QueryMapper;
 import jakarta.nosql.Template;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * The Microstream implementation of {@link Template}
@@ -148,15 +151,17 @@ class MicrostreamTemplate implements Template {
 
     private <T> T save(T entity) {
         Objects.requireNonNull(entity, "entity is required");
-        EntityMetadata metadata = metadata(entity.getClass());
-        Object id = metadata.id().get(entity);
-        this.data.put(id, entity);
+        Entry entry = entry(entity);
+        this.data.put(entry.key(), entry.value());
         return entity;
     }
 
     private <T> Iterable<T> save(Iterable<T> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        entities.forEach(this::save);
+
+        List<Entry> entries = StreamSupport.stream(entities.spliterator(), false)
+                .map(this::entry).toList();
+        this.data.put(entries);
         return entities;
     }
 
@@ -166,5 +171,11 @@ class MicrostreamTemplate implements Template {
                 .orElseThrow(() -> new MappingException("The enity type is not found on mapping: "
                         + type + " The type most annotated with @Entity"));
     }
+
+    private <T> Entry entry(T entity) {
+        EntityMetadata metadata = metadata(entity.getClass());
+        return metadata.entry(entity);
+    }
+
 
 }
