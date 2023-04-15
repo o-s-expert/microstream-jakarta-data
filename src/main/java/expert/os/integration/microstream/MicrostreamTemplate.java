@@ -32,7 +32,6 @@ import java.util.stream.Stream;
 /**
  * The Microstream implementation of {@link Template}
  * It uses a {@link DataStructure} as root graph at Microstream.
- * It does not implement {@link Template#select(Class)} and {@link Template#delete(Class)}
  */
 @ApplicationScoped
 @Typed({Template.class, MicrostreamTemplate.class})
