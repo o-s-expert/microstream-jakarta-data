@@ -22,8 +22,6 @@ import jakarta.inject.Inject;
 import jakarta.interceptor.AroundInvoke;
 import jakarta.interceptor.Interceptor;
 import jakarta.interceptor.InvocationContext;
-import one.microstream.concurrency.XThreads;
-import one.microstream.persistence.types.Storer;
 import one.microstream.storage.types.StorageManager;
 
 import java.util.logging.Level;
