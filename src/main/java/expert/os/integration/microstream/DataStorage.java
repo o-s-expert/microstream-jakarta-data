@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * <p>
  * It is a wrapper of {@link LazyHashMap}
  */
-public class DataStructure {
+public class DataStorage {
 
     private final Map<Object, Object> data = new LazyHashMap<>();
 
@@ -121,7 +121,7 @@ public class DataStructure {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        DataStructure that = (DataStructure) o;
+        DataStorage that = (DataStorage) o;
         return Objects.equals(data, that.data);
     }
 

@@ -50,12 +50,12 @@ import java.util.stream.Stream;
 @Microstream
 class MicrostreamTemplate implements Template {
 
-    private DataStructure data;
+    private DataStorage data;
 
     private Entities entities;
 
     @Inject
-    MicrostreamTemplate(DataStructure data, Entities entities) {
+    MicrostreamTemplate(DataStorage data, Entities entities) {
         this.data = data;
         this.entities = entities;
     }

@@ -40,14 +40,14 @@ public class RepositoryBasicOperationsTest {
 
 
     private Library library;
-    private DataStructure data;
+    private DataStorage data;
 
     private MicrostreamTemplate template;
 
     @BeforeEach
     public void setUp() {
         Entities entities = Entities.of(Collections.singleton(Book.class));
-        this.data = new DataStructure();
+        this.data = new DataStorage();
         this.template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
     }

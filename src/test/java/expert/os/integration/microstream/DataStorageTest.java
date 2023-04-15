@@ -21,13 +21,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
 
-class DataStructureTest {
+class DataStorageTest {
 
-    private DataStructure data;
+    private DataStorage data;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
+        this.data = new DataStorage();
     }
 
     @Test

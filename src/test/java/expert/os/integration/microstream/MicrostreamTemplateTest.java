@@ -37,7 +37,7 @@ class MicrostreamTemplateTest {
 
     @BeforeEach
     public void setUp() {
-        DataStructure data = new DataStructure();
+        DataStorage data = new DataStorage();
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
 

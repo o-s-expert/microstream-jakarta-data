@@ -33,7 +33,7 @@ class RepositoryProxySupplierTest {
 
     @BeforeEach
     public void setUp() {
-        DataStructure data = new DataStructure();
+        DataStorage data = new DataStorage();
         Entities entities = Entities.of(Collections.singleton(Book.class));
         this.template = new MicrostreamTemplate(data, entities);
 

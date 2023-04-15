@@ -30,13 +30,13 @@ import java.util.function.Predicate;
 
 public class MapperDeleteTest {
 
-    private DataStructure data;
+    private DataStorage data;
 
     private Template template;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
+        this.data = new DataStorage();
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());

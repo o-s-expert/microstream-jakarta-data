@@ -48,7 +48,7 @@ public class RepositoryMethodQueryTest {
     @BeforeEach
     public void setUp() {
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
-        DataStructure data = new DataStructure();
+        DataStorage data = new DataStorage();
         MicrostreamTemplate template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
         template.insert(garage());
