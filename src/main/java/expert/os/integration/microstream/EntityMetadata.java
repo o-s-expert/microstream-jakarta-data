@@ -49,7 +49,7 @@ record EntityMetadata(FieldMetadata id, List<FieldMetadata> fields, Class<?> typ
                 .findFirst();
     }
 
-    Predicate<?> isInstance() {
+    Predicate<Object> isInstance() {
         return this.type::isInstance;
     }
 
