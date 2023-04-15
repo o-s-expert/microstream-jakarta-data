@@ -199,6 +199,32 @@ class MicrostreamTemplateTest {
         });
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldSaveSeveralEntitiesAsItems(Book book, Car car) {
+        this.template.insert(List.of(book, car));
+
+        Optional<Book> bookOptional = this.template.find(Book.class, book.isbn());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(bookOptional).isNotNull().isNotEmpty();
+            bookOptional.ifPresent(b -> {
+                soft.assertThat(b.isbn()).isEqualTo(book.isbn());
+                soft.assertThat(b.title()).isEqualTo(book.title());
+                soft.assertThat(b.active()).isEqualTo(book.active());
+                soft.assertThat(b.release()).isEqualTo(book.release());
+            });
+        });
+
+        Optional<Car> carOptional = this.template.find(Car.class, car.plate());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(carOptional).isNotNull().isNotEmpty();
+            carOptional.ifPresent(b -> {
+                soft.assertThat(b.model()).isEqualTo(car.model());
+                soft.assertThat(b.plate()).isEqualTo(car.plate());
+                soft.assertThat(b.release()).isEqualTo(car.release());
+            });
+        });
+    }
 
     @ParameterizedTest
     @ArgumentsSource(BookCarArgumentProvider.class)
