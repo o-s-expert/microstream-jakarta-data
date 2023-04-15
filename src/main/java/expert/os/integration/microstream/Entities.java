@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toMap;
  */
 class Entities {
 
-    private Map<Class<?>, EntityMetadata> entities;
+    private final Map<Class<?>, EntityMetadata> entities;
 
     Entities(Map<Class<?>, EntityMetadata> entities) {
         this.entities = entities;
