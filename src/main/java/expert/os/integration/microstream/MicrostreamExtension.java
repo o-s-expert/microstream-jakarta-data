@@ -28,8 +28,7 @@ public class MicrostreamExtension implements Extension {
     void onAfterBeanDiscovery(@Observes final AfterBeanDiscovery afterBeanDiscovery) {
         LOGGER.fine("Starting Microstream extention to check entity and repository classes");
         ClassScanner scanner = ClassScanner.INSTANCE;
-        scanner.repositories().stream().forEach(type -> {
-            afterBeanDiscovery.addBean(new RepositoryBean(type));
-        });
+        scanner.repositories().stream().forEach(type -> afterBeanDiscovery
+                .addBean(new RepositoryBean<>(type)));
     }
 }

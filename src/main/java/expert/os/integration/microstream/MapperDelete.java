@@ -124,7 +124,7 @@ class MapperDelete extends AbstractMapperQuery implements QueryMapper.MapperDele
             values = values.filter(isInstance);
         }
         FieldMetadata id = mapping.id();
-        List<Object> ids = values.map(t -> id.get(t)).collect(Collectors.toUnmodifiableList());
+        List<Object> ids = values.map(id::get).collect(Collectors.toUnmodifiableList());
         this.template.delete(ids);
     }
 }

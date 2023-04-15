@@ -128,7 +128,7 @@ public class MapperDeleteTest {
                 .eq("Effective Java").and("active")
                 .eq(true).execute();
         Predicate<Book> effectiveJava = b -> b.title().equals("Effective Java");
-        Predicate<Book> active = b -> b.active();
+        Predicate<Book> active = Book::active;
         List<Book> expected = library();
         expected.removeIf(effectiveJava.and(active));
         List<Book> result = this.template.select(Book.class).result();
@@ -142,7 +142,7 @@ public class MapperDeleteTest {
                 .eq("Effective Java").or("active")
                 .eq(true).execute();
         Predicate<Book> effectiveJava = b -> b.title().equals("Effective Java");
-        Predicate<Book> active = b -> b.active();
+        Predicate<Book> active = Book::active;
         List<Book> expected = library();
         expected.removeIf(effectiveJava.or(active));
         List<Book> result = this.template.select(Book.class).result();

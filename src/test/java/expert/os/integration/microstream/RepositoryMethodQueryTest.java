@@ -209,7 +209,7 @@ public class RepositoryMethodQueryTest {
         Assertions.assertThat(result)
                 .isNotEmpty()
                 .hasSize(1)
-                .allMatch(b -> b.active());
+                .allMatch(Book::active);
     }
 
     @ParameterizedTest
@@ -220,7 +220,7 @@ public class RepositoryMethodQueryTest {
         Assertions.assertThat(result)
                 .isNotEmpty()
                 .hasSize(4)
-                .noneMatch(b -> b.active());
+                .noneMatch(Book::active);
     }
 
     @ParameterizedTest
