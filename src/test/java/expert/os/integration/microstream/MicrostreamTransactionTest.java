@@ -18,6 +18,7 @@ package expert.os.integration.microstream;
 
 import jakarta.inject.Inject;
 import jakarta.nosql.Template;
+import org.assertj.core.api.Assertions;
 import org.jboss.weld.junit5.auto.AddExtensions;
 import org.jboss.weld.junit5.auto.AddPackages;
 import org.jboss.weld.junit5.auto.EnableAutoWeld;
@@ -52,8 +53,22 @@ public class MicrostreamTransactionTest {
         Book book = Book.builder().isbn("1231").title("Clean Code").author("Robert Martin")
                 .edition(1).release(Year.of(2020)).build();
         books.add(book);
+        books.add(Book.builder().isbn("12312342").title("Clean Code").author("Robert Martin")
+                .edition(1).release(Year.of(2020)).build());
         books.add(book);
         this.template.insert(books);
+
+        List<Book> result = this.template.select(Book.class).where("isbn")
+                .in(List.of("1231", "12312342"))
+                .result();
+
+        Assertions.assertThat(result)
+                .isNotNull()
+                .isNotEmpty()
+                .hasSize(2)
+                .extracting(Book::isbn)
+                .contains("1231", "12312342");
+
     }
 
     @Test

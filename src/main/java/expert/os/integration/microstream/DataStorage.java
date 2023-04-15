@@ -67,7 +67,8 @@ class DataStorage {
      */
     public synchronized void put(List<Entry> entries) {
         Objects.requireNonNull(entries, "entries is required");
-        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key,Entry::value));
+        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key,Entry::value,
+                (a, b) -> a));
         this.data.putAll(entities);
         this.commit();
     }
