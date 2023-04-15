@@ -33,14 +33,14 @@ class ClassScannerTest {
 
     @Test
     public void shouldReturnEntity() {
-        Assertions.assertThat(this.scanner.entities()).hasSize(1)
-                .contains(Book.class);
+        Assertions.assertThat(this.scanner.entities()).hasSize(2)
+                .contains(Book.class, Car.class);
     }
 
     @Test
     public void shouldReturnRepository() {
-        Assertions.assertThat(this.scanner.repositories()).hasSize(1)
-                .contains(Library.class);
+        Assertions.assertThat(this.scanner.repositories()).hasSize(2)
+                .contains(Library.class, Garage.class);
     }
 
 }
