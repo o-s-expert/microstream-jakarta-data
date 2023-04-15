@@ -31,7 +31,17 @@ import java.util.stream.Stream;
 
 /**
  * The Microstream implementation of {@link Template}
- * It uses a {@link DataStructure} as root graph at Microstream.
+ * It uses a {@link one.microstream.collections.lazy.LazyHashMap} as root graph at Microstream.
+ *
+ * <p>This interface uses a {@link java.util.Map} as the data structure root on Microstream, the {@link one.microstream.collections.lazy.LazyHashMap} 
+ * provided by Microstream.</p>
+ * <p>It is crucial to the Id, annotated with a field with {@link jakarta.nosql.Id},
+ * implements the {@link Object#equals(Object)} and {@link Object#hashCode()} methods.</p>
+ * <p>You can have several entities from different instances; however, the id is unique.</p>
+ * <p>So, given the id: "any-id" it will belong to an entity, two entities with the same id will keep the last one updated.</p>
+ * 
+ * <p>The {@link Template#find(Class, Object)} method will use the {@link Class#isInstance(Object)} is instance to return if the entity is the same instance, avoiding ClassCastException.</p> 
+ * The {@link Template#select(Class)} method has the same approach. 
  */
 @ApplicationScoped
 @Typed({Template.class, MicrostreamTemplate.class})
