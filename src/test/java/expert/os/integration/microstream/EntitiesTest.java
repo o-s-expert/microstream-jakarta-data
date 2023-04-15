@@ -62,6 +62,7 @@ class EntitiesTest {
 
     @Test
     public void shouldReturnErrorWhenFindIsNull() {
-
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        assertThrows(NullPointerException.class, () -> entities.findType(null));
     }
 }
