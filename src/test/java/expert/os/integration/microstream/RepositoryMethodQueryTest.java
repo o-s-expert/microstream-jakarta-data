@@ -52,6 +52,7 @@ public class RepositoryMethodQueryTest {
         DataStructure data = new DataStructure();
         MicrostreamTemplate template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
+        template.insert(garage());
     }
 
 
@@ -307,5 +308,15 @@ public class RepositoryMethodQueryTest {
         return Book.builder().isbn(isbn.toString()).title(title)
                 .author(author).edition(edition)
                 .release(Year.of(year)).active().build();
+    }
+
+    private List<Car> garage() {
+        List<Car> garage = new ArrayList<>();
+        garage.add(Car.of("A10", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("B11", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("C12", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("D13", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("E14", "Ferrari", Year.of(1980)));
+        return garage;
     }
 }
