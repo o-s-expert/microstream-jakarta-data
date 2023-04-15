@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -43,9 +44,10 @@ class MapperSelectTest {
     @BeforeEach
     public void setUp() {
         DataStructure data = new DataStructure();
-        Entities entities = Entities.of(Collections.singleton(Book.class));
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());
+        this.template.insert(garage());
     }
 
 
@@ -238,6 +240,16 @@ class MapperSelectTest {
                 2020));
 
         return books;
+    }
+
+    private List<Car> garage() {
+        List<Car> garage = new ArrayList<>();
+       garage.add(Car.of("A10", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("B11", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("C12", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("D13", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("E14", "Ferrari", Year.of(1980)));
+        return garage;
     }
 
     private Book createBook(Integer isbn, String title, String author, int edition, int year) {
