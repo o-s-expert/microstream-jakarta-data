@@ -36,7 +36,7 @@ public class MapperDeleteTest {
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStorage();
+        this.data = new DataStorage(data, persister);
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());

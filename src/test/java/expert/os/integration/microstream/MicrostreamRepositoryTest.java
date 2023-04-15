@@ -49,7 +49,7 @@ public class MicrostreamRepositoryTest {
     @BeforeEach
     public void setUp() {
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
-        this.data = new DataStorage();
+        this.data = new DataStorage(data, persister);
         this.template = new MicrostreamTemplate(data, entities);
         this.library = new MicrostreamRepository<>(template, Book.class);
     }

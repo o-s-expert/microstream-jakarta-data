@@ -37,7 +37,7 @@ class DataStructureSupplier implements Supplier<DataStorage> {
         Object root = manager.root();
         DataStorage data;
         if (root == null) {
-            data = new DataStorage();
+            data = new DataStorage(data, persister);
             manager.setRoot(data);
             manager.storeRoot();
         } else if (root instanceof DataStorage dataStorage) {

@@ -27,7 +27,7 @@ class DataStorageTest {
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStorage();
+        this.data = new DataStorage(data, persister);
     }
 
     @Test

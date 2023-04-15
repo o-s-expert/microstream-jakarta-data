@@ -42,7 +42,7 @@ class MapperSelectTest {
 
     @BeforeEach
     public void setUp() {
-        DataStorage data = new DataStorage();
+        DataStorage data = new DataStorage(data, persister);
         Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());

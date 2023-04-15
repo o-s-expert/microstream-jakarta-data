@@ -16,6 +16,8 @@
 package expert.os.integration.microstream;
 
 import one.microstream.collections.lazy.LazyHashMap;
+import one.microstream.persistence.types.Persister;
+import one.microstream.persistence.types.Storer;
 
 import java.util.Collection;
 import java.util.Map;
@@ -30,10 +32,15 @@ import java.util.stream.Stream;
  * <p>
  * It is a wrapper of {@link LazyHashMap}
  */
-public class DataStorage {
+class DataStorage {
 
-    private final Map<Object, Object> data = new LazyHashMap<>();
+    private final Map<Object, Object> data;
+    private final Persister persister;
 
+    DataStorage(Map<Object, Object> data, Persister persister) {
+        this.data = data;
+        this.persister = persister;
+    }
 
     /**
      * Associates the specified value with the specified key in this map.
@@ -43,10 +50,11 @@ public class DataStorage {
      * @param <K>   the key type
      * @param <V>   the entity type
      */
-    public <K, V> void put(K key, V value) {
+    public synchronized <K, V> void put(K key, V value) {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
         this.data.put(key, value);
+        commit();
     }
 
     /**
@@ -58,7 +66,7 @@ public class DataStorage {
      * @param <V> the entity type
      * @return the entity of {@link Optional#empty()}
      */
-    public <K, V> Optional<V> get(K key) {
+    public synchronized <K, V> Optional<V> get(K key) {
         Objects.requireNonNull(key, "key is required");
         return (Optional<V>) Optional.ofNullable(this.data.get(key));
     }
@@ -69,9 +77,10 @@ public class DataStorage {
      * @param key the key
      * @param <K> the key type
      */
-    public <K> void remove(K key) {
+    public synchronized <K> void remove(K key) {
         Objects.requireNonNull(key, "key is required");
         this.data.remove(key);
+        this.commit();
     }
 
     /**
@@ -79,7 +88,7 @@ public class DataStorage {
      *
      * @return the number of key-value mappings in this map
      */
-    public int size() {
+    public synchronized int size() {
         return this.data.size();
     }
 
@@ -88,7 +97,7 @@ public class DataStorage {
      *
      * @return {@code true} if this map contains no key-value mappings
      */
-    public boolean isEmpty() {
+    public synchronized boolean isEmpty() {
         return this.data.isEmpty();
     }
 
@@ -98,7 +107,7 @@ public class DataStorage {
      * @param <V> the entity type
      * @return a collection view of the values contained in this map
      */
-    public <V> Stream<V> values() {
+    public synchronized <V> Stream<V> values() {
         if (data.isEmpty()) {
             return Stream.empty();
         }
@@ -111,6 +120,7 @@ public class DataStorage {
      */
     public void clear() {
         this.data.clear();
+        this.commit();
     }
 
     @Override
@@ -135,5 +145,11 @@ public class DataStorage {
         return "DataStructure{" +
                 "data=" + data +
                 '}';
+    }
+
+    private synchronized void commit() {
+        Storer eagerStorer = persister.createEagerStorer();
+        eagerStorer.store(this.data);
+        eagerStorer.commit();
     }
 }
