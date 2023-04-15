@@ -134,8 +134,8 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 comparator = comparator.thenComparing(comparator1);
             }
         }
-        return comparator == null ? Collections.emptyList() : (List<Comparator<?>>)
-                Collections.singleton(comparator);
+        return comparator == null ? Collections.emptyList() :
+                Collections.singletonList(comparator);
     }
 
 }
