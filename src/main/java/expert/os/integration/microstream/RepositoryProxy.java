@@ -101,7 +101,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
 
         Stream<T> values = repository.findAll();
         values = values.filter(predicate);
-        this.repository.deleteAll(values.collect(Collectors.toUnmodifiableList()));
+        this.repository.deleteAll(values.toList());
     }
 
     private Stream<T> query(Method method, Object[] params) {
