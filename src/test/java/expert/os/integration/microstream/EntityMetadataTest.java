@@ -17,6 +17,8 @@ package expert.os.integration.microstream;
 
 import jakarta.data.exceptions.MappingException;
 import jakarta.nosql.Column;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.Year;
@@ -104,7 +106,28 @@ class EntityMetadataTest {
         assertThat(instance.test(Book.builder().build())).isTrue();
     }
 
+    @Test
+    public void shouldCreateEntry() {
+        EntityMetadata metadata = EntityMetadata.of(Book.class);
+        Book book = Book.builder().isbn("23")
+                .edition(13).release(Year.now()).build();
+
+        Entry entry = metadata.entry(book);
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(entry).isNotNull();
+            soft.assertThat(entry.key()).isEqualTo("23");
+            soft.assertThat(entry.value()).isEqualTo(book);
+        });
+    }
+
+    @Test
+    public void shouldReturnErrorEntryWhenEntityIsNull() {
+        EntityMetadata metadata = EntityMetadata.of(Book.class);
+        assertThrows(NullPointerException.class, () -> metadata.entry(null));
+    }
+
     private static class Car {
+
         @Column
         private String plate;
 
