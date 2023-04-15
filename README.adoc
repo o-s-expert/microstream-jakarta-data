@@ -45,9 +45,11 @@ public class Book {
 }
 ----
 
-WARNING: Microstream integration supports only an entity with `Entity`; otherwise, it will return an exception.
-
-After mapping an entity, you can explore the advantage of using a `Template` interface, which can increase productivity on NoSQL operations.
+WARNING: This `Template` implementation uses a  `java.util.Map` as the data structure root on Microstream, the `one.microstream.collections.lazy.LazyHashMap` provided by Microstream. It is crucial to the Id, annotated with a field with `jakarta.nosql.Id`,
+implements the `Object#equals(Object)` and `Object#hashCode()` methods.
+You can have several entities from different instances; however, the id is unique.
+WARNING: The `Template#find(Class, Object)` method will use the `Class#isInstance(Object)` is instance to return if the entity is the same instance, avoiding `ClassCastException`.
+The `Template#select(Class)` method has the same approach.
 
 [source,java]
 ----

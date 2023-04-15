@@ -149,8 +149,11 @@ class MapperSelect extends AbstractMapperQuery implements QueryMapper.MapperFrom
     @Override
     public <T> Stream<T> stream() {
         Stream<T> values = this.template.entities();
+        Predicate<T> isInstance = this.mapping.isInstance();
         if (condition != null) {
-            values = values.filter((Predicate<? super T>) condition);
+            values = values.filter(isInstance.and((Predicate<? super T>) condition));
+        } else {
+            values = values.filter(isInstance);
         }
         if (!sorts.isEmpty()) {
             Comparator<T> comparator = sorts.stream()

@@ -15,21 +15,18 @@
 
 package expert.os.integration.microstream;
 
-import jakarta.data.exceptions.MappingException;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Produces;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
 
-import java.util.function.Supplier;
+import java.time.Year;
+import java.util.stream.Stream;
 
-@ApplicationScoped
-class EntityMetadataSupplier implements Supplier<EntityMetadata> {
-
-
+public class BookCarArgumentProvider implements ArgumentsProvider {
     @Override
-    @Produces
-    public EntityMetadata get() {
-        Class<?> entity = ClassScanner.INSTANCE.entity()
-                .orElseThrow(() -> new MappingException("For the integration you need one entity with @Entity annotation"));
-        return EntityMetadata.of(entity);
+    public Stream<? extends Arguments> provideArguments(ExtensionContext context) throws Exception {
+        return Stream.of(Arguments.of(Book.builder().isbn("1231").title("Clean Code").author("Robert Martin")
+                        .edition(1).release(Year.of(2020)).build(),
+                Car.of("123", "Ferrari", Year.of(2021))));
     }
 }

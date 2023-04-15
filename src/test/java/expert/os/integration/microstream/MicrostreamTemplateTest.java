@@ -15,6 +15,7 @@
 
 package expert.os.integration.microstream;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,23 +26,20 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MicrostreamTemplateTest {
 
-    private DataStructure data;
-
-    private EntityMetadata metadata;
-
     private MicrostreamTemplate template;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
-        this.metadata = EntityMetadata.of(Book.class);
-        this.template = new MicrostreamTemplate(data, metadata);
+        DataStructure data = new DataStructure();
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
+        this.template = new MicrostreamTemplate(data, entities);
 
     }
 
@@ -58,7 +56,7 @@ class MicrostreamTemplateTest {
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldInsert(List<Book> books) {
         Iterable<Book> insert = this.template.insert(books);
-        org.assertj.core.api.Assertions.assertThat(insert).hasSize(3)
+        assertThat(insert).hasSize(3)
                 .isNotEmpty()
                 .contains(books.toArray(Book[]::new));
     }
@@ -82,7 +80,7 @@ class MicrostreamTemplateTest {
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldUpdate(List<Book> books) {
         Iterable<Book> insert = this.template.update(books);
-        org.assertj.core.api.Assertions.assertThat(insert).hasSize(3)
+        assertThat(insert).hasSize(3)
                 .isNotEmpty()
                 .contains(books.toArray(Book[]::new));
     }
@@ -108,7 +106,7 @@ class MicrostreamTemplateTest {
     public void shouldFindId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, book.isbn());
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isPresent()
                 .contains(book);
     }
@@ -118,7 +116,7 @@ class MicrostreamTemplateTest {
     public void shouldFindNotId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, "no-isbn");
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isNotPresent();
     }
 
@@ -127,14 +125,14 @@ class MicrostreamTemplateTest {
     public void shouldDeleteId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, book.isbn());
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isPresent()
                 .contains(book);
 
         template.delete(Book.class, book.isbn());
 
         optional = this.template.find(Book.class, book.isbn());
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isNotPresent();
     }
 
@@ -152,12 +150,12 @@ class MicrostreamTemplateTest {
     public void shouldReturnEntities(List<Book> books) {
         this.template.insert(books);
         Stream<Book> entities = this.template.entities();
-        org.assertj.core.api.Assertions.assertThat(entities).containsAll(books);
+        assertThat(entities).containsAll(books);
     }
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldIsEmpty(List<Book> books){
+    public void shouldIsEmpty(List<Book> books) {
         assertThat(this.template.isEmpty()).isTrue();
         this.template.insert(books);
         assertThat(this.template.isEmpty()).isFalse();
@@ -165,7 +163,7 @@ class MicrostreamTemplateTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldSize(List<Book> books){
+    public void shouldSize(List<Book> books) {
         assertThat(this.template.isEmpty()).isTrue();
         assertThat(this.template.size()).isEqualTo(0);
         this.template.insert(books);
@@ -173,4 +171,109 @@ class MicrostreamTemplateTest {
         assertThat(this.template.size()).isEqualTo(books.size());
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldSaveSeveralEntities(Book book, Car car) {
+        this.template.insert(book);
+        this.template.insert(car);
+
+        Optional<Book> bookOptional = this.template.find(Book.class, book.isbn());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(bookOptional).isNotNull().isNotEmpty();
+            bookOptional.ifPresent(b -> {
+                soft.assertThat(b.isbn()).isEqualTo(book.isbn());
+                soft.assertThat(b.title()).isEqualTo(book.title());
+                soft.assertThat(b.active()).isEqualTo(book.active());
+                soft.assertThat(b.release()).isEqualTo(book.release());
+            });
+        });
+
+        Optional<Car> carOptional = this.template.find(Car.class, car.plate());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(carOptional).isNotNull().isNotEmpty();
+            carOptional.ifPresent(b -> {
+                soft.assertThat(b.model()).isEqualTo(car.model());
+                soft.assertThat(b.plate()).isEqualTo(car.plate());
+                soft.assertThat(b.release()).isEqualTo(car.release());
+            });
+        });
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldSaveSeveralEntitiesAsItems(Book book, Car car) {
+        this.template.insert(List.of(book, car));
+
+        Optional<Book> bookOptional = this.template.find(Book.class, book.isbn());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(bookOptional).isNotNull().isNotEmpty();
+            bookOptional.ifPresent(b -> {
+                soft.assertThat(b.isbn()).isEqualTo(book.isbn());
+                soft.assertThat(b.title()).isEqualTo(book.title());
+                soft.assertThat(b.active()).isEqualTo(book.active());
+                soft.assertThat(b.release()).isEqualTo(book.release());
+            });
+        });
+
+        Optional<Car> carOptional = this.template.find(Car.class, car.plate());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(carOptional).isNotNull().isNotEmpty();
+            carOptional.ifPresent(b -> {
+                soft.assertThat(b.model()).isEqualTo(car.model());
+                soft.assertThat(b.plate()).isEqualTo(car.plate());
+                soft.assertThat(b.release()).isEqualTo(car.release());
+            });
+        });
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldNotFindWhenTypeIsImcompatible(Book book, Car car) {
+        this.template.insert(book);
+        this.template.insert(car);
+
+        Optional<Car> carOptional = this.template.find(Car.class, book.isbn());
+        Optional<Book> bookOptional = this.template.find(Book.class, car.plate());
+
+        assertThat(carOptional).isNotNull().isEmpty();
+        assertThat(bookOptional).isNotNull().isEmpty();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldSaveSeveralEntitiesWithConflict(Book book, Car car) {
+        Car carConflict = Car.of(book.isbn(), car.model(), car.release());
+        this.template.insert(book);
+        this.template.insert(carConflict);
+
+        assertThat(this.template.find(Book.class, book.isbn()))
+                .isNotNull().isEmpty();
+
+        Optional<Car> optional = this.template.find(Car.class, carConflict.plate());
+
+        assertThat(optional).isNotNull().isNotEmpty();
+
+        optional.ifPresent(c ->
+                SoftAssertions.assertSoftly(soft -> {
+                    soft.assertThat(c.plate()).isEqualTo(carConflict.plate());
+                    soft.assertThat(c.model()).isEqualTo(carConflict.model());
+                    soft.assertThat(c.release()).isEqualTo(carConflict.release());
+                })
+        );
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldDeleteIdIgnoringType(Book book, Car car) {
+        this.template.insert(List.of(book, car));
+
+        template.delete(Book.class, car.plate());
+        template.delete(Car.class, book.isbn());
+
+        assertThat(this.template.find(Book.class, book.isbn()))
+                .isNotNull().isEmpty();
+
+        assertThat(this.template.find(Car.class, car.plate()))
+                .isNotNull().isEmpty();
+    }
 }

@@ -33,15 +33,17 @@ import java.util.stream.StreamSupport;
 class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
 
     private final MicrostreamTemplate template;
+    private final Class<T> type;
 
-    MicrostreamRepository(MicrostreamTemplate template) {
+    MicrostreamRepository(MicrostreamTemplate template, Class<T> type) {
         this.template = template;
+        this.type = type;
     }
 
     @Override
     public Page<T> findAll(Pageable pageable) {
         Objects.requireNonNull(pageable, "pageable is required");
-        EntityMetadata metadata = this.template.metadata();
+        EntityMetadata metadata = this.template.metadata(type);
 
         Comparator<T> comparator = comparator(pageable, metadata);
         Stream<T> entities = this.template.entities();
@@ -117,7 +119,7 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
     @Override
     public void delete(T entity) {
         Objects.requireNonNull(entity, "entity is required");
-        EntityMetadata metadata = this.template.metadata();
+        EntityMetadata metadata = this.template.metadata(type);
         FieldMetadata id = metadata.id();
         Object key = id.get(entity);
         Objects.requireNonNull(key, "The key is required at the entity "
@@ -130,17 +132,17 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
     @Override
     public void deleteAllById(Iterable<K> ids) {
         Objects.requireNonNull(ids, "ids is required");
-       this.template.delete(ids);
+        this.template.delete(ids);
     }
 
     @Override
     public void deleteAll(Iterable<? extends T> entities) {
         Objects.requireNonNull(entities, "entities is required");
-        EntityMetadata metadata = this.template.metadata();
+        EntityMetadata metadata = this.template.metadata(type);
         FieldMetadata id = metadata.id();
         Set<Object> keys = StreamSupport.stream(entities.spliterator(), false)
                 .map(id::get).collect(Collectors.toUnmodifiableSet());
-       this.template.delete(keys);
+        this.template.delete(keys);
     }
 
     @Override
@@ -149,20 +151,20 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
     }
 
     private Class<?> type() {
-        return this.template.metadata().type();
+        return this.type;
     }
 
     private Comparator<T> comparator(Pageable pageable, EntityMetadata metadata) {
         Comparator<T> comparator = null;
         for (Sort sort : pageable.sorts()) {
             Optional<FieldMetadata> field = metadata.field(sort.property());
-            Comparator comparator1 = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
+            Comparator<T> newComparator = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
                     .orElseThrow(() -> new MappingException("There is not field with the name " + sort.property() +
                             " to order"));
             if (comparator == null) {
-                comparator = comparator1;
+                comparator = newComparator;
             } else {
-                comparator = comparator.thenComparing(comparator1);
+                comparator = comparator.thenComparing(newComparator);
             }
         }
         return comparator;

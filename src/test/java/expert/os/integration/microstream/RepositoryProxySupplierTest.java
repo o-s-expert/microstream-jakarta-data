@@ -20,24 +20,22 @@ import jakarta.data.repository.PageableRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collections;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 class RepositoryProxySupplierTest {
 
 
-    private DataStructure data;
-
-    private EntityMetadata metadata;
-
     private MicrostreamTemplate template;
 
-    private RepositoryProxySupplier supplier = RepositoryProxySupplier.INSTANCE;
+    private final RepositoryProxySupplier supplier = RepositoryProxySupplier.INSTANCE;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
-        this.metadata = EntityMetadata.of(Book.class);
-        this.template = new MicrostreamTemplate(data, metadata);
+        DataStructure data = new DataStructure();
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        this.template = new MicrostreamTemplate(data, entities);
 
     }
 

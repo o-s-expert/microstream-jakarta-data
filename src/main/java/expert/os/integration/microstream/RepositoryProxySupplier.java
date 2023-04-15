@@ -17,6 +17,7 @@ package expert.os.integration.microstream;
 
 import jakarta.data.repository.CrudRepository;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 
 enum RepositoryProxySupplier {
@@ -26,18 +27,20 @@ enum RepositoryProxySupplier {
     /**
      * Produces a Repository class from repository class and {@link MicrostreamTemplate}
      *
-     * @param repositoryClass the repository class
+     * @param type the repository class
      * @param template        the template
      * @param <T>             the entity of repository
      * @param <K>             the K of the entity
      * @param <R>             the repository type
      * @return a Repository interface
      */
-    <T, K, R extends CrudRepository<T, K>> R get(Class<R> repositoryClass, MicrostreamTemplate template) {
-        MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template);
-        RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository, template);
-        return (R) Proxy.newProxyInstance(repositoryClass.getClassLoader(),
-                new Class[]{repositoryClass},
+    <T, K, R extends CrudRepository<T, K>> R get(Class<R> type, MicrostreamTemplate template) {
+        ParameterizedType parameterizedType = (ParameterizedType) type.getGenericInterfaces()[0];
+        Class<T> entity = (Class<T>) parameterizedType.getActualTypeArguments()[0];
+        MicrostreamRepository<T, K> repository = new MicrostreamRepository<>(template, entity);
+        RepositoryProxy<T, K> handler = new RepositoryProxy<>(repository, template, entity);
+        return (R) Proxy.newProxyInstance(type.getClassLoader(),
+                new Class[]{type},
                 handler);
     }
 }

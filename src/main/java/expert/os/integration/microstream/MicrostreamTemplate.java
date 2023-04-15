@@ -16,6 +16,7 @@
 package expert.os.integration.microstream;
 
 
+import jakarta.data.exceptions.MappingException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Default;
 import jakarta.enterprise.inject.Typed;
@@ -30,8 +31,18 @@ import java.util.stream.Stream;
 
 /**
  * The Microstream implementation of {@link Template}
- * It uses a {@link DataStructure} as root graph at Microstream.
- * It does not implement {@link Template#select(Class)} and {@link Template#delete(Class)}
+ * It uses a {@link one.microstream.collections.lazy.LazyHashMap} as root graph at Microstream.
+ *
+ * <p>This interface uses a {@link java.util.Map} as the data structure root on Microstream, the {@link one.microstream.collections.lazy.LazyHashMap} 
+ * provided by Microstream.</p>
+ * <p>It is crucial to the Id, annotated with a field with {@link jakarta.nosql.Id},
+ * implements the {@link Object#equals(Object)} and {@link Object#hashCode()} methods.</p>
+ * <p>You can have several entities from different instances; however, the id is unique.</p>
+ * <p>So, given the id: "any-id" it will belong to an entity, two entities with the same id will keep the last one updated.</p>
+ * 
+ * <p>The {@link Template#find(Class, Object)} method will use the {@link Class#isInstance(Object)}
+ * is instance to return if the entity is the same instance, avoiding {@link ClassCastException}.</p>
+ * The {@link Template#select(Class)} method has the same approach. 
  */
 @ApplicationScoped
 @Typed({Template.class, MicrostreamTemplate.class})
@@ -41,12 +52,12 @@ class MicrostreamTemplate implements Template {
 
     private DataStructure data;
 
-    private EntityMetadata metadata;
+    private Entities entities;
 
     @Inject
-    MicrostreamTemplate(DataStructure data, EntityMetadata metadata) {
+    MicrostreamTemplate(DataStructure data, Entities entities) {
         this.data = data;
-        this.metadata = metadata;
+        this.entities = entities;
     }
 
     @Deprecated
@@ -92,7 +103,8 @@ class MicrostreamTemplate implements Template {
     public <T, K> Optional<T> find(Class<T> type, K id) {
         Objects.requireNonNull(type, "type is required");
         Objects.requireNonNull(id, "id is required");
-        return data.get(id);
+        Optional<T> entity = data.get(id);
+        return entity.filter(type::isInstance);
     }
 
     @Override
@@ -129,33 +141,22 @@ class MicrostreamTemplate implements Template {
     @Override
     public <T> QueryMapper.MapperFrom select(Class<T> type) {
         Objects.requireNonNull(type, "type is required");
-        if (metadata.type().equals(type)) {
-            return new MapperSelect(metadata, this);
-        }
-
-        throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
-                + type + " @Entity class " + metadata.type());
-
+        EntityMetadata metadata = metadata(type);
+        return new MapperSelect(metadata, this);
     }
 
     @Override
     public <T> QueryMapper.MapperDeleteFrom delete(Class<T> type) {
         Objects.requireNonNull(type, "type is required");
-        if (metadata.type().equals(type)) {
-            return new MapperDelete(metadata, this);
-        }
-
-        throw new IllegalArgumentException("The type is not the same of the class annotated with @Entity. Param class "
-                + type + " @Entity class " + metadata.type());
+        EntityMetadata metadata = metadata(type);
+        return new MapperDelete(metadata, this);
     }
 
-    EntityMetadata metadata() {
-        return metadata;
-    }
 
     private <T> T save(T entity) {
         Objects.requireNonNull(entity, "entity is required");
-        Object id = this.metadata.id().get(entity);
+        EntityMetadata metadata = metadata(entity.getClass());
+        Object id = metadata.id().get(entity);
         this.data.put(id, entity);
         return entity;
     }
@@ -164,6 +165,13 @@ class MicrostreamTemplate implements Template {
         Objects.requireNonNull(entities, "entities is required");
         entities.forEach(this::save);
         return entities;
+    }
+
+    <T> EntityMetadata metadata(Class<T> type) {
+        Optional<EntityMetadata> metadata = entities.findType(type);
+        return metadata
+                .orElseThrow(() -> new MappingException("The enity type is not found on mapping: "
+                        + type + " The type most annotated with @Entity"));
     }
 
 }

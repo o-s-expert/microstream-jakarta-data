@@ -16,6 +16,7 @@
 package expert.os.integration.microstream;
 
 
+import jakarta.data.exceptions.MappingException;
 import jakarta.data.exceptions.NonUniqueResultException;
 import jakarta.nosql.Template;
 import org.junit.jupiter.api.Assertions;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -36,26 +38,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MapperSelectTest {
 
-    private DataStructure data;
-
-    private EntityMetadata metadata;
-
     private Template template;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
-        this.metadata = EntityMetadata.of(Book.class);
-        this.template = new MicrostreamTemplate(data, metadata);
+        DataStructure data = new DataStructure();
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
+        this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());
+        this.template.insert(garage());
     }
-
 
 
     @Test
     public void shouldExecuteSelectFrom() {
         List<Book> result = this.template.select(Book.class).result();
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsAll(library());
     }
 
@@ -64,7 +62,7 @@ class MapperSelectTest {
         List<Book> result = this.template.select(Book.class).orderBy("isbn")
                 .asc().result();
 
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsExactly(library().toArray(Book[]::new));
     }
 
@@ -74,7 +72,7 @@ class MapperSelectTest {
                 .desc().result();
         List<Book> expected = library().stream().sorted(Comparator.comparing(Book::isbn).reversed())
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsExactly(expected.toArray(Book[]::new));
     }
 
@@ -85,7 +83,7 @@ class MapperSelectTest {
         List<Book> expected = library().stream().sorted(Comparator.comparing(Book::isbn).reversed())
                 .limit(2)
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsExactly(expected.toArray(Book[]::new));
     }
 
@@ -96,7 +94,7 @@ class MapperSelectTest {
         List<Book> expected = library().stream().sorted(Comparator.comparing(Book::isbn).reversed())
                 .limit(3)
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsExactly(expected.toArray(Book[]::new));
     }
 
@@ -107,7 +105,7 @@ class MapperSelectTest {
                 .eq("Effective Java").result();
         List<Book> expected = library().stream().filter(b -> b.title().equals("Effective Java"))
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
@@ -117,7 +115,7 @@ class MapperSelectTest {
                 .gt(2).result();
         List<Book> expected = library().stream().filter(b -> b.edition()> 2)
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
@@ -126,7 +124,7 @@ class MapperSelectTest {
                 .gte(2).result();
         List<Book> expected = library().stream().filter(b -> b.edition()>= 2)
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
@@ -136,7 +134,7 @@ class MapperSelectTest {
                 .lt(2).result();
         List<Book> expected = library().stream().filter(b -> b.edition()< 2)
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
@@ -145,7 +143,7 @@ class MapperSelectTest {
                 .lte(2).result();
         List<Book> expected = library().stream().filter(b -> b.edition()<= 2)
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
@@ -155,7 +153,7 @@ class MapperSelectTest {
                 .not().eq("Effective Java").result();
         List<Book> expected = library().stream().filter(b -> !b.title().equals("Effective Java"))
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
 
@@ -168,7 +166,7 @@ class MapperSelectTest {
         Predicate<Book> edition = b -> b.edition() > 2;
         List<Book> expected = library().stream().filter(effective.and(edition))
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
@@ -180,13 +178,13 @@ class MapperSelectTest {
         Predicate<Book> edition = b -> b.edition() > 2;
         List<Book> expected = library().stream().filter(effective.or(edition))
                 .collect(Collectors.toUnmodifiableList());
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty().containsAll(expected);
+        assertThat(result).isNotEmpty().containsAll(expected);
     }
 
     @Test
     public void shouldResult() {
         List<Book> result = this.template.select(Book.class).result();
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsAll(library());
     }
 
@@ -194,7 +192,7 @@ class MapperSelectTest {
     @Test
     public void shouldStream() {
         Stream<Book> result = this.template.select(Book.class).stream();
-        org.assertj.core.api.Assertions.assertThat(result).isNotEmpty()
+        assertThat(result).isNotEmpty()
                 .containsAll(library());
 
     }
@@ -202,12 +200,12 @@ class MapperSelectTest {
     @Test
     public void shouldSingleResult() {
         Optional<Book> book = this.template.select(Book.class).where("edition").eq(3).singleResult();
-        org.assertj.core.api.Assertions.assertThat(book).isPresent()
+        assertThat(book).isPresent()
                 .get().extracting(Book::edition)
                 .isEqualTo(3);
 
         book = this.template.select(Book.class).where("edition").eq(5).singleResult();
-        org.assertj.core.api.Assertions.assertThat(book).isNotPresent();
+        assertThat(book).isNotPresent();
     }
 
     @Test
@@ -222,7 +220,7 @@ class MapperSelectTest {
 
     @Test
     public void shouldReturnErrorWhenDifferentType() {
-        Assertions.assertThrows(IllegalArgumentException.class, () -> template.select(String.class).orderBy(null));
+        Assertions.assertThrows(MappingException.class, () -> template.select(String.class).orderBy(null));
     }
 
     private List<Book> library() {
@@ -241,6 +239,16 @@ class MapperSelectTest {
                 2020));
 
         return books;
+    }
+
+    private List<Car> garage() {
+        List<Car> garage = new ArrayList<>();
+       garage.add(Car.of("A10", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("B11", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("C12", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("D13", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("E14", "Ferrari", Year.of(1980)));
+        return garage;
     }
 
     private Book createBook(Integer isbn, String title, String author, int edition, int year) {

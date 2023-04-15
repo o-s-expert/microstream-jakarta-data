@@ -17,40 +17,40 @@ package expert.os.integration.microstream;
 
 import jakarta.nosql.Template;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MapperDeleteTest {
 
     private DataStructure data;
-
-    private EntityMetadata metadata;
 
     private Template template;
 
     @BeforeEach
     public void setUp() {
         this.data = new DataStructure();
-        this.metadata = EntityMetadata.of(Book.class);
-        this.template = new MicrostreamTemplate(data, metadata);
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
+        this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());
+        this.template.insert(garage());
     }
 
     @Test
     public void shouldReturnDeleteFrom() {
         this.template.delete(Book.class).execute();
-        assertThat(this.data.isEmpty()).isTrue();
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(this.data.isEmpty()).isFalse();
+            soft.assertThat(this.data.values()).noneMatch(Book.class::isInstance);
+        });
     }
-
 
     @Test
     public void shouldDeleteWhereEq() {
@@ -125,7 +125,7 @@ public class MapperDeleteTest {
                 .eq("Effective Java").and("active")
                 .eq(true).execute();
         Predicate<Book> effectiveJava = b -> b.title().equals("Effective Java");
-        Predicate<Book> active = b -> b.active();
+        Predicate<Book> active = Book::active;
         List<Book> expected = library();
         expected.removeIf(effectiveJava.and(active));
         List<Book> result = this.template.select(Book.class).result();
@@ -139,7 +139,7 @@ public class MapperDeleteTest {
                 .eq("Effective Java").or("active")
                 .eq(true).execute();
         Predicate<Book> effectiveJava = b -> b.title().equals("Effective Java");
-        Predicate<Book> active = b -> b.active();
+        Predicate<Book> active = Book::active;
         List<Book> expected = library();
         expected.removeIf(effectiveJava.or(active));
         List<Book> result = this.template.select(Book.class).result();
@@ -163,6 +163,16 @@ public class MapperDeleteTest {
                 2020));
 
         return books;
+    }
+
+    private List<Car> garage() {
+        List<Car> garage = new ArrayList<>();
+        garage.add(Car.of("A10", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("B11", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("C12", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("D13", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("E14", "Ferrari", Year.of(1980)));
+        return garage;
     }
 
     private Book createBook(Integer isbn, String title, String author, int edition, int year) {

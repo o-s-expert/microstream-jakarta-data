@@ -15,6 +15,7 @@
 
 package expert.os.integration.microstream;
 
+
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
@@ -23,58 +24,32 @@ import java.time.Year;
 import java.util.Objects;
 
 @Entity
-public class Book {
+public class Car {
+
     @Id
-    private String isbn;
+    private final String plate;
     @Column
-    private String title;
+    private final  String model;
 
     @Column
-    private Integer edition;
+    private final  Year release;
 
-    @Column
-    private Year release;
-
-    @Column
-    private String author;
-
-    @Column
-    private boolean active;
-
-    Book(String isbn, String title, Integer edition, Year release, String author, boolean active) {
-        this.isbn = isbn;
-        this.title = title;
-        this.edition = edition;
+    private Car(String plate, String model, Year release) {
+        this.plate = plate;
+        this.model = model;
         this.release = release;
-        this.author = author;
-        this.active = active;
     }
 
-    Book() {
+    public String plate() {
+        return plate;
     }
 
-    public String isbn() {
-        return isbn;
-    }
-
-    public String title() {
-        return title;
-    }
-
-    public Integer edition() {
-        return edition;
+    public String model() {
+        return model;
     }
 
     public Year release() {
         return release;
-    }
-
-    public String author() {
-        return author;
-    }
-
-    public boolean active() {
-        return active;
     }
 
     @Override
@@ -85,28 +60,28 @@ public class Book {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Book book = (Book) o;
-        return Objects.equals(isbn, book.isbn);
+        Car car = (Car) o;
+        return Objects.equals(plate, car.plate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(isbn);
+        return Objects.hashCode(plate);
     }
 
     @Override
     public String toString() {
-        return "Book{" +
-                "isbn='" + isbn + '\'' +
-                ", title='" + title + '\'' +
-                ", edition=" + edition +
+        return "Car{" +
+                "plate='" + plate + '\'' +
+                ", model='" + model + '\'' +
                 ", release=" + release +
-                ", author='" + author + '\'' +
-                ", active=" + active +
                 '}';
     }
 
-    public static BookBuilder builder() {
-        return new BookBuilder();
+    public static Car of(String plate, String model, Year year) {
+        Objects.requireNonNull(plate, "plate is required");
+        Objects.requireNonNull(model, "model is required");
+        Objects.requireNonNull(year, "year is required");
+        return new Car(plate, model, year);
     }
 }

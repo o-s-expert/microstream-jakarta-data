@@ -43,19 +43,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RepositoryMethodQueryTest {
 
     private Library library;
-    private DataStructure data;
-
-    private MicrostreamTemplate template;
-
-    private EntityMetadata metadata;
 
 
     @BeforeEach
     public void setUp() {
-        this.metadata = EntityMetadata.of(Book.class);
-        this.data = new DataStructure();
-        this.template = new MicrostreamTemplate(data, metadata);
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
+        DataStructure data = new DataStructure();
+        MicrostreamTemplate template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
+        template.insert(garage());
     }
 
 
@@ -212,7 +208,7 @@ public class RepositoryMethodQueryTest {
         Assertions.assertThat(result)
                 .isNotEmpty()
                 .hasSize(1)
-                .allMatch(b -> b.active());
+                .allMatch(Book::active);
     }
 
     @ParameterizedTest
@@ -223,7 +219,7 @@ public class RepositoryMethodQueryTest {
         Assertions.assertThat(result)
                 .isNotEmpty()
                 .hasSize(4)
-                .noneMatch(b -> b.active());
+                .noneMatch(Book::active);
     }
 
     @ParameterizedTest
@@ -311,5 +307,15 @@ public class RepositoryMethodQueryTest {
         return Book.builder().isbn(isbn.toString()).title(title)
                 .author(author).edition(edition)
                 .release(Year.of(year)).active().build();
+    }
+
+    private List<Car> garage() {
+        List<Car> garage = new ArrayList<>();
+        garage.add(Car.of("A10", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("B11", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("C12", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("D13", "Ferrari", Year.of(1980)));
+        garage.add(Car.of("E14", "Ferrari", Year.of(1980)));
+        return garage;
     }
 }

@@ -19,9 +19,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 class ClassScannerTest {
 
     private ClassScanner scanner;
@@ -33,19 +30,14 @@ class ClassScannerTest {
 
     @Test
     public void shouldReturnEntity() {
-        Set<Class<?>> entities = this.scanner.entity().stream()
-                .collect(Collectors.toUnmodifiableSet());
-        Assertions.assertThat(entities).hasSize(1)
-                .contains(Book.class);
+        Assertions.assertThat(this.scanner.entities()).hasSize(2)
+                .contains(Book.class, Car.class);
     }
 
     @Test
     public void shouldReturnRepository() {
-        Set<Class<?>> repositories = this.scanner.repository()
-                .stream()
-                .collect(Collectors.toUnmodifiableSet());
-        Assertions.assertThat(repositories).hasSize(1)
-                .contains(Library.class);
+        Assertions.assertThat(this.scanner.repositories()).hasSize(2)
+                .contains(Library.class, Garage.class);
     }
 
 }
