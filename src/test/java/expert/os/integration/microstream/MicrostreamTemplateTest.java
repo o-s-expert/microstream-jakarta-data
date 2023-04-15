@@ -56,7 +56,7 @@ class MicrostreamTemplateTest {
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldInsert(List<Book> books) {
         Iterable<Book> insert = this.template.insert(books);
-        org.assertj.core.api.Assertions.assertThat(insert).hasSize(3)
+        assertThat(insert).hasSize(3)
                 .isNotEmpty()
                 .contains(books.toArray(Book[]::new));
     }
@@ -80,7 +80,7 @@ class MicrostreamTemplateTest {
     @ArgumentsSource(BooksArgumentProvider.class)
     public void shouldUpdate(List<Book> books) {
         Iterable<Book> insert = this.template.update(books);
-        org.assertj.core.api.Assertions.assertThat(insert).hasSize(3)
+        assertThat(insert).hasSize(3)
                 .isNotEmpty()
                 .contains(books.toArray(Book[]::new));
     }
@@ -106,7 +106,7 @@ class MicrostreamTemplateTest {
     public void shouldFindId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, book.isbn());
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isPresent()
                 .contains(book);
     }
@@ -116,7 +116,7 @@ class MicrostreamTemplateTest {
     public void shouldFindNotId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, "no-isbn");
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isNotPresent();
     }
 
@@ -125,14 +125,14 @@ class MicrostreamTemplateTest {
     public void shouldDeleteId(Book book) {
         this.template.insert(book);
         Optional<Book> optional = this.template.find(Book.class, book.isbn());
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isPresent()
                 .contains(book);
 
         template.delete(Book.class, book.isbn());
 
         optional = this.template.find(Book.class, book.isbn());
-        org.assertj.core.api.Assertions.assertThat(optional)
+        assertThat(optional)
                 .isNotPresent();
     }
 
@@ -150,7 +150,7 @@ class MicrostreamTemplateTest {
     public void shouldReturnEntities(List<Book> books) {
         this.template.insert(books);
         Stream<Book> entities = this.template.entities();
-        org.assertj.core.api.Assertions.assertThat(entities).containsAll(books);
+        assertThat(entities).containsAll(books);
     }
 
     @ParameterizedTest
@@ -199,7 +199,28 @@ class MicrostreamTemplateTest {
         });
     }
 
-    //should save both books and cars
+
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldNotFindWhenTypeIsImcompatible(Book book, Car car) {
+        this.template.insert(book);
+        this.template.insert(car);
+
+        Optional<Car> carOptional = this.template.find(Car.class, book.isbn());
+        Optional<Book> bookOptional = this.template.find(Book.class, car.plate());
+
+        assertThat(carOptional).isNotNull().isEmpty();
+        assertThat(bookOptional).isNotNull().isEmpty();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldSaveSeveralEntitiesWithConflict(Book book, Car car) {
+        Car carConflict = Car.of(book.isbn(), car.model(), car.release());
+        this.template.insert(book);
+        this.template.insert(carConflict);
+
+    }
     //should save with conflifict
     //find when there id with car, but the id is Book
     //delete when there id with car, but the id is Book
