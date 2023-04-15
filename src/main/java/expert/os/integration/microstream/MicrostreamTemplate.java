@@ -65,7 +65,6 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T> T insert(T entity) {
         return save(entity);
     }
@@ -77,7 +76,6 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T> Iterable<T> insert(Iterable<T> entities) {
         return save(entities);
     }
@@ -88,13 +86,11 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T> T update(T entity) {
         return save(entity);
     }
 
     @Override
-    @Transaction
     public <T> Iterable<T> update(Iterable<T> entities) {
         return save(entities);
     }
@@ -108,20 +104,17 @@ class MicrostreamTemplate implements Template {
     }
 
     @Override
-    @Transaction
     public <T, K> void delete(Class<T> type, K id) {
         Objects.requireNonNull(type, "type is required");
         Objects.requireNonNull(id, "id is required");
         this.data.remove(id);
     }
 
-    @Transaction
     <T, K> void delete(Iterable<K> ids) {
         Objects.requireNonNull(ids, "ids is required");
         ids.forEach(this.data::remove);
     }
 
-    @Transaction
     void deleteAll() {
         this.data.clear();
     }
