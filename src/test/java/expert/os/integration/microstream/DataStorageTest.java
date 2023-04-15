@@ -140,4 +140,13 @@ class DataStorageTest {
                 .createEagerStorer();
     }
 
+    @Test
+    public void shouldRemoveMultipleIds() {
+        List<Entry> entries = List.of(Entry.of("one", 1), Entry.of("two", 2), Entry.of("four", 4));
+        this.data.put(entries);
+        this.data.remove(List.of("one", "two", "four"));
+        Mockito.verify(this.persister, Mockito.times(2))
+                .createEagerStorer();
+    }
+
 }
