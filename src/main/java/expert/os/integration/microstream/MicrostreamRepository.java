@@ -158,13 +158,13 @@ class MicrostreamRepository<T, K> implements PageableRepository<T, K> {
         Comparator<T> comparator = null;
         for (Sort sort : pageable.sorts()) {
             Optional<FieldMetadata> field = metadata.field(sort.property());
-            Comparator comparator1 = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
+            Comparator<T> newComparator = field.map(f -> sort.isAscending() ? f.comparator() : f.reversed())
                     .orElseThrow(() -> new MappingException("There is not field with the name " + sort.property() +
                             " to order"));
             if (comparator == null) {
-                comparator = comparator1;
+                comparator = newComparator;
             } else {
-                comparator = comparator.thenComparing(comparator1);
+                comparator = comparator.thenComparing(newComparator);
             }
         }
         return comparator;
