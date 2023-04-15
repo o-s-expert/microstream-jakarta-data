@@ -21,10 +21,14 @@ import one.microstream.persistence.types.Storer;
 import one.microstream.storage.types.StorageManager;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toMap;
 
 
 /**
@@ -56,6 +60,17 @@ class DataStorage {
         Objects.requireNonNull(value, "value is required");
         this.data.put(key, value);
         commit();
+    }
+
+    /**
+     * Inserts multiples entries on the data storage
+     * @param entries the entries
+     */
+    public synchronized void put(List<Entry> entries) {
+        Objects.requireNonNull(entries, "entries is required");
+        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key, Entry::value));
+        this.data.putAll(entities);
+        this.commit();
     }
 
     /**
@@ -159,5 +174,6 @@ class DataStorage {
         eagerStorer.store(this.data);
         eagerStorer.commit();
     }
+
 
 }
