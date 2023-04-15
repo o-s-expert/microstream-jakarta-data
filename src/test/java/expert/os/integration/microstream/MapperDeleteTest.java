@@ -17,6 +17,7 @@ package expert.os.integration.microstream;
 
 import jakarta.nosql.Template;
 import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -48,9 +49,11 @@ public class MapperDeleteTest {
     @Test
     public void shouldReturnDeleteFrom() {
         this.template.delete(Book.class).execute();
-        assertThat(this.data.isEmpty()).isTrue();
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(this.data.isEmpty()).isFalse();
+            soft.assertThat(this.data.values()).noneMatch(Book.class::isInstance);
+        });
     }
-
 
     @Test
     public void shouldDeleteWhereEq() {
