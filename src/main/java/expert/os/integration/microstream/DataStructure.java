@@ -32,7 +32,7 @@ import java.util.stream.Stream;
  */
 public class DataStructure {
 
-    private final Map<Object, Object> data = new LazyHashMap();
+    private final Map<Object, Object> data = new LazyHashMap<>();
 
 
     /**
