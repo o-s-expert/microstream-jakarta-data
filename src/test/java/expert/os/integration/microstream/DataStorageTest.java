@@ -23,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 class DataStorageTest {
@@ -125,6 +126,17 @@ class DataStorageTest {
                 .contains(1, 2, 4);
 
         Mockito.verify(this.persister, Mockito.times(3))
+                .createEagerStorer();
+    }
+
+    @Test
+    public void shouldPutEntries() {
+        List<Entry> entries = List.of(Entry.of("one", 1), Entry.of("two", 2), Entry.of("four", 4));
+        this.data.put(entries);
+        Assertions.assertThat(this.data.values())
+                .hasSize(3)
+                .contains(1, 2, 4);
+        Mockito.verify(this.persister, Mockito.only())
                 .createEagerStorer();
     }
 
