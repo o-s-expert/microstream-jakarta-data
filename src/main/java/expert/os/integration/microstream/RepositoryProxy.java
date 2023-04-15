@@ -28,6 +28,7 @@ import org.eclipse.jnosql.communication.query.method.SelectMethodProvider;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -98,9 +99,7 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                     return p;
                 }).orElse(metadata.isInstance());
 
-        Stream<T> values = repository.findAll();
-        values = values.filter(predicate);
-        this.repository.deleteAll(values.toList());
+        this.template.remove((Predicate<Object>) predicate);
     }
 
     private Stream<T> query(Method method, Object[] params) {
@@ -113,28 +112,16 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                     Predicate<T> p = predicate(w, method, params, metadata);
                     return p;
                 }).orElse(metadata.isInstance());
-        Stream<T> values = repository.findAll();
-        values = values.filter(predicate);
         Pageable pageable = ReturnType.pageable(params);
         long skip = pageable == null ? query.skip() : MicrostreamPage.skip(pageable);
         long limit = pageable == null ? query.limit() : pageable.size();
 
-        if (skip > 0) {
-            values = values.skip(skip);
-        }
-        if (limit > 0) {
-            values = values.limit(limit);
-        }
-
-        Comparator<T> comparator = comparator(ReturnType.sort(query.orderBy(), params), metadata);
-        if (comparator != null) {
-            values = values.sorted(comparator);
-        }
-        return values;
+        List<Comparator<?>> comparators = comparator(ReturnType.sort(query.orderBy(), params), metadata);
+        return this.template.entities(predicate, comparators, skip, limit);
     }
 
 
-    private Comparator<T> comparator(List<Sort> sorts, EntityMetadata metadata) {
+    private List<Comparator<?>> comparator(List<Sort> sorts, EntityMetadata metadata) {
         Comparator<T> comparator = null;
         for (Sort sort : sorts) {
             Optional<FieldMetadata> field = metadata.field(sort.property());
@@ -147,8 +134,8 @@ class RepositoryProxy<T, K> implements InvocationHandler {
                 comparator = comparator.thenComparing(comparator1);
             }
         }
-        return comparator;
+        return comparator == null ? Collections.emptyList() : (List<Comparator<?>>)
+                Collections.singleton(comparator);
     }
-
 
 }
