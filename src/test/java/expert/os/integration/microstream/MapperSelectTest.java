@@ -38,13 +38,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class MapperSelectTest {
 
-    private DataStructure data;
-
     private Template template;
 
     @BeforeEach
     public void setUp() {
-        this.data = new DataStructure();
+        DataStructure data = new DataStructure();
         Entities entities = Entities.of(Collections.singleton(Book.class));
         this.template = new MicrostreamTemplate(data, entities);
         this.template.insert(library());
