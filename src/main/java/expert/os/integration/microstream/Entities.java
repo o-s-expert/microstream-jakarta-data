@@ -30,7 +30,7 @@ class Entities {
 
     private final Map<Class<?>, EntityMetadata> entities;
 
-    Entities(Map<Class<?>, EntityMetadata> entities) {
+    private Entities(Map<Class<?>, EntityMetadata> entities) {
         this.entities = entities;
     }
 
