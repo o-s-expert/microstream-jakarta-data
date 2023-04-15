@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toMap;
@@ -64,11 +65,12 @@ class DataStorage {
 
     /**
      * Inserts multiples entries on the data storage
+     *
      * @param entries the entries
      */
     public synchronized void put(List<Entry> entries) {
         Objects.requireNonNull(entries, "entries is required");
-        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key,Entry::value,
+        Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key, Entry::value,
                 (a, b) -> a));
         this.data.putAll(entities);
         this.commit();
@@ -102,14 +104,16 @@ class DataStorage {
 
     /**
      * Removes the mapping for a key from this map if it is present as Bulk operation.
+     *
      * @param keys the keys entries
-     * @param <K> the key type
+     * @param <K>  the key type
      */
     public synchronized <K> void remove(Iterable<K> keys) {
         Objects.requireNonNull(keys, "keys is required");
         keys.forEach(this.data::remove);
         this.commit();
     }
+
     /**
      * Returns the number of key-value mappings in this map.
      *
@@ -140,6 +144,22 @@ class DataStorage {
         }
         List<V> entries = new ArrayList<>();
         entries.addAll((Collection<? extends V>) this.data.values());
+        return entries.stream();
+    }
+
+    /**
+     * Returns a {@link Collection} view of the values contained in this map limited by the predicate.
+     *
+     * @param <V>       the entity type
+     * @param predicate the filter
+     * @return a collection view of the values contained in this map
+     */
+    public synchronized <V> Stream<V> values(Predicate<Object> predicate) {
+        if (data.isEmpty()) {
+            return Stream.empty();
+        }
+        List<V> entries = new ArrayList<>();
+        entries.addAll((Collection<? extends V>) this.data.values().stream().filter(predicate).toList());
         return entries.stream();
     }
 

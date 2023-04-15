@@ -25,6 +25,8 @@ import org.mockito.Mockito;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 class DataStorageTest {
 
@@ -149,4 +151,15 @@ class DataStorageTest {
                 .createEagerStorer();
     }
 
+    @Test
+    public void shouldReturnValueFromPredicate() {
+        List<Entry> entries = List.of(Entry.of("one", 1), Entry.of("two", 2), Entry.of("four", 4));
+        this.data.put(entries);
+        Predicate<Object> predicate = e -> e.equals(1);
+        Stream<Integer> values = this.data.values(predicate);
+        Assertions.assertThat(values)
+                .isNotEmpty()
+                .isNotNull().hasSize(1)
+                .contains(1);
+    }
 }
