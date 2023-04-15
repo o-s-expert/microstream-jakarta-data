@@ -15,6 +15,7 @@
 
 package expert.os.integration.microstream;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,20 +26,19 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class MicrostreamTemplateTest {
 
-    private EntityMetadata metadata;
-
     private MicrostreamTemplate template;
 
     @BeforeEach
     public void setUp() {
         DataStructure data = new DataStructure();
-       Entities entities = Entities.of(Collections.singleton(Book.class));
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
         this.template = new MicrostreamTemplate(data, entities);
 
     }
@@ -155,7 +155,7 @@ class MicrostreamTemplateTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldIsEmpty(List<Book> books){
+    public void shouldIsEmpty(List<Book> books) {
         assertThat(this.template.isEmpty()).isTrue();
         this.template.insert(books);
         assertThat(this.template.isEmpty()).isFalse();
@@ -163,7 +163,7 @@ class MicrostreamTemplateTest {
 
     @ParameterizedTest
     @ArgumentsSource(BooksArgumentProvider.class)
-    public void shouldSize(List<Book> books){
+    public void shouldSize(List<Book> books) {
         assertThat(this.template.isEmpty()).isTrue();
         assertThat(this.template.size()).isEqualTo(0);
         this.template.insert(books);
@@ -171,4 +171,36 @@ class MicrostreamTemplateTest {
         assertThat(this.template.size()).isEqualTo(books.size());
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldSaveSeveralEntities(Book book, Car car) {
+        this.template.insert(book);
+        this.template.insert(car);
+
+        Optional<Book> bookOptional = this.template.find(Book.class, book.isbn());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(bookOptional).isNotNull().isNotEmpty();
+            bookOptional.ifPresent(b -> {
+                soft.assertThat(b.isbn()).isEqualTo(book.isbn());
+                soft.assertThat(b.title()).isEqualTo(book.title());
+                soft.assertThat(b.active()).isEqualTo(book.active());
+                soft.assertThat(b.release()).isEqualTo(book.release());
+            });
+        });
+
+        Optional<Car> carOptional = this.template.find(Car.class, car.plate());
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(carOptional).isNotNull().isNotEmpty();
+            carOptional.ifPresent(b -> {
+                soft.assertThat(b.model()).isEqualTo(car.model());
+                soft.assertThat(b.plate()).isEqualTo(car.plate());
+                soft.assertThat(b.release()).isEqualTo(car.release());
+            });
+        });
+    }
+
+    //should save both books and cars
+    //should save with conflifict
+    //find when there id with car, but the id is Book
+    //delete when there id with car, but the id is Book
 }
