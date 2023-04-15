@@ -262,5 +262,18 @@ class MicrostreamTemplateTest {
         );
     }
 
-    //delete when there id with car, but the id is Book
+    @ParameterizedTest
+    @ArgumentsSource(BookCarArgumentProvider.class)
+    public void shouldDeleteIdIgnoringType(Book book, Car car) {
+        this.template.insert(List.of(book, car));
+
+        template.delete(Book.class, car.plate());
+        template.delete(Car.class, book.isbn());
+
+        assertThat(this.template.find(Book.class, book.isbn()))
+                .isNotNull().isEmpty();
+
+        assertThat(this.template.find(Car.class, car.plate()))
+                .isNotNull().isEmpty();
+    }
 }
