@@ -116,15 +116,15 @@ class MapperDelete extends AbstractMapperQuery implements QueryMapper.MapperDele
     }
 
     private <T> void delete() {
-        Stream<T> values = this.template.entities();
+        this.template.remove(filter());
+    }
+
+    private <T> Predicate<T> filter() {
         Predicate<T> isInstance = this.mapping.isInstance();
         if (condition != null) {
-            values = values.filter(isInstance.and((Predicate<T>) condition));
+            return isInstance.and((Predicate<T>) condition));
         } else {
-            values = values.filter(isInstance);
+            return isInstance;
         }
-        FieldMetadata id = mapping.id();
-        List<Object> ids = values.map(id::get).collect(Collectors.toUnmodifiableList());
-        this.template.delete(ids);
     }
 }

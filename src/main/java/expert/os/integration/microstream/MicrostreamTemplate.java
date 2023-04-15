@@ -25,9 +25,11 @@ import jakarta.nosql.QueryMapper;
 import jakarta.nosql.Template;
 
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -125,6 +127,14 @@ class MicrostreamTemplate implements Template {
         return this.data.values();
     }
 
+    <T> Stream<T> entities(Predicate<?> filter, List<Comparator<?>> sorts,
+                           long start, long limit) {
+        return this.data.values((Predicate<Object>) filter, sorts, start, limit);
+    }
+
+    void remove(Predicate<Object> filter){
+        this.data.remove(filter);
+    }
     boolean isEmpty() {
         return this.data.isEmpty();
     }

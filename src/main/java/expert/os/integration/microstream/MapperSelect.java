@@ -148,36 +148,17 @@ class MapperSelect extends AbstractMapperQuery implements QueryMapper.MapperFrom
 
     @Override
     public <T> Stream<T> stream() {
-        Stream<T> values = this.template.entities();
-        Predicate<T> isInstance = this.mapping.isInstance();
-        if (condition != null) {
-            values = values.filter(isInstance.and((Predicate<? super T>) condition));
-        } else {
-            values = values.filter(isInstance);
-        }
-        if (!sorts.isEmpty()) {
-            Comparator<T> comparator = sorts.stream()
-                    .map(c -> (Comparator<T>) c).reduce(Comparator::thenComparing)
-                    .orElseThrow();
-            values = values.sorted(comparator);
-        }
-        if (start > 0) {
-            values = values.skip(start);
-        }
-        if (limit > 0) {
-            values = values.limit(limit);
-        }
-        return values;
+        return this.template.entities(filter(), sorts, start, limit);
     }
 
     @Override
     public <T> List<T> result() {
-        return (List<T>) stream().collect(Collectors.toUnmodifiableList());
+        return (List<T>) stream().toList();
     }
 
     @Override
     public <T> Optional<T> singleResult() {
-        List<T> entities = (List<T>) stream().collect(Collectors.toUnmodifiableList());
+        List<T> entities = result();
         if (entities.isEmpty()) {
             return Optional.empty();
         }
@@ -185,5 +166,14 @@ class MapperSelect extends AbstractMapperQuery implements QueryMapper.MapperFrom
             throw new NonUniqueResultException("The single result can return zero or one, but it is returning " + entities.size());
         }
         return Optional.of(entities.get(0));
+    }
+
+    private <T> Predicate<?> filter() {
+        Predicate<T> isInstance = this.mapping.isInstance();
+        if (condition != null) {
+            return isInstance.and((Predicate<? super T>) condition);
+        } else {
+            return isInstance;
+        }
     }
 }

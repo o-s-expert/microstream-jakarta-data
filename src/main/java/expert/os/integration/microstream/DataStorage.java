@@ -22,6 +22,7 @@ import one.microstream.storage.types.StorageManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -138,7 +139,7 @@ class DataStorage {
      * @param <V> the entity type
      * @return a collection view of the values contained in this map
      */
-    public synchronized <V> Stream<V> values() {
+    synchronized <V> Stream<V> values() {
         if (data.isEmpty()) {
             return Stream.empty();
         }
@@ -147,20 +148,45 @@ class DataStorage {
         return entries.stream();
     }
 
-    /**
-     * Returns a {@link Collection} view of the values contained in this map limited by the predicate.
-     *
-     * @param <V>       the entity type
-     * @param predicate the filter
-     * @return a collection view of the values contained in this map
-     */
-    public synchronized <V> Stream<V> values(Predicate<Object> predicate) {
+    synchronized <V> Stream<V> values(Predicate<Object> predicate, List<Comparator<?>> sorts,
+                                      long start, long limit) {
+
         if (data.isEmpty()) {
             return Stream.empty();
         }
+
+        Stream<V> values = (Stream<V>) this.data.values().stream()
+                .filter(predicate);
+
+        if (!sorts.isEmpty()) {
+            Comparator<V> comparator = sorts.stream()
+                    .map(c -> (Comparator<V>) c).reduce(Comparator::thenComparing)
+                    .orElseThrow();
+            values = values.sorted(comparator);
+        }
+        if (start > 0) {
+            values = values.skip(start);
+        }
+        if (limit > 0) {
+            values = values.limit(limit);
+        }
+
         List<V> entries = new ArrayList<>();
-        entries.addAll((Collection<? extends V>) this.data.values().stream().filter(predicate).toList());
+        entries.addAll(values.toList());
         return entries.stream();
+
+    }
+
+    /**
+     * Remove items from the Map with the predicate as filter
+     *
+     * @param predicate the filter
+     */
+    synchronized void remove(Predicate<Object> predicate) {
+        List<Object> keys = this.data.entrySet().stream()
+                .filter(e -> predicate.test(e.getValue()))
+                .map(Map.Entry::getKey).toList();
+        this.remove(keys);
     }
 
     /**
