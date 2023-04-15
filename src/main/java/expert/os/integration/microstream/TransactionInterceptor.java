@@ -44,7 +44,7 @@ class TransactionInterceptor {
 
         LOGGER.log(Level.FINEST, "Executing a transaction at the method: " + context.getMethod());
 
-        Object result = XThreads.executeSynchronized(() -> {
+     /*   Object result = XThreads.executeSynchronized(() -> {
             Object proceed = proceed(context);
             final Object root = manager.root();
             final Storer storer = manager.createEagerStorer();
@@ -52,9 +52,9 @@ class TransactionInterceptor {
             LOGGER.log(Level.FINEST, "Store the root: " + storeId);
             storer.commit();
             return proceed;
-        });
+        });*/
 
-        return result;
+        return context.proceed();
     }
 
     private static Object proceed(InvocationContext context) {
