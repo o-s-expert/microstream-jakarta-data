@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -93,6 +94,14 @@ class EntityMetadataTest {
         EntityMetadata metadata = EntityMetadata.of(Book.class);
         Optional<FieldMetadata> name = metadata.field("not-found");
         assertThat(name).isNotPresent();
+    }
+
+    @Test
+    public void shouldReturnIsInstance() {
+        EntityMetadata metadata = EntityMetadata.of(Book.class);
+        Predicate<Object> instance = metadata.isInstance();
+        assertThat(instance.test(new Car())).isFalse();
+        assertThat(instance.test(Book.builder().build())).isTrue();
     }
 
     private static class Car {
