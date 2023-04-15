@@ -122,7 +122,7 @@ class MapperDelete extends AbstractMapperQuery implements QueryMapper.MapperDele
     private <T> Predicate<T> filter() {
         Predicate<T> isInstance = this.mapping.isInstance();
         if (condition != null) {
-            return isInstance.and((Predicate<T>) condition));
+            return isInstance.and((Predicate<T>) condition);
         } else {
             return isInstance;
         }
