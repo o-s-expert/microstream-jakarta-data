@@ -55,26 +55,28 @@ class RepositoryProxy<T, K> implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] params) throws Throwable {
         RepositoryType type = RepositoryType.of(method);
         switch (type) {
-            case DEFAULT:
+            case DEFAULT -> {
                 return method.invoke(repository, params);
-            case FIND_BY:
+            }
+            case FIND_BY -> {
                 return ReturnType.of(method.getReturnType())
                         .convert(query(method, params), ReturnType.pageable(params));
-            case COUNT_BY:
+            }
+            case COUNT_BY -> {
                 return query(method, params).count();
-            case EXISTS_BY:
+            }
+            case EXISTS_BY -> {
                 return query(method, params).findFirst().isPresent();
-            case DELETE_BY:
+            }
+            case DELETE_BY -> {
                 delete(method, params);
                 return Void.class;
-            case OBJECT_METHOD:
+            }
+            case OBJECT_METHOD -> {
                 return method.invoke(this, params);
-            case FIND_ALL:
-            case ORDER_BY:
-            case QUERY:
-            default:
-                throw new MappingException("There is not support for Microstream for feature of the type: " + type);
-
+            }
+            default ->
+                    throw new MappingException("There is not support for Microstream for feature of the type: " + type);
         }
     }
 
