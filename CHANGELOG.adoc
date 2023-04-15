@@ -17,6 +17,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 - Add Support to Multiple entities
 
+=== Removed
+
+- Remove the Transaction annotation
+
 == [0.0.1] - 2023-03-16
 
 === Added
