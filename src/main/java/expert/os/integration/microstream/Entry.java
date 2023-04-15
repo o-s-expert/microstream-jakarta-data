@@ -17,13 +17,20 @@ package expert.os.integration.microstream;
 
 import java.util.Objects;
 
-record MicrostreamEntry(Object key, Object value){
+/**
+ * A structure that represents the {@link java.util.Map.Entry}
+ *
+ * @param key   the   {@link java.util.Map.Entry#getKey()}
+ * @param value {@link java.util.Map.Entry#getValue()} ()}
+ */
+record Entry(Object key, Object value) {
 
-    public MicrostreamEntry {
+    public Entry {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
     }
-    public static MicrostreamEntry of(Object key, Object value) {
-        return new MicrostreamEntry(key, value);
+
+    public static Entry of(Object key, Object value) {
+        return new Entry(key, value);
     }
 }
