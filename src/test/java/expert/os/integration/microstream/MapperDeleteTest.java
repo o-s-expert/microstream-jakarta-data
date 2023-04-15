@@ -23,13 +23,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Year;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class MapperDeleteTest {
 
