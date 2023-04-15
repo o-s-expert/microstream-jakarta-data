@@ -32,24 +32,24 @@ public class Car {
     private final  String model;
 
     @Column
-    private final  Year year;
+    private final  Year release;
 
-    private Car(String plate, String model, Year year) {
+    private Car(String plate, String model, Year release) {
         this.plate = plate;
         this.model = model;
-        this.year = year;
+        this.release = release;
     }
 
-    public String getPlate() {
+    public String plate() {
         return plate;
     }
 
-    public String getModel() {
+    public String model() {
         return model;
     }
 
-    public Year getYear() {
-        return year;
+    public Year release() {
+        return release;
     }
 
     @Override
@@ -74,7 +74,7 @@ public class Car {
         return "Car{" +
                 "plate='" + plate + '\'' +
                 ", model='" + model + '\'' +
-                ", year=" + year +
+                ", release=" + release +
                 '}';
     }
 
