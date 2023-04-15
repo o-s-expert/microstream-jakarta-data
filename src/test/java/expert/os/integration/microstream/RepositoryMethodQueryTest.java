@@ -44,14 +44,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class RepositoryMethodQueryTest {
 
     private Library library;
-    private MicrostreamTemplate template;
 
 
     @BeforeEach
     public void setUp() {
-        Entities entities = Entities.of(Collections.singleton(Book.class));
+        Entities entities = Entities.of(Set.of(Book.class, Car.class));
         DataStructure data = new DataStructure();
-        this.template = new MicrostreamTemplate(data, entities);
+        MicrostreamTemplate template = new MicrostreamTemplate(data, entities);
         this.library = RepositoryProxySupplier.INSTANCE.get(Library.class, template);
     }
 
