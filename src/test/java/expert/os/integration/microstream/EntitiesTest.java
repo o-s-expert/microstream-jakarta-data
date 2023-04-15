@@ -15,8 +15,53 @@
 
 package expert.os.integration.microstream;
 
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Test;
+
+import java.util.Collections;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EntitiesTest {
 
+
+    @Test
+    public void shouldCreateEntities() {
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        assertThat(entities)
+                .isNotNull()
+                .isInstanceOf(Entities.class);
+    }
+
+    @Test
+    public void shouldGetErrorWhenParameterIsNull() {
+        assertThrows(NullPointerException.class, () -> Entities.of(null));
+    }
+
+    @Test
+    public void shouldReturnEntity() {
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        Optional<EntityMetadata> metadata = entities.findType(Book.class);
+        SoftAssertions.assertSoftly(soft -> {
+            soft.assertThat(metadata).isNotNull().isNotEmpty();
+            soft.assertThat(metadata).get()
+                    .extracting(EntityMetadata::type)
+                    .isEqualTo(Book.class);
+        });
+    }
+
+    @Test
+    public void shouldReturnEmpty() {
+        Entities entities = Entities.of(Collections.singleton(Book.class));
+        Optional<EntityMetadata> metadata = entities.findType(Animal.class);
+        Assertions.assertThat(metadata).isNotNull().isEmpty();
+    }
+
+    @Test
+    public void shouldReturnErrorWhenFindIsNull() {
+
+    }
 }
