@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2023 Otavio
+ *  Copyright (c) 2023 Otavio & Rudy
  *
  *  This program and the accompanying materials are made available under the
  *  terms of the Apache License, Version 2.0 which is available at
@@ -17,16 +17,9 @@ package expert.os.integration.microstream;
 
 import one.microstream.collections.lazy.LazyHashMap;
 import one.microstream.persistence.types.Persister;
-import one.microstream.persistence.types.Storer;
 import one.microstream.storage.types.StorageManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -60,8 +53,12 @@ class DataStorage {
     public synchronized <K, V> void put(K key, V value) {
         Objects.requireNonNull(key, "key is required");
         Objects.requireNonNull(value, "value is required");
-        this.data.put(key, value);
-        commit();
+        Object oldValue = this.data.put(key, value);
+        if (oldValue == value) {
+            commitEntity(value);
+        } else {
+            commitMap();
+        }
     }
 
     /**
@@ -73,8 +70,21 @@ class DataStorage {
         Objects.requireNonNull(entries, "entries is required");
         Map<Object, Object> entities = entries.stream().collect(toMap(Entry::key, Entry::value,
                 (a, b) -> a));
-        this.data.putAll(entities);
-        this.commit();
+        // This is a little bit more complex when we want to avoid EagerStorer.
+
+        List<Object> updatedInstances = new ArrayList<>();
+        for (Map.Entry<Object, Object> entry : entities.entrySet()) {
+            if (entry.getValue() == this.data.put(entry.getKey(), entry.getValue())) {
+                updatedInstances.add(entry.getValue());
+            }
+        }
+        if (!updatedInstances.isEmpty()) {
+            persister.storeAll(updatedInstances);
+        }
+        if (updatedInstances.size() != entities.size()) {
+            // Commit entire Map as not all Put operations are pure (same instance)
+            this.commitMap();
+        }
     }
 
     /**
@@ -100,7 +110,7 @@ class DataStorage {
     public synchronized <K> void remove(K key) {
         Objects.requireNonNull(key, "key is required");
         this.data.remove(key);
-        this.commit();
+        this.commitMap();
     }
 
     /**
@@ -112,7 +122,7 @@ class DataStorage {
     public synchronized <K> void remove(Iterable<K> keys) {
         Objects.requireNonNull(keys, "keys is required");
         keys.forEach(this.data::remove);
-        this.commit();
+        this.commitMap();
     }
 
     /**
@@ -195,7 +205,7 @@ class DataStorage {
      */
     public void clear() {
         this.data.clear();
-        this.commit();
+        this.commitMap();
     }
 
     @Override
@@ -228,11 +238,12 @@ class DataStorage {
         return new DataStorage(data, manager);
     }
 
-    private synchronized void commit() {
-        Storer eagerStorer = persister.createEagerStorer();
-        eagerStorer.store(this.data);
-        eagerStorer.commit();
+    private void commitMap() {
+        persister.store(this.data);
     }
 
+    private void commitEntity(Object entity) {
+        persister.store(entity);
+    }
 
 }
