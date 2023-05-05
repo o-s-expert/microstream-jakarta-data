@@ -120,7 +120,7 @@ You can overwrite this behavior programmatically.
 ----
 
 @Alternative
-@Priority(Interceptor.Priority.APPLICrATION)
+@Priority(Interceptor.Priority.APPLICATION)
 @ApplicationScoped
 class CustomSupplier implements Supplier<StorageManager>{
 
