@@ -21,7 +21,7 @@
 
     <groupId>expert.os.integration</groupId>
     <artifactId>microstream-jakarta-data</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>0.0.2</version>
 
     <name>Microstream Integration Jakarta persistence layers</name>
     <description>Microstream Integration aims to explore the capability of Jakarta persistence
