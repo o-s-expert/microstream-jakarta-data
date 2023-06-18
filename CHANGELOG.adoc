@@ -8,6 +8,10 @@ and this project adheres to https://semver.org/spec/v2.0.0.html[Semantic Version
 
 == [Unreleased]
 
+=== Changed
+
+- Update Microstream to version 08.01.00-MS-GA
+
 == [0.0.2] - 2023-05-05
 
 === Fixed
