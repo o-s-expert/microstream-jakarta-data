@@ -58,8 +58,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <microstream.version>08.01.00-MS-GA</microstream.version>
         <jakarta.data.version>1.0.0-b2</jakarta.data.version>
-        <jakarta.nosql.version>1.0.0-b6</jakarta.nosql.version>
-        <jnosql.query.version>1.0.0-b6</jnosql.query.version>
+        <jakarta.nosql.version>1.0.0-b7</jakarta.nosql.version>
+        <jnosql.query.version>1.0.0</jnosql.query.version>
         <junit.version>5.9.2</junit.version>
         <mockito.version>4.11.0</mockito.version>
         <classgraph.version>4.8.151</classgraph.version>
