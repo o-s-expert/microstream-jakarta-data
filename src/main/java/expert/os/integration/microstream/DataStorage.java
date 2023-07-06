@@ -42,6 +42,10 @@ class DataStorage {
         this.persister = persister;
     }
 
+    DataStorage() {
+        this(null, null);
+    }
+
     /**
      * Associates the specified value with the specified key in this map.
      *
