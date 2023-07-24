@@ -102,7 +102,7 @@ Add the Maven dependency:
 <dependency>
   <groupId>expert.os.integration</groupId>
   <artifactId>microstream-jakarta-data</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.3</version>
 </dependency>
 ----
 
